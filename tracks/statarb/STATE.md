@@ -28,13 +28,25 @@ Sharpe collapsed 4.77 → −0.06. **Matches Do & Faff (2010): pairs profitabili
 most residual profit dies after costs.** Naive distance pairs has no edge left in liquid large caps.
 The 4.77→−0.06 catch is the transferable lesson (formation-vs-trading look-ahead is THE pairs bug).
 
+## Result — pairs, WIDE universe (2026-07-07)
+S&P 500 + S&P 600 (1103 names, large + small), within-sector pair formation (`select_pairs_sectored`),
+50 pairs, same 252/126 walk-forward, 5bps.
+**Net Sharpe 0.23, ann. 0.90%, max DD −11%, hit rate 50%, deflated prob 74%.**
+
+Widening from 60 mega-caps → 1103 large+small moved pairs **−0.06 → +0.23** — a faint pulse,
+exactly where the LIT note said the residual edge survives (smaller names). But 0.9%/yr net at
+Sharpe 0.23 is **below the 0.5 kill threshold** → still dead-for-me, and nowhere near GGR's historic
+~11%/Sharpe-1.5. Consistent with Do & Faff's post-2002 decay. Caveat: deflated prob shown at
+n_trials=1 is optimistic — real search = {mega, wide} × {formation/trading/entry params}, so the
+honest multiple-testing count is higher and the true deflated prob lower.
+
 ## Next
 1. Run the **residual (Avellaneda-Lee)** variant — regress universe on SPY + sector ETFs, trade
    s-score reversion. A-L report Sharpe ~1.1–1.5 (decaying); test whether residual reversion
-   survives where distance-pairs didn't.
-2. If pairs is revisited: expand to a broader/point-in-time universe (small caps, where GGR
-   found most profit) and cointegration selection instead of distance.
+   survives where distance-pairs didn't. (Best remaining shot at a live signal here.)
+2. Cointegration-based selection instead of distance; point-in-time universe (WRDS) to kill survivorship.
 3. Ledoit-Wolf covariance cleaning (planned `core/` util) for a portfolio-level residual book.
 
 ## Verdict for HYP-005
-Pairs: **dead-for-me on liquid large caps** (as predicted). Residual variant pending. Kristen's Stage-4 call.
+Pairs: **dead-for-me** on both mega-cap (−0.06) and wide (+0.23, sub-threshold) universes. Widening
+gave a faint pulse but not an edge. Residual variant pending. Kristen's Stage-4 call.

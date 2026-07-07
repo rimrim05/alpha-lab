@@ -28,13 +28,28 @@ in small caps); 60 mega-caps can't evaluate it fairly. So this run does **not** 
 — it shows the anomaly's sign is wrong *within a basket of large-cap growth winners*, which is
 almost tautological. It's a clean illustration of why universe choice dominates a cross-sectional test.
 
+## Result — WIDE universe (2026-07-07)
+S&P Composite 1500 via `core/data/universe.py` (503 large + 400 mid + 600 small); EDGAR assets
+for 1495 names with data, ~1303 in the sort each month; monthly rebalance, 10bps.
+**Net Sharpe −0.56, ann. −1.84%, max DD −33%, hit rate 44%.** Benchmark equal-weight 1.01.
+
+Widening 60 mega-caps → 1495 broad names moved the strategy **−0.78 → −0.56**: the mega-cap
+"short the decade's winners" artifact largely disappeared, leaving a weak *negative* — i.e. the
+low-asset-growth premium is simply **absent in the 2010–2026 growth regime** on this data, not
+violently inverted. Not the anomaly working; not the catastrophe either.
+
+Data-quality note (caught + fixed this run): the raw wide run showed a −107% max DD — impossible
+for a diversified book. Traced to **CHRD (Chord Energy) Nov-2020, a fake +30,991% monthly return**
+(post-bankruptcy reverse split off a near-zero delisted-shell price in yfinance). Fixed by
+winsorizing monthly returns to [−90%, +300%]. Free monthly price data has corporate-action landmines.
+
 ## Next
-1. **Right test needs breadth + small caps + point-in-time membership → WRDS/Compustat.** Until then
-   this track can't fairly evaluate the anomaly. Flag as blocked for a real verdict.
-2. Interim free-data option: widen to a few hundred names via a broader EDGAR pull (Russell-1000-ish
-   ticker list) — still survivorship-biased but enough breadth to see the small-cap tilt.
-3. Neutralize size/sector before sorting (the anomaly is partly a size story) — needs more names first.
+1. **Still current-membership → survivorship-biased.** A real verdict needs point-in-time membership
+   (WRDS/CRSP). 2010–2026 is also a single growth-favoring regime vs the anomaly's 1968–2003 sample.
+2. Neutralize size/sector before sorting (asset growth correlates with size) — feasible now with breadth.
+3. Test the low-turnover annual-hold version net of Novy-Marx-Velikov costs explicitly.
 
 ## Verdict for HYP-006
-**Inconclusive — wrong test bed.** Not evidence against Cooper-Gulen-Schill; evidence that you
-can't test a broad cross-sectional anomaly on 60 mega-caps. Real verdict gated on a wider universe.
+**Still no premium, but no longer a universe artifact.** −0.56 on 1495 names says the contrarian
+asset-growth signal didn't pay in this era/data — a weak, honest negative. A clean verdict on the
+*anomaly* still needs point-in-time data + size neutralization. Kristen's Stage-4 call.
