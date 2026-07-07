@@ -4,6 +4,8 @@ Personal quant signal-research monorepo. Reproduce a published edge, attack it h
 dead ones. One shared, honest scorecard judges every strategy. **Paper trading only. Nothing here
 places real orders.**
 
+**[▶ Live dashboard](https://rimrim05.github.io/alpha-lab/dashboard.html)** · **[QuantStats tearsheet](https://rimrim05.github.io/alpha-lab/reports/statarb_tearsheet_all_on.html)** · **[research notebook](notebooks/statarb_research.ipynb)**
+
 The flagship track (`tracks/statarb`) carries a full research workflow end to end: a market-neutral
 statistical-arbitrage strategy, seven survivorship audits, a production-layer ablation, a per-signal
 outcome log, and a leakage-safe meta-model, packaged as a QuantStats tearsheet and a notebook.
@@ -60,10 +62,10 @@ The decisive test is forward paper trading (survivorship-immune by construction)
 
 - **[`notebooks/statarb_research.ipynb`](notebooks/statarb_research.ipynb)** the research narrative,
   runs top to bottom.
-- **`reports/statarb_tearsheet_all_on.html`** the QuantStats tearsheet (open locally).
+- **[`reports/statarb_tearsheet_all_on.html`](https://rimrim05.github.io/alpha-lab/reports/statarb_tearsheet_all_on.html)** the QuantStats tearsheet (live).
 - **`reports/shap_beeswarm_all_on.png`** SHAP attribution for the meta-model.
 - **`audit-bundle/`** a self-contained reproducibility package (spec, code, recompute steps, return series).
-- **`dashboard.html`** an at-a-glance project overview (the fun extra).
+- **[`dashboard.html`](https://rimrim05.github.io/alpha-lab/dashboard.html)** an at-a-glance project overview (the fun extra).
 
 ## The research program (one scorecard, honest verdicts)
 
