@@ -47,6 +47,40 @@ honest multiple-testing count is higher and the true deflated prob lower.
 2. Cointegration-based selection instead of distance; point-in-time universe (WRDS) to kill survivorship.
 3. Ledoit-Wolf covariance cleaning (planned `core/` util) for a portfolio-level residual book.
 
+## Result — RESIDUAL reversion (Avellaneda-Lee), 2026-07-07 — FIRST LIVE SIGNAL IN THE LAB
+Rolling single-factor regression of each stock on its SECTOR ETF (betas lagged, no look-ahead) →
+idiosyncratic residual → s-score of the cumulative residual → mean-reversion (long s≤−1.25, short
+s≥+1.25, flat inside ±0.5). Dollar-neutral, equal-weight, `scripts/statarb_residual_run.py`.
+
+**Canonical: S&P 500 (503 names), skip=1, 10bps, n_trials=20 → net Sharpe 2.67**, ann. 12.5%,
+max DD −6.3%, hit rate 60%, deflated prob 100%. Subperiods 2.91 (2018–22) / 2.40 (2022–26).
+
+### It survived every skeptical audit (this is why I believe it — provisionally)
+| Audit | Result | Kills? |
+| ----- | ------ | ------ |
+| skip=0 → skip=1 (bid-ask bounce / same-close reversal) | 3.42 → 3.61 | NO — reversion persists a day out |
+| winsorize daily returns to [−50%,+100%] (bad-tick/halt) | 3.61 → 2.66 | NO (but ~26% was data-error reversion — removed) |
+| **S&P 500 only @ 10bps (is it just small-cap microstructure?)** | **2.67, DD −6.3%** | NO — *strongest* in the most liquid names |
+| S&P 600 only @ 30bps | 1.56 | NO — survives high small-cap costs too |
+| multiple testing (n_trials=20 deflation) | prob 100% | NO — Sharpe 2.67 over ~2015 days has huge headroom |
+
+### Remaining risks (do NOT treat 2.67 as final)
+1. **Survivorship bias** — current S&P 500 membership. Residual reversion on *survivors* can be inflated;
+   this is the single biggest unaddressed threat. Needs point-in-time membership (WRDS/CRSP).
+2. **Higher than the paper** — A-L reported ~1.1–1.5 (already decaying by 2007); 2.67 on 2018–26 is
+   *higher*, which is itself a reason for skepticism. Likely helped by (a) survivorship, (b) COVID-era
+   vol where reversion paid unusually well (2018–22 subperiod 2.91 includes Mar-2020), (c) unmodeled
+   frictions (borrow/short availability, market impact, real fills vs close).
+3. Turnover is high → very cost-sensitive (2.67@10bps large-cap, 1.2@30bps). Capacity-limited.
+
 ## Verdict for HYP-005
-Pairs: **dead-for-me** on both mega-cap (−0.06) and wide (+0.23, sub-threshold) universes. Widening
-gave a faint pulse but not an edge. Residual variant pending. Kristen's Stage-4 call.
+- **Pairs: dead-for-me** (−0.06 mega, +0.23 wide, sub-threshold).
+- **Residual reversion: ALIVE — clears the kill criterion by 5×, survived 5 audits.** Recommend
+  **Stage 4 → promote to Stage 5 paper trading** (a live forward test is the one check that can't be
+  survivorship-biased or overfit), in parallel with a point-in-time-universe re-test to attack the
+  survivorship risk. Kristen's Stage-4 call.
+
+## Next
+1. Promote residual to paper trading (Stage 5): daily s-score book on S&P 500, track live vs backtest.
+2. Attack survivorship: re-run on a point-in-time universe (WRDS) — the decisive out-of-sample test.
+3. Ledoit-Wolf covariance cleaning for a portfolio-level (vs equal-weight) residual book.

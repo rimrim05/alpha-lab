@@ -4,7 +4,7 @@ import pytest
 from tracks.statarb.bands import band_positions
 from tracks.statarb.pairs import (normalize_prices, select_pairs, select_pairs_sectored,
                                   spread_zscore, pair_pnl, pair_zscore_oos)
-from tracks.statarb.residual import residual_returns, s_score
+from tracks.statarb.residual import residual_returns, s_score, rolling_residual
 
 
 # ---- shared band logic ----
@@ -106,6 +106,25 @@ def test_residual_returns_orthogonal_to_factor():
     resid = residual_returns(stock, factor.to_frame())
     # residual should be ~uncorrelated with the factor
     assert abs(np.corrcoef(resid["A"], factor)[0, 1]) < 0.2
+
+
+def test_rolling_residual_orthogonal_and_lagged():
+    idx = pd.date_range("2022-01-01", periods=300, freq="B")
+    rng = np.random.default_rng(9)
+    fac = pd.Series(rng.normal(0, 0.01, 300), index=idx)
+    # two stocks: S1 = 1.2*fac + noise, S2 = 0.8*fac + noise
+    stock = pd.DataFrame({
+        "S1": 1.2 * fac.values + rng.normal(0, 0.004, 300),
+        "S2": 0.8 * fac.values + rng.normal(0, 0.004, 300),
+    }, index=idx)
+    factors = pd.DataFrame({"S1": fac.values, "S2": fac.values}, index=idx)
+    resid = rolling_residual(stock, factors, window=60)
+    # residuals should be much less correlated with the factor than the raw returns
+    r = resid.dropna()
+    assert abs(np.corrcoef(r["S1"], fac.reindex(r.index))[0, 1]) < 0.3
+    assert abs(np.corrcoef(r["S2"], fac.reindex(r.index))[0, 1]) < 0.3
+    # first window rows are NaN (no look-ahead: beta needs a trailing window, then lag)
+    assert resid["S1"].iloc[:60].isna().all()
 
 
 def test_s_score_mean_reverting_signal():
