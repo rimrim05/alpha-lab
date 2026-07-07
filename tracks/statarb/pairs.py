@@ -34,10 +34,32 @@ def spread_zscore(a: pd.Series, b: pd.Series, window: int | None = None) -> pd.S
     spread = norm.iloc[:, 0] - norm.iloc[:, 1]
     if window:
         mu = spread.rolling(window).mean()
-        sd = spread.rolling(window).std()
+        sd = spread.rolling(window).std().replace(0, pd.NA)
     else:
-        mu, sd = spread.mean(), spread.std()
-    return (spread - mu) / sd.replace(0, pd.NA)
+        mu = spread.mean()
+        sd = spread.std()
+        sd = pd.NA if sd == 0 else sd
+    return (spread - mu) / sd
+
+
+def pair_zscore_oos(form_a: pd.Series, form_b: pd.Series,
+                    trade_a: pd.Series, trade_b: pd.Series) -> pd.Series:
+    """Out-of-sample spread z-score for the TRADING window, standardized by the
+    FORMATION window's spread mean/std (Gatev-Goetzmann-Rouwenhorst). No look-ahead:
+    the bands are fixed from formation data before the trading period starts.
+    """
+    a_all = pd.concat([form_a, trade_a])
+    b_all = pd.concat([form_b, trade_b])
+    a_all = a_all[~a_all.index.duplicated()]
+    b_all = b_all[~b_all.index.duplicated()]
+    base_a = form_a.dropna().iloc[0]
+    base_b = form_b.dropna().iloc[0]
+    spread_all = a_all / base_a - b_all / base_b
+    form_spread = spread_all.loc[form_a.index]
+    mu, sd = form_spread.mean(), form_spread.std()
+    if sd == 0 or pd.isna(sd):
+        return pd.Series(pd.NA, index=trade_a.index)
+    return (spread_all.loc[trade_a.index] - mu) / sd
 
 
 def pair_pnl(positions: pd.Series, ret_a: pd.Series, ret_b: pd.Series) -> pd.Series:

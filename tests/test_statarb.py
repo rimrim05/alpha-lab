@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from tracks.statarb.bands import band_positions
-from tracks.statarb.pairs import normalize_prices, select_pairs, spread_zscore, pair_pnl
+from tracks.statarb.pairs import normalize_prices, select_pairs, spread_zscore, pair_pnl, pair_zscore_oos
 from tracks.statarb.residual import residual_returns, s_score
 
 
@@ -52,6 +52,21 @@ def test_pair_pnl_no_lookahead_and_profits_on_convergence():
     # day2 pnl = pos(day1) * (ret_a-ret_b)(day2) = 1*(0.03-0.01)=0.02
     assert np.isclose(pnl.iloc[1], 0.02)
     assert np.isclose(pnl.iloc[0], 0.0)   # no position lag on day0
+
+
+def test_pair_zscore_oos_uses_formation_stats_only():
+    fidx = pd.date_range("2024-01-01", periods=60, freq="B")
+    tidx = pd.date_range("2024-03-25", periods=30, freq="B")
+    # formation: A and B track with small spread noise
+    rng = np.random.default_rng(5)
+    fa = pd.Series(100 + np.cumsum(rng.normal(0, 0.3, 60)), index=fidx)
+    fb = pd.Series(fa.values + rng.normal(0, 0.5, 60), index=fidx)
+    # trading: B jumps up -> spread goes sharply negative -> z should be large negative
+    ta = pd.Series(fa.iloc[-1] + np.cumsum(rng.normal(0, 0.3, 30)), index=tidx)
+    tb = pd.Series(ta.values + 5.0, index=tidx)   # B persistently 5 above A
+    z = pair_zscore_oos(fa, fb, ta, tb)
+    assert z.index.equals(tidx)
+    assert z.dropna().iloc[-1] < -2   # divergence flagged out-of-sample
 
 
 def test_spread_zscore_zero_mean():
