@@ -37,6 +37,11 @@ def main():
     ap.add_argument("--entry", type=float, default=1.25)
     ap.add_argument("--exit", type=float, default=0.5, dest="exit_")
     ap.add_argument("--cost-bps", type=float, default=5.0)
+    ap.add_argument("--long-floor", type=float, default=None, dest="long_floor",
+                    help="falling-knife stress test: forbid longs while s < -long_floor "
+                         "(skip deep-dip entries + stop out held longs that keep falling). "
+                         "Tests whether the edge is concentrated in the trades most analogous "
+                         "to the missing delisted names. Off by default.")
     ap.add_argument("--n-trials", type=int, default=20,
                     help="declared # of strategy variants tried, for the deflated-Sharpe haircut")
     ap.add_argument("--skip", type=int, default=1,
@@ -93,7 +98,8 @@ def main():
     cum = resid.cumsum()
     s = (cum - cum.rolling(args.window).mean()) / cum.rolling(args.window).std()
 
-    positions = s.apply(lambda col: band_positions(col, entry=args.entry, exit_=args.exit_))
+    positions = s.apply(lambda col: band_positions(col, entry=args.entry, exit_=args.exit_,
+                                                    long_floor=args.long_floor))
     if args.pit:
         # gate trading to actual index-membership days: a name is forced flat when it was
         # not in the S&P 500 (turnover on entry/exit is charged realistically via .diff()).
@@ -112,11 +118,14 @@ def main():
 
     med_active = int(active.sum(axis=1).replace(0, pd.NA).dropna().median())
     tag = "point-in-time membership" if args.pit else f"{args.cap} cap"
-    title = (f"StatArb residual reversion (Avellaneda-Lee) — {tag}, {rets.shape[1]} names, "
+    floor_tag = f", long-floor {args.long_floor}" if args.long_floor is not None else ""
+    title = (f"StatArb residual reversion (Avellaneda-Lee) — {tag}{floor_tag}, {rets.shape[1]} names, "
              f"~{med_active} pos/day, skip={args.skip}, {args.cost_bps}bps")
     bench = {"equal_weight_universe": rets.mean(axis=1)}
     card = scorecard(net, bench, n_trials=args.n_trials, periods_per_year=252)
     stem = "residual_pit" if args.pit else "residual"
+    if args.long_floor is not None:
+        stem += f"_floor{args.long_floor}"
     (out / f"{stem}_scorecard.md").write_text(to_markdown(card, title))
     net.to_frame("net").to_parquet(out / f"{stem}_pnl.parquet")
     register(Path("data/manifest.jsonl"), name="statarb_" + stem, source="yfinance",

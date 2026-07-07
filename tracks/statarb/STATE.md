@@ -96,19 +96,47 @@ subperiods 2.67 / 2.31). A −0.17 haircut. Signal survives the achievable corre
 **What the PIT run does and doesn't fix:** ✅ inclusion look-ahead (fixed, cost −0.17). ❌ delisting
 survivorship (structurally unfixable on free data). The residual bias points DOWN.
 
+## Result — FALLING-KNIFE stress test (2026-07-07) — how survivorship-fragile is the edge?
+`--long-floor X`: forbid longs while s < −X (skip deep-dip entries + stop out held longs that keep
+falling). The deepest-negative-s longs are the survivor-universe analogue of the missing dead-name
+longs (bought a name in steep idiosyncratic decline). If the edge lives there, it's survivorship-fragile.
+
+Survivor baseline (2.67), tightening the floor toward the −1.25 entry:
+| long floor | Net Sharpe | Ann. return | Max DD |
+| ---------- | ---------- | ----------- | ------ |
+| off (base) | 2.67 | 12.5% | −6.3% |
+| −3.0 | 2.57 | 11.5% | −5.1% |
+| −2.5 | 2.31 | 10.1% | −4.5% |
+| −2.0 | 1.86 | 7.8% | −4.3% |
+| −1.75 | 1.71 | 7.1% | −4.3% |
+
+PIT universe consistency point: **PIT + floor −2.0 = 1.69** (vs PIT no-floor 2.50) — same ~0.8 erosion,
+so the fragility is not a survivor-set quirk.
+
+### Read: a decomposition, not a pass/fail
+- The edge **erodes steadily but does NOT collapse**. A **robust core of ~1.7 Sharpe / 7.1% ann**
+  survives removing ALL longs deeper than −1.75 — that core clears the 0.5 kill threshold by ~3.4×.
+- But **~43% of the headline return (5.4% of 12.5%) sits in longs deeper than −1.75σ** — the −2σ-to-−3σ
+  dip-buying trades. That band is exactly where survivorship bias bites: dead names entered the same
+  deep-dip longs and never bounced. So this premium is survivor-inflated to an unknown-but-nonzero degree.
+- Removing the deep longs also **halves max drawdown** (−6.3% → −4.3%): the falling-knife trades carried
+  most of the tail risk, not just the return.
+- **Bracket on the true survivorship-free Sharpe: ~1.7 (robust floor) ≤ true ≤ 2.50 (PIT upper bound).**
+  Free data can't pin it tighter (dead-name prices needed); forward paper trading resolves it directly.
+
 ## Verdict for HYP-005
 - **Pairs: dead-for-me** (−0.06 mega, +0.23 wide, sub-threshold).
-- **Residual reversion: ALIVE — 2.67 baseline, 2.50 point-in-time (upper bound), survived 6 audits.**
-  Point-in-time membership was the last *backtest* check available on free data; it did not kill the
-  signal but also can't fully clear survivorship (120 dead names unrecoverable). The one test that is
-  **structurally immune to survivorship — forward paper trading** — is now the decisive next step
-  (you trade the live universe going forward; there are no omitted dead names by construction).
+- **Residual reversion: ALIVE, but survivorship-sensitive. 2.67 baseline → 2.50 point-in-time (upper
+  bound) → ~1.7 robust core (deep-dip longs removed). Survived 7 audits.** Not a pure survivorship
+  artifact — a Sharpe-1.7 core clears the kill bar 3.4× — but ~half the headline return is fragile
+  deep-dip premium that a delisting-inclusive universe would partly erase. The one test structurally
+  **immune to survivorship — forward paper trading** — is the decisive next step (live universe forward,
+  no omitted dead names by construction), and paper the FULL signal (not the floored one) to see how the
+  fragile premium behaves live.
 
 ## Next
 1. **Paper trade (Stage 5) — the survivorship-immune test.** Daily s-score book on the *current live*
-   S&P 500, track live vs backtest. This is what finally resolves the un-testable 2.50-is-an-upper-bound gap.
-2. Optional pre-paper probe (survivor data): strip the deepest-negative-s-score long entries (the
-   "falling-knife" trades whose dead-name analogues are missing) — if Sharpe collapses, the edge is
-   survivorship-fragile; if it holds, it's broad-based. Cheap, informative, no new data.
-3. If CRSP/WRDS ever unblocks: point-in-time *prices* (not just membership) for the true survivorship-free number.
-4. Ledoit-Wolf covariance cleaning for a portfolio-level (vs equal-weight) residual book.
+   S&P 500, track live vs backtest. Resolves the ~1.7-to-2.50 bracket directly. Instrument the deep-dip
+   (s < −2) longs separately — that bucket is where live-vs-backtest divergence should show first.
+2. If CRSP/WRDS ever unblocks: point-in-time *prices* (not just membership) for the true survivorship-free number.
+3. Ledoit-Wolf covariance cleaning for a portfolio-level (vs equal-weight) residual book.

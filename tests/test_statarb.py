@@ -21,6 +21,18 @@ def test_band_positions_enter_hold_exit():
     assert pos.iloc[5] == 0        # exit
 
 
+def test_band_long_floor_skips_and_stops_falling_knives():
+    # deep dip below the floor: never enter long
+    deep = pd.Series([0.0, -3.0, -0.2])
+    assert band_positions(deep, entry=1.25, exit_=0.5, long_floor=2.5).tolist() == [0, 0, 0]
+    # enter at a shallow dip, then it keeps falling past the floor -> stop out the long
+    knife = pd.Series([0.0, -1.5, -3.0, -0.2])
+    assert band_positions(knife, entry=1.25, exit_=0.5, long_floor=2.5).tolist() == [0, 1, 0, 0]
+    # short side is unaffected by long_floor
+    up = pd.Series([0.0, 3.0, 0.1])
+    assert band_positions(up, entry=1.25, exit_=0.5, long_floor=2.5).tolist() == [0, -1, 0]
+
+
 # ---- pairs (Gatev-Goetzmann-Rouwenhorst) ----
 
 def test_normalize_prices_starts_at_one():
