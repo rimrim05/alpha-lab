@@ -59,3 +59,50 @@ def fetch_sp_composite(which=("500", "400", "600"), cache: Path | None = None) -
         Path(cache).parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(cache)
     return df
+
+
+# Point-in-time S&P 500 membership (fja05680, maintained). Full constituent snapshot
+# at each change date — forward-filled it reconstructs membership on any past day.
+# This is the free-data fix for INCLUSION look-ahead (trading a name before it joined).
+# It does NOT fix delisting survivorship: names acquired/failed have no price data in
+# yfinance at all, so they can't be re-added. Point-in-time PRICES need CRSP/WRDS.
+PIT_SP500_URL = ("https://raw.githubusercontent.com/fja05680/sp500/master/"
+                 "S%26P%20500%20Historical%20Components%20%26%20Changes%20(Updated).csv")
+
+
+def fetch_sp500_pit_changes(cache: Path | None = None) -> pd.DataFrame:
+    """S&P 500 membership change-log as [date, members] — members is a sorted list of
+    cleaned tickers effective on that date (a full snapshot, not a delta). Network."""
+    if cache and Path(cache).exists():
+        return pd.read_parquet(cache)
+    resp = requests.get(PIT_SP500_URL, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    raw = pd.read_csv(io.StringIO(resp.text))
+    raw["date"] = pd.to_datetime(raw["date"])
+    raw = raw.sort_values("date").reset_index(drop=True)
+    members = [sorted({clean_ticker(t) for t in str(row).split(",")}) for row in raw["tickers"]]
+    df = pd.DataFrame({"date": raw["date"], "members": members})
+    if cache:
+        Path(cache).parent.mkdir(parents=True, exist_ok=True)
+        df.to_parquet(cache)
+    return df
+
+
+def membership_mask(changes: pd.DataFrame, dates, tickers) -> pd.DataFrame:
+    """Daily boolean frame (dates x tickers): True where the ticker was an S&P 500
+    member. Forward-fills each change-date snapshot onto the trading calendar."""
+    tickers = list(tickers)
+    dates = pd.DatetimeIndex(dates)
+    rows = [[t in set(m) for t in tickers] for m in changes["members"]]
+    mat = pd.DataFrame(rows, index=pd.to_datetime(changes["date"].values), columns=tickers)
+    mat = mat[~mat.index.duplicated(keep="last")].sort_index()
+    daily = mat.reindex(mat.index.union(dates)).ffill().reindex(dates)
+    return daily.fillna(False).astype(bool)
+
+
+def ever_members(changes: pd.DataFrame) -> set:
+    """Set of tickers that were an S&P 500 member at any point in the change-log."""
+    out = set()
+    for m in changes["members"]:
+        out |= set(m)
+    return out

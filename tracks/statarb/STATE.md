@@ -73,14 +73,42 @@ max DD −6.3%, hit rate 60%, deflated prob 100%. Subperiods 2.91 (2018–22) / 
    frictions (borrow/short availability, market impact, real fills vs close).
 3. Turnover is high → very cost-sensitive (2.67@10bps large-cap, 1.2@30bps). Capacity-limited.
 
+## Result — POINT-IN-TIME re-test (2026-07-07) — survivorship attack, free-data ceiling
+`scripts/statarb_residual_run.py --pit --cost-bps 10`. Reconstructs point-in-time S&P 500 membership
+(fja05680 maintained change-log, `core/data/universe.py::fetch_sp500_pit_changes`), then trades each
+name ONLY on its actual index-membership days (`membership_mask`, forward-filled snapshots). Removes
+the **inclusion look-ahead** the baseline had — 156 current members were added mid-window yet traded
+from 2018.
+
+**Baseline (survivor universe) 2.67 → PIT-membership 2.50** (ann. 11.5%, DD −5.5%, hit 58.4%,
+subperiods 2.67 / 2.31). A −0.17 haircut. Signal survives the achievable correction.
+
+### But 2.50 is an UPPER BOUND, not the true PIT Sharpe — and the gap is unmeasurable on free data
+- Of the **505 S&P 500 members on 2018-01-02, 144 were gone by 2026; 120 of those have NO price
+  series in yfinance** (acquired/failed → delisted). Probed directly: SIVB, FRC, XLNX, ATVI, CERN,
+  ABMD… all return empty. (The one "SBNY" hit is a post-2024 symbol *reuse*, not Signature Bank — a trap.)
+- So the PIT run still trades a *thinned* member set: **~447 of ~500 real members per day** (min 384
+  in 2018, where the most names have since died). The missing ~53/day are exactly the delisted tail.
+- Those dead names are the adverse-selection trades a reversion signal *loses* on (bought the dip,
+  name kept falling into delisting). Re-adding them can only LOWER the Sharpe. → true PIT Sharpe ≤ 2.50,
+  by an amount only CRSP/WRDS point-in-time PRICES can pin down. WRDS is blocked; yfinance cannot fix this.
+
+**What the PIT run does and doesn't fix:** ✅ inclusion look-ahead (fixed, cost −0.17). ❌ delisting
+survivorship (structurally unfixable on free data). The residual bias points DOWN.
+
 ## Verdict for HYP-005
 - **Pairs: dead-for-me** (−0.06 mega, +0.23 wide, sub-threshold).
-- **Residual reversion: ALIVE — clears the kill criterion by 5×, survived 5 audits.** Recommend
-  **Stage 4 → promote to Stage 5 paper trading** (a live forward test is the one check that can't be
-  survivorship-biased or overfit), in parallel with a point-in-time-universe re-test to attack the
-  survivorship risk. Kristen's Stage-4 call.
+- **Residual reversion: ALIVE — 2.67 baseline, 2.50 point-in-time (upper bound), survived 6 audits.**
+  Point-in-time membership was the last *backtest* check available on free data; it did not kill the
+  signal but also can't fully clear survivorship (120 dead names unrecoverable). The one test that is
+  **structurally immune to survivorship — forward paper trading** — is now the decisive next step
+  (you trade the live universe going forward; there are no omitted dead names by construction).
 
 ## Next
-1. Promote residual to paper trading (Stage 5): daily s-score book on S&P 500, track live vs backtest.
-2. Attack survivorship: re-run on a point-in-time universe (WRDS) — the decisive out-of-sample test.
-3. Ledoit-Wolf covariance cleaning for a portfolio-level (vs equal-weight) residual book.
+1. **Paper trade (Stage 5) — the survivorship-immune test.** Daily s-score book on the *current live*
+   S&P 500, track live vs backtest. This is what finally resolves the un-testable 2.50-is-an-upper-bound gap.
+2. Optional pre-paper probe (survivor data): strip the deepest-negative-s-score long entries (the
+   "falling-knife" trades whose dead-name analogues are missing) — if Sharpe collapses, the edge is
+   survivorship-fragile; if it holds, it's broad-based. Cheap, informative, no new data.
+3. If CRSP/WRDS ever unblocks: point-in-time *prices* (not just membership) for the true survivorship-free number.
+4. Ledoit-Wolf covariance cleaning for a portfolio-level (vs equal-weight) residual book.
