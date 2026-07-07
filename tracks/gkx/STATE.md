@@ -31,11 +31,24 @@ timing study (predict next month's signal returns, rotate), not the firm-level r
 forecasts. `core.backtest` lags weights internally, so the runner feeds `actual.shift(1)`
 — pairing weight(t) with y_true(t), realization dated t+1. No look-ahead.
 
-## Result
-*Run in progress (annual refit). Paste scorecard here + into HYP-004 when done.*
+## Result (2026-07-07, LS panel 1980+, 212 signals, 504 monthly obs, annual refit)
+Best model = OLS. Signal-rotation L/S (long top-quintile predicted, short bottom), net of 5bps:
+- Net Sharpe **0.78**, ann. return 13.4%, **max DD −52%**, hit rate 65%
+- Deflated-Sharpe prob 100% (clears the 3-model multiple-testing haircut)
+- Subperiods: 0.93 (1982–2003) → 0.61 (2003–2024) — real decay
+- **Benchmark: equal-weight ALL signals = Sharpe 2.10** ← the punchline
+
+**Honest read:** the rotation *badly underperforms just holding every anomaly equally*
+(0.78 vs 2.10) and carries a 52% drawdown. Timing the factor zoo with 12m-momentum/vol
+features adds negative value versus naive diversification here. Passes HYP-004's literal
+kill thresholds (Sharpe > 0.3, deflated > 50%) but **fails the benchmark test** — which is
+the one that matters. Caveats: (a) apples-to-oranges — rotation is signal-neutral L/S,
+benchmark is net-long all anomalies harvesting the average premium; (b) CZ "op" = in-sample
+original-paper portfolios, so the 2.10 benchmark is gross and in-sample-flattered; (c) no
+cost on the benchmark. Still: no evidence the ML timing beats diversification.
 
 ## Next
-1. Read scorecard: net Sharpe per model, deflated-Sharpe prob (3-model haircut), subperiods.
-2. Verdict vs HYP-004 kill criteria (net Sharpe < 0.3 or deflated prob < 50% → dead).
-3. If alive: add more features (factor value/BM spread, macro), widen model ladder.
-4. Full firm-level GKX remains gated on WRDS — the real replication, deferred.
+1. Verdict for HYP-004: leaning **dead-for-me** (doesn't beat equal-weight). Kristen's Stage-4 call.
+2. If pursued: richer features (factor BM/value spread, macro state, cross-signal momentum),
+   and a fairer benchmark (best single signal, 60/40 rotation-vs-hold blend).
+3. Full firm-level GKX remains gated on WRDS — the real replication, deferred.
