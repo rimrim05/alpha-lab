@@ -36,6 +36,19 @@ SECTOR_ETF = {
 }
 
 
+def equal_weight_net(positions, resid, skip, cost_bps):
+    """The audited equal-weight, dollar-neutral, net-of-cost P&L series. This is the ONE formula that
+    produces the 2.67 — run_residual and the ML gated backtest both call it, so a gated book's Sharpe
+    comes from the exact same path as the headline number (not a reconstruction)."""
+    held = positions.shift(1 + skip)
+    n_active = held.abs().sum(axis=1).replace(0, pd.NA)
+    gross = (held * resid).sum(axis=1) / n_active
+    turnover = positions.diff().abs()
+    cost = (turnover * cost_bps / 1e4 * 2).sum(axis=1) / n_active
+    net = (gross - cost).fillna(0)
+    return net[net.ne(0).cumsum() > 0]
+
+
 def run_residual(rets, factors, sectors, *, window=60, entry=1.25, exit_=0.5, skip=1,
                  long_floor=None, cost_bps=5.0, liquidity_adv=0.0, dollar_adv=None,
                  sector_cap_=0.0, name_cap=0.0, blackout=None, features=None, pit_mask=None):
@@ -66,21 +79,16 @@ def run_residual(rets, factors, sectors, *, window=60, entry=1.25, exit_=0.5, sk
         turnover = w.diff().abs()
         cost = (turnover * cost_bps / 1e4 * 2).sum(axis=1)
         net = (gross - cost).fillna(0)
+        net = net[net.ne(0).cumsum() > 0]          # drop warm-up (equal_weight_net trims internally)
     else:
-        held = positions.shift(1 + skip)
-        n_active = held.abs().sum(axis=1).replace(0, pd.NA)
-        gross = (held * resid).sum(axis=1) / n_active
-        turnover = positions.diff().abs()
-        cost = (turnover * cost_bps / 1e4 * 2).sum(axis=1) / n_active
-        net = (gross - cost).fillna(0)
-    net = net[net.ne(0).cumsum() > 0]
+        net = equal_weight_net(positions, resid, skip, cost_bps)
 
     if features is None:
         features = {"volatility": rets.rolling(window).std(),
                     "volume_ratio": pd.DataFrame(1.0, index=rets.index, columns=rets.columns)}
     trades = extract_trades(base_positions, positions, resid, s, features, sectors, removed_by,
                             lag=1 + skip)
-    return {"net": net, "trades": trades,
+    return {"net": net, "trades": trades, "resid": resid,
             "base_positions": base_positions, "final_positions": positions}
 
 

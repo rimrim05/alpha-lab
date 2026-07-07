@@ -1,22 +1,30 @@
 """The research payload: does gating trades by predicted-success probability beat taking every signal?
 
-Pre-registration (anti-overfitting): the probability threshold is chosen on the EARLIER 60% of trades
-by date and reported on the LATER 40% (held-out). The result is reported whichever way it comes out —
-if gating does not improve held-out Sharpe, that is itself a finding (signal quality isn't predictable
-from entry features alone). No threshold-hunting on the held-out set.
+The gated book's Sharpe is a REAL daily Sharpe from the audited engine — we zero out the positions of
+sub-threshold signals and run them through the exact `equal_weight_net` that produces the 2.67, NOT a
+reconstruction. So the gated-vs-ungated comparison is bulletproof: same path, same number.
 
-Two views: per-trade stats (honest, from the log directly) and a reconstructed equal-weight daily
-series scored via the house scorecard. The daily reconstruction is internally consistent for the
-gated-vs-ungated comparison; its absolute level differs from the audited engine net (documented).
+Pre-registration (anti-overfitting): the probability threshold is a fixed rule (top 30% of predicted
+probability) fit on the EARLIER 60% of trades by date, then applied to the LATER 40% (held-out). The
+result is reported whichever way it comes out — a null gated result is a finding, not a failure.
+
+Runs on the `costs` config (the equal-weight S&P 500 book whose ungated Sharpe IS the audited 2.67).
 """
 import argparse
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from core.eval.scorecard import scorecard
+from scripts.statarb_residual_run import equal_weight_net
 from tracks.statarb.ml.dataset import build_features, load_log
 from tracks.statarb.ml.train import walk_forward_oof
+from tracks.statarb.trades import _runs
+
+ROOT = Path(__file__).resolve().parents[3]
+ABL = ROOT / "artifacts/statarb/ablation"
+KEEP_QUANTILE = 0.70          # pre-registered rule: keep signals above the 70th pct of selection proba
 
 
 def per_trade_stats(pnl: pd.Series) -> dict:
@@ -28,60 +36,55 @@ def per_trade_stats(pnl: pd.Series) -> dict:
             "sharpe": float(pnl.mean() / sd) if sd > 0 else 0.0}
 
 
-def reconstruct_daily(df: pd.DataFrame) -> pd.Series:
-    """Equal-weight daily returns from entered trades: each trade's realized_pnl spread uniformly over
-    its holding business days; per day, mean across active trades."""
-    df = df[df["entered"] & df["realized_pnl"].notna()].copy()
-    if df.empty:
-        return pd.Series(dtype=float)
-    contribs: dict = {}
-    for _, t in df.iterrows():
-        days = pd.bdate_range(pd.to_datetime(t["entry_date"]), periods=max(1, int(t["holding_days"])))
-        per_day = float(t["realized_pnl"]) / len(days)
-        for d in days:
-            contribs.setdefault(d, []).append(per_day)
-    return pd.Series({d: np.mean(v) for d, v in contribs.items()}).sort_index()
+def evaluate(config: str = "costs", skip: int = 1, cost_bps: float = 10.0) -> dict:
+    positions = pd.read_parquet(ABL / f"{config}_positions.parquet")
+    resid = pd.read_parquet(ABL / "resid.parquet")
+    idx = positions.index
 
-
-def pick_threshold(sel: pd.DataFrame, grid_lo=0.1, grid_hi=0.8, min_trades=10) -> float:
-    """Threshold maximizing per-trade Sharpe on the SELECTION set only (>= min_trades kept)."""
-    grid = np.quantile(sel["proba"], np.linspace(grid_lo, grid_hi, 15))
-    def score(th):
-        kept = sel[sel["proba"] > th]["realized_pnl"]
-        s = per_trade_stats(kept)
-        return s["sharpe"] if s["n"] >= min_trades and not np.isnan(s["sharpe"]) else -np.inf
-    return float(max(grid, key=score))
-
-
-def evaluate(config: str = "all_on") -> dict:
     df = load_log(config)
     X, y, dates = build_features(df)
     oof = walk_forward_oof(X, y, dates, "xgboost")
     df = df.assign(proba=oof.to_numpy(), entry_dt=dates.to_numpy())
-    ev = df[df["proba"].notna() & df["entered"] & df["realized_pnl"].notna()].copy()
-    if ev.empty:
-        raise RuntimeError("no evaluable trades (need entered trades with OOF predictions)")
+    proba_by_id = dict(zip(df["signal_id"], df["proba"]))
 
-    cut = ev["entry_dt"].quantile(0.6)
-    sel, hold = ev[ev["entry_dt"] <= cut], ev[ev["entry_dt"] > cut]
-    threshold = pick_threshold(sel)
-    gated = hold[hold["proba"] > threshold]
+    # pre-register threshold on the earlier 60% of PREDICTED trades; apply to the later 40% (held-out)
+    pred = df[df["proba"].notna()]
+    cut = pred["entry_dt"].quantile(0.6)
+    sel = pred[pred["entry_dt"] <= cut]
+    threshold = float(np.nanquantile(sel["proba"], KEEP_QUANTILE))
 
-    ung_daily = reconstruct_daily(hold)
-    gat_daily = reconstruct_daily(gated)
+    # gate: zero the position run of any signal whose proba is below threshold (keep NaN/unpredicted)
+    gated = positions.copy()
+    col_loc = {c: gated.columns.get_loc(c) for c in gated.columns}
+    for c in positions.columns:
+        for i0, i1, _sign in _runs(positions[c]):
+            p = proba_by_id.get(f"{c}:{idx[i0].date()}:{i0}", np.nan)
+            if not np.isnan(p) and p < threshold:
+                gated.iloc[i0:i1 + 1, col_loc[c]] = 0
+
+    # REAL daily net from the audited path; report the held-out window (dates after the cut).
+    # Coerce to float: equal_weight_net's internal pd.NA yields object dtype under pandas 3.0 (this
+    # venv), which scipy's skew/kurtosis rejects. The audited .venv (pandas 2.2) is unaffected, so the
+    # parity-proven formula stays untouched — we just clean its output at this boundary.
+    net_ung = equal_weight_net(positions, resid, skip, cost_bps).astype(float)
+    net_gat = equal_weight_net(gated, resid, skip, cost_bps).astype(float)
+    oos = lambda s: s[s.index > cut]
     sc = lambda s: scorecard(s, {}, n_trials=1, periods_per_year=252) if len(s) > 2 else None
+
+    hold = df[df["proba"].notna() & (df["entry_dt"] > cut) & df["entered"]]
+    kept = hold[hold["proba"] >= threshold]
     return {
         "config": config, "threshold": round(threshold, 4),
-        "n_selection": len(sel), "n_holdout": len(hold),
+        "ungated_full_sharpe": round(float(scorecard(net_ung, {}, 1, 252)["sharpe"]), 2),  # ~2.67 anchor
+        "n_holdout_trades": len(hold), "n_kept": len(kept),
         "per_trade": {"ungated": per_trade_stats(hold["realized_pnl"]),
-                      "gated": per_trade_stats(gated["realized_pnl"])},
-        "daily": {"ungated": sc(ung_daily), "gated": sc(gat_daily)},
+                      "gated": per_trade_stats(kept["realized_pnl"])},
+        "daily": {"ungated": sc(oos(net_ung)), "gated": sc(oos(net_gat))},
     }
 
 
 def as_table(res: dict) -> pd.DataFrame:
-    pt = res["per_trade"]
-    dl = res["daily"]
+    pt, dl = res["per_trade"], res["daily"]
     def row(name):
         d = dl[name]
         return {"arm": name, "n_trades": pt[name]["n"], "win%": round(pt[name]["win"] * 100, 1),
@@ -93,13 +96,15 @@ def as_table(res: dict) -> pd.DataFrame:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--config", default="all_on")
+    ap.add_argument("--config", default="costs")
     args = ap.parse_args()
     res = evaluate(args.config)
-    print(f"pre-registered threshold {res['threshold']} (chosen on {res['n_selection']} earlier "
-          f"trades) → reported on {res['n_holdout']} held-out trades:\n")
+    print(f"ungated full-period Sharpe {res['ungated_full_sharpe']} (audited-path anchor, ~2.67)")
+    print(f"pre-registered threshold {res['threshold']} → held-out: {res['n_kept']}/"
+          f"{res['n_holdout_trades']} trades kept\n")
     print(as_table(res).to_string(index=False))
-    print("\nReported as-is: a null or negative gated result is a finding, not a failure.")
+    print("\ndaily_sharpe is a REAL engine Sharpe (gated positions through the 2.67 path). "
+          "Reported as-is: a null gated result is a finding.")
 
 
 if __name__ == "__main__":

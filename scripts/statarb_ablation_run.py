@@ -126,6 +126,9 @@ def main():
                            skip=1, features=features, **kw)
         rows.append(_row(name, out))
         out["net"].to_frame("net").to_parquet(out_dir / f"{name}_net.parquet")
+        if name == "costs":   # persist for the real-engine gated ML backtest (equal-weight path)
+            out["final_positions"].to_parquet(out_dir / "costs_positions.parquet")
+            out["resid"].to_parquet(out_dir / "resid.parquet")
         led = Ledger(log_root / name)
         for t in out["trades"]:
             led.append("signal_log", t)
