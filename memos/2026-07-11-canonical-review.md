@@ -88,15 +88,37 @@ Computation in `scripts/hunt_paper_reconcile.py:162-164`:
 | Remaining quantity | **271 symbols / $141,671.51 gross** (per-symbol qty not stored) | these 271 *are* the un-flattened remainder |
 | Status | **stat-arb flatten / AMAT NOT COMPLETE** | reconcile alarm; `position_gap_frac 2.5684` |
 
-**Honest limitation:** the long/short/net/priced-unpriced/flatten-quantity decomposition the question asks
-for **is not derivable from any committed artifact** — the reconcile schema persists only aggregate gross
-dollars, the count, and the symbol list. Recovering it requires a live read-only `get_all_positions()`
-snapshot (per-position `qty`, `side`, `market_value`), which no ledger captures. This is an
-**observability gap in the reconcile schema, not a strategy issue**; recommended fix (documentation/tooling
-only, for Coordinator action) is to persist per-position `{qty, side, market_value, priced}` in
-`_reconcile.jsonl`. The 271 names are a broad large-cap S&P roster (AAPL, MSFT-tier, …) with gross
-1.405× equity — consistent with either a levered long book or a long/short book; **the sign split cannot
-be asserted from the artifacts** and is therefore left as NOT RECORDED rather than estimated.
+**Honest limitation (as of the committed ledger):** the long/short/net/priced-unpriced/flatten-quantity
+decomposition was **not derivable from any committed artifact** — the reconcile schema persisted only
+aggregate gross dollars, the count, and the symbol list. This was an observability gap in the reconcile
+schema, now closed (see addendum).
+
+**Addendum — read-only broker snapshot, 2026-07-11 (resolves the fields above).** A read-only
+`get_all_positions` / `get_account` / `get_orders(OPEN)` snapshot (no ledger write, no order submitted)
+and the new decomposition instrumentation (`scripts/hunt_paper_reconcile.py`, commit `da5dc8e`) measure
+the signed decomposition directly:
+
+| Field | Value |
+|---|---|
+| Foreign positions | **271** (285 total − 14 in-book) |
+| Long legs / short legs / unpriced | **106 / 165 / 0** |
+| Gross long | **$55,419.78** |
+| Gross short | **$86,251.64** |
+| **Gross** (Σ \|mv\|) | **$141,671.42** (matches the $141,671.51 gross to price drift) |
+| **Net** (Σ signed mv) | **−$30,831.86** |
+| Gross / equity | 1.406 |
+| Net / equity | **−0.306** |
+| \|Net\| / gross | **0.218** |
+| Open flatten orders | **271** (1,563 shares submitted, **0 filled**) |
+| Account equity | $100,794.31 |
+
+**Interpretation:** the $141.7K gross is **primarily offsetting long/short inventory** — 78% of the gross
+nets out (|net|/gross = 0.22) — **but it carries a material residual net short of −$30.8K (−30.6% of
+equity)**, a real directional tilt, not negligible. This is consistent with the legacy stat-arb book being
+a long/short (106L/165S) roster mid-flatten. **Flatten is NOT complete:** 271 positions still held and
+1,563 flatten shares still unfilled (0 filled) — it fills at Monday's open. Per the standing rule, the
+flatten is **not** to be called complete until broker positions **and** remaining flatten quantities are
+both zero.
 
 ### 1.3 The 68 order outcomes — split (canceled and rejected kept separate)
 
