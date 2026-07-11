@@ -13,10 +13,10 @@ class Broker(ABC):
     """What the nightly loop needs a broker to do. Four verbs, nothing more."""
 
     @abstractmethod
-    def submit_targets(self, targets: dict[str, float]) -> None:
+    def submit_targets(self, targets: dict[str, float], *, tag: str | None = None) -> None:
         """Move current holdings toward the FULL target book `{ticker: dollars}`
         (signed: +long, -short). Any held name absent from `targets` is an exit
-        (target 0)."""
+        (target 0). `tag` optionally attributes the orders (e.g. book name)."""
 
     @abstractmethod
     def positions(self) -> dict[str, dict]:
@@ -45,8 +45,8 @@ class FakeBroker(Broker):
         self._status: dict[str, str] = {}       # ticker -> status (default 'tradable')
 
     # ---- the fill policy ----------------------------------------------------
-    def submit_targets(self, targets: dict[str, float]) -> None:
-        """Fill toward `targets`. Union held + target names so a held name absent
+    def submit_targets(self, targets: dict[str, float], *, tag: str | None = None) -> None:
+        """Fill toward `targets` (`tag` ignored — in-memory book has no blotter). Union held + target names so a held name absent
         from the book is an exit (target 0). Turn target dollars into a share count,
         diff against current qty, and book the delta ONLY if it's nonzero AND the
         name is tradable — a delisted/halted name can't be traded out, so its stale

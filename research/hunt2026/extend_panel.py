@@ -53,6 +53,10 @@ def main():
 
     ext_panel = pd.concat(out, axis=1)
     ext_panel.columns.names = ["field", "ticker"]
+    # drop phantom days (e.g. ^VIX-only holidays from the calendar union): a single all-NaN
+    # ETF row inside a rolling window silently nulls SMAs and gates trend specs off
+    etf_close = ext_panel["close"][META["etfs"]]
+    ext_panel = ext_panel[etf_close.notna().any(axis=1)]
     ext_panel.to_parquet(HERE / "panel_2005.parquet")
     print(f"panel_2005: {len(ext_panel)} rows {ext_panel.index[0].date()} -> "
           f"{ext_panel.index[-1].date()}")

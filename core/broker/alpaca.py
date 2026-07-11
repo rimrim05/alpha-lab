@@ -23,7 +23,11 @@ class AlpacaBroker(Broker):
         self._seen: set = set()            # order ids already drained by fills()
         self._order_errors: list = []      # per-order rejections (don't crash the nightly run)
 
-    def submit_targets(self, targets: dict[str, float]) -> None:
+    def submit_targets(self, targets: dict[str, float], *, tag: str | None = None) -> None:
+        """`tag`: prefix stamped into each order's client_order_id (e.g. the book name), so
+        multi-book runs sharing one paper account are attributable in the Alpaca blotter."""
+        import uuid
+
         from alpaca.common.exceptions import APIError
         from alpaca.trading.enums import OrderSide, TimeInForce
         from alpaca.trading.requests import MarketOrderRequest
@@ -40,11 +44,12 @@ class AlpacaBroker(Broker):
             delta = target_qty - cur
             if delta == 0:
                 continue
+            coid = f"{tag}-{sym}-{uuid.uuid4().hex[:8]}" if tag else None
             try:                                          # one rejection must not kill the run
                 self._tc.submit_order(MarketOrderRequest(
                     symbol=sym, qty=abs(delta),
                     side=OrderSide.BUY if delta > 0 else OrderSide.SELL,
-                    time_in_force=TimeInForce.DAY))
+                    time_in_force=TimeInForce.DAY, client_order_id=coid))
             except APIError as e:
                 self._order_errors.append({"ticker": sym, "error": str(e)})
 

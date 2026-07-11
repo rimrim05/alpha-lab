@@ -115,3 +115,89 @@ Status: RETIRED as a large-cap ranking signal. Reopen on: a different universe (
 caps), interaction conditioning (momentum × dispersion / × earnings), or an IC that
 returns in live regime monitoring. Rule adopted: every future cross-sectional signal
 reports rank IC before any portfolio is built.
+
+---
+
+## Negative-result registry
+
+Hypothesis-level records: one row per HYPOTHESIS, aggregating the independent tests
+(F-entries above) that bear on it. A hypothesis with 3+ independent kills is stronger
+evidence than any single entry — and the first thing to check before proposing a "new"
+idea. F-entries keep their numbers; only this section aggregates.
+
+**NR-1 — "Short-term reversal survives costs at daily frequency (large caps)"**
+Independent tests: F-001 (decile spread, direct), F-003 (OU half-life screen — the
+theory's own quality filter selects the wrong trades), F-004 (Avellaneda-Lee drift
+correction — gross up, net worse), F-008 (deep-dip concentration — second construction
+angle, same death). Four designs, four mechanisms, one verdict.
+Evidence strength: **STRONG against.** Do not run a fifth daily-bar reversal variant at
+10 bps/side. Shared reopen condition: measured live slippage ≤ 2-3 bps/side or intraday
+execution (per F-001); vol-conditioned entry timing remains the one untested angle
+(memos/alpha-roadmap-2026-07.md, Dai et al. NBER w30917).
+
+**NR-2 — "Cross-sectional momentum ranks large caps (post-2015)"**
+Independent tests: F-015 (return space — 44-window walk-forward, −4.6pp median excess)
+and F-016 (signal space — monthly rank IC ≈ 0, t=−0.07, 135 months, measured before any
+construction). Two measurement spaces, same verdict; the tolerable windows were
+construction (concentration + vol targeting), not selection skill.
+Evidence strength: **STRONG against** in this universe/era. Reopen per F-016 (small caps,
+interaction conditioning, or IC returning in live monitoring).
+
+**NR-3 — "Slow gates protect against fast crashes"**
+Independent tests: F-007 (daily-close VIX gates ate the Aug-2024/Apr-2025 SVXY gaps),
+F-012 (12m dual-momentum gate: COVID −41% in-train, 2022 −25.5% blind), F-013 (VIX-spike
+mean-reversion add: −62.1% in the GFC cascade). Three different gate constructions, three
+different fast events, zero protection. The gates all work on SLOW bears (2022).
+Evidence strength: **STRONG against.** Any spec whose safety argument is a daily-or-slower
+gate must state fast-crash exposure explicitly (F-012 rule) and show its worst
+walk-forward window includes 2008 (F-013 rule).
+
+**NR-4 — "Static leverage on beta survives a bear window"**
+Independent tests: F-011 aggregates three books that died the same way in one window
+(trend_gated_spy_2x, ew_levered_vix_gate, composite_book: −40%ish DD, 11-16% CAGR) —
+one window, so counted as one test with three expressions — while the state-dependent
+versions (vol_managed_qqq, trend_vol_qqq) survived the identical window.
+Evidence strength: **MODERATE-STRONG against** (single macro window; mechanism is
+arithmetic — volatility drag — which argues it generalizes). Leverage must be
+state-dependent; already adopted as a design rule.
+
+**NR-5 — "Sophistication adds median return over the naive expression"**
+Independent tests: F-014 (trend+vol combo: +8.0pp median vs +13.4pp for either naive
+parent; buys tail relief), F-010 (JSE vs raw PCA: direction right, magnitude ≈ noise at
+k=1 long-only). Pattern, not a law: two cases where the sophisticated layer repriced
+return into robustness rather than adding return.
+Evidence strength: **SUGGESTIVE.** Not a retirement — a reporting rule: every layered
+spec reports the delta vs its naive parent (TRIAL_LEDGER.md rule 4), and "better tail,
+worse median" is claimed as a hedge, never as alpha.
+
+**F-016 addendum — momentum variants (sector-relative, residual, 52w-high) die with it**
+Result: FALSE by IC (robustness/ic_screen.md). Sector-hedged 12-1 (t=0.03/0.59 at
+21d/63d), residual 12-1 on 60d-beta sector residuals (t=0.27/1.22), and 52-week-high
+proximity (t=−0.02/0.32) all fail; each variant's by-year IC is ~0.97-correlated with raw
+momentum's — same signal, lower amplitude. Residual mom's 63d t=1.22 is the best of ten
+screened signals, i.e. the expected max of ten noise draws.
+Status: RETIRED with F-016. Reopen conditions unchanged.
+
+**F-017 — short-horizon reversal ranks S&P 500 stocks (post-2015)**
+Result: FALSE by IC. 21d reversal: mean IC +0.005 (t=0.34); sector-dispersion residual
+(21d return vs sector median, flipped): −0.001 (t=−0.09). Mildly positive 2015-19
+(+0.036), negative since 2020 (−0.011, −0.052 in 2025-26) — the documented large-cap STR
+decay, not a harvestable signal (robustness/ic_screen.md).
+Status: RETIRED at monthly rebalance. Reopen on: intraday/weekly horizons with a cost
+model, or small caps.
+
+**F-018 — low-vol / low-ivol ranks S&P 500 stocks (post-2015)**
+Result: FALSE by IC. 60d total vol (low-minus-high): mean IC −0.006 (t=−0.29); 60d
+sector-residual ivol: +0.002 (t=0.16). Both were strongly negative in 2025 (−0.05 to
+−0.10) — no defensive ranking power in this universe/era (robustness/ic_screen.md).
+Status: RETIRED as a large-cap ranking signal. Reopen on: vol-anomaly conditioning
+(post-drawdown regimes) or a universe with a real vol spread.
+
+**F-019 — price/volume microstructure (volume shock, overnight share, gap persistence)
+ranks S&P 500 stocks**
+Result: FALSE by IC. Volume shock 21d/252d (t=0.13/−0.43), 126d overnight-minus-intraday
+cum log return (t=−0.21/−0.48), 63d count of held >2σ up-gaps (t=0.25/0.52). Flat in
+every half-decade (robustness/ic_screen.md).
+Status: RETIRED at monthly horizon. These are plausibly intraday/weekly effects; monthly
+sampling was the honest first test and it found nothing. Reopen only with a
+higher-frequency harness.
