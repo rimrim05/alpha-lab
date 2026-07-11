@@ -1,20 +1,33 @@
 """Experiment 5 — the PERMANENT Orthogonality Benchmark for the Additional Discovery Program.
 
-Every discovery candidate must pass through here BEFORE it can be called independent. It
-answers one question with numbers, not opinion: does a candidate daily return series add
-information the existing Alpha Lab portfolio does not already own?
+v2 (2026-07-10): pre-registered dimensions frozen BEFORE EXP-A/EXP-B are evaluated. Thresholds
+below are frozen; do NOT retune after seeing any experiment. A candidate must not pass merely
+because full-period correlation is low — it must stay independent WHEN THE BOOKS ARE LOSING
+(downside corr, tail dependence, drawdown overlap all gate independence).
 
-Method (reuses the frozen independence harness so the control set is identical to the
-7-book reconstruction the runner would P&L):
-  control set X = [1, SPY, QQQ, <the 7 live books>]   # trend/vol/leverage/momentum ARE the books
-  regress candidate on X  -> residual alpha (ann) + t, residual Sharpe, residual series
-  report: max |return corr| to any book, max |residual corr|, crisis contribution
-          (worst-decile SPY days), incremental ensemble Sharpe (equal-risk, block-bootstrap)
+Control set X = [1, SPY, QQQ, the 7 live books]. Reuses the frozen independence harness so the
+control returns are identical to the runner's P&L convention.
 
-Gate is reported component-by-component (charter 3C: never one opaque score). The reviewer
-assigns the final verdict from the charter vocabulary; this file only supplies evidence.
+FROZEN GATES (pre-registered):
+  independence (ALL must hold):
+    max_corr_to_book      < 0.50   full-period |corr| to any single book
+    max_partial_corr      < 0.35   partial |corr| to any book, controlling for market + other books
+    max_resid_corr_mkt    < 0.35   |corr| after removing SPY+QQQ from both
+    downside_corr_ens     < 0.50   corr to the ensemble on negative-SPY days
+    tail_dep_ens          < 0.40   co-exceedance in the worst 10% SPY days
+    dd_overlap_lift       < 1.30   P(cand in DD | ensemble in DD) / P(cand in DD) — co-drawdown beyond base rate
+    roll_corr_max_ens     < 0.65   worst 63d rolling |corr| to the ensemble (never spikes)
+  edge:            resid_alpha_t > 2.0
+  portfolio value: P(incr ensemble ΔSharpe > 0) > 0.90  OR  (incr ΔmaxDD < -0.02 AND incr ΔSharpe >= -0.02)
+                   (the DD path requires not harming Sharpe, so pure dilution cannot pass)
 
-Run: .venv/bin/python research/discovery/orthogonality_benchmark.py   (runs the self-check)
+FOUR OUTCOMES:
+  NOT INDEPENDENT           — fails any independence gate (it's the cluster, esp. when books lose)
+  INDEPENDENT BUT NO EDGE   — independent, no residual alpha, no portfolio value
+  EDGE BUT NO PORTFOLIO VALUE— independent + residual alpha, but adds no ensemble Sharpe/DD benefit
+  PORTFOLIO CANDIDATE       — independent + portfolio value (alpha OR pure diversification)
+
+Run: .venv/bin/python research/discovery/orthogonality_benchmark.py   (frozen self-check)
 Import: from orthogonality_benchmark import score_candidate
 """
 from __future__ import annotations
@@ -31,14 +44,14 @@ sys.path.insert(0, str(IND))
 from compute_independence import book_returns, factor_returns, BOOKS  # noqa: E402
 
 PROMOTED = ["vol_managed_qqq", "vol_core_svxy", "trend_vol_qqq", "defensive_ensemble"]
-INDEP_CORR_MAX = 0.50   # max return corr to any single book to call it independent
-INDEP_RESID_MAX = 0.35  # max residual corr after removing SPY+QQQ
-ALPHA_T_MIN = 2.0       # residual-alpha t to claim a residual edge
-INCR_P_MIN = 0.90       # P(incremental ensemble ΔSharpe > 0) to claim portfolio value
+
+# ---- FROZEN thresholds (pre-registered 2026-07-10; do not retune after seeing EXP-A/B) ----
+T_CORR, T_PARTIAL, T_RESID = 0.50, 0.35, 0.35
+T_DOWN, T_TAIL, T_DD_LIFT, T_ROLL = 0.50, 0.40, 1.30, 0.65
+T_ALPHA_T, T_INCR_P, T_DD_CUT = 2.0, 0.90, -0.02
 
 
-def _load_panel_frames() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """The 7 books + SPY/QQQ factor series on the runner's exact P&L convention."""
+def _load_panel_frames():
     panel = pd.read_parquet(HUNT / "panel_2005.parquet")
     books = book_returns(panel)
     factors = factor_returns(panel)
@@ -48,129 +61,161 @@ def _load_panel_frames() -> tuple[pd.DataFrame, pd.DataFrame]:
     return df[list(BOOKS)], df[["SPY", "QQQ"]]
 
 
-def _ann_sharpe(r: pd.Series) -> float:
-    s = r.std()
-    return float(r.mean() / s * np.sqrt(252)) if s > 0 else 0.0
+def _ann_sharpe(r):
+    s = np.std(r)
+    return float(np.mean(r) / s * np.sqrt(252)) if s > 0 else 0.0
 
 
-def _block_bootstrap_incr_sharpe(ens: pd.Series, cand: pd.Series, block=21, reps=2000, seed=0):
-    """P(ΔSharpe > 0) for adding cand to the equal-risk ensemble, treatment re-scaled to
-    control vol each replicate (skill not leverage). Fixed seed -> reproducible."""
-    # equal-risk add: weight candidate by inverse-vol vs the ensemble, then rescale to ens vol
+def _max_dd(r):
+    nav = (1 + pd.Series(np.asarray(r))).cumprod()
+    return float((nav / nav.cummax() - 1).min())
+
+
+def _ols_resid(y, Z):
+    coef, *_ = np.linalg.lstsq(Z, y, rcond=None)
+    return y - Z @ coef, coef
+
+
+def _block_bootstrap(ens, cand, block=21, reps=2000, seed=0):
     w = ens.std() / cand.std() if cand.std() > 0 else 0.0
     treat = ens + w * cand
     treat = treat * (ens.std() / treat.std()) if treat.std() > 0 else treat
-    diff0 = _ann_sharpe(treat) - _ann_sharpe(ens)
+    d_sharpe = _ann_sharpe(treat) - _ann_sharpe(ens)
+    d_maxdd = _max_dd(treat) - _max_dd(ens)     # negative = candidate reduces drawdown
     rng = np.random.default_rng(seed)
-    n = len(ens)
-    nb = int(np.ceil(n / block))
-    e, t = ens.values, treat.values
-    wins = 0
-    for _ in range(reps):
-        idx = (rng.integers(0, n - block, nb)[:, None] + np.arange(block)).ravel()[:n]
-        if _ann_sharpe(pd.Series(t[idx])) - _ann_sharpe(pd.Series(e[idx])) > 0:
-            wins += 1
-    return diff0, wins / reps
+    n = len(ens); nb = int(np.ceil(n / block)); e, t = ens.values, treat.values
+    wins = sum(_ann_sharpe(t[(idx := (rng.integers(0, n - block, nb)[:, None] + np.arange(block)).ravel()[:n])])
+                          - _ann_sharpe(e[idx]) > 0 for _ in range(reps))
+    return d_sharpe, d_maxdd, wins / reps
 
 
 def score_candidate(candidate: pd.Series, label: str = "candidate") -> dict:
-    """Score one daily return series. Returns a dict of evidence + component gate flags."""
     books, factors = _load_panel_frames()
     df = pd.concat([candidate.rename("cand"), books, factors], axis=1, join="inner").dropna()
     if len(df) < 252:
-        raise ValueError(f"{label}: only {len(df)} overlapping days — need >=252")
+        raise ValueError(f"{label}: {len(df)} overlapping days < 252")
     cand = df["cand"]
+    ens = df[PROMOTED].mean(axis=1)
 
-    # (1) plain return correlation to each existing book
+    # (1) full-period corr to each book
     corr_to_books = df[list(BOOKS)].apply(lambda c: cand.corr(c))
-    max_corr = corr_to_books.abs().max()
+    max_corr = float(corr_to_books.abs().max())
 
-    # (2) residual alpha after [1, SPY, QQQ, 7 books]
+    # (2) partial corr to each book, controlling for market + the other books
+    mkt = df[["SPY", "QQQ"]].values
+    partials = {}
+    for b in BOOKS:
+        others = [x for x in BOOKS if x != b]
+        Z = np.column_stack([np.ones(len(df)), mkt, df[others].values])
+        rc, _ = _ols_resid(cand.values, Z)
+        rb, _ = _ols_resid(df[b].values, Z)
+        partials[b] = float(np.corrcoef(rc, rb)[0, 1])
+    max_partial = max(abs(v) for v in partials.values())
+
+    # (3) residual alpha after [1, SPY, QQQ, 7 books] + residual-vs-market corr
     Xcols = ["SPY", "QQQ"] + list(BOOKS)
     X = np.column_stack([np.ones(len(df)), df[Xcols].values])
-    coef, *_ = np.linalg.lstsq(X, cand.values, rcond=None)
-    resid = cand.values - X @ coef
+    resid, coef = _ols_resid(cand.values, X)
     dof = len(df) - X.shape[1]
-    sigma2 = (resid @ resid) / dof
-    se_alpha = np.sqrt(sigma2 * np.linalg.inv(X.T @ X)[0, 0])
-    alpha_ann = coef[0] * 252
-    alpha_t = coef[0] / se_alpha if se_alpha > 0 else 0.0
-    resid_s = pd.Series(resid, index=df.index)
-    resid_sharpe = _ann_sharpe(resid_s)
+    se = np.sqrt((resid @ resid) / dof * np.linalg.inv(X.T @ X)[0, 0])
+    alpha_ann, alpha_t = coef[0] * 252, (coef[0] / se if se > 0 else 0.0)
+    resid_sharpe = _ann_sharpe(resid)
+    fX = np.column_stack([np.ones(len(df)), mkt])
+    cand_rm, _ = _ols_resid(cand.values, fX)
+    max_resid_corr = max(abs(np.corrcoef(cand_rm, _ols_resid(df[b].values, fX)[0])[0, 1]) for b in BOOKS)
 
-    # residual corr to each book's SPY+QQQ residual (shared-info-after-market check)
-    fX = np.column_stack([np.ones(len(df)), df[["SPY", "QQQ"]].values])
-    def _resid_on_mkt(y):
-        c, *_ = np.linalg.lstsq(fX, y, rcond=None)
-        return y - fX @ c
-    cand_rm = _resid_on_mkt(cand.values)
-    max_resid_corr = max(abs(np.corrcoef(cand_rm, _resid_on_mkt(df[b].values))[0, 1]) for b in BOOKS)
+    # (4) downside corr to ensemble on negative-SPY days
+    neg = df[df["SPY"] < 0]
+    downside_corr = float(neg["cand"].corr(neg[PROMOTED].mean(axis=1)))
 
-    # (3) crisis contribution: mean candidate return on worst-decile SPY days (bps/day)
-    crisis = df[df["SPY"] <= df["SPY"].quantile(0.10)]
-    crisis_bps = float(crisis["cand"].mean() * 1e4)
+    # (5) tail dependence: worst-10% SPY days, co-exceedance of candidate lower decile
+    worst = df[df["SPY"] <= df["SPY"].quantile(0.10)]
+    cand_low = cand <= cand.quantile(0.10)
+    tail_dep = float(cand_low.reindex(worst.index).mean())  # P(cand in its low decile | worst SPY day)
 
-    # (4) incremental ensemble value (equal-risk ensemble of the 4 promoted books)
-    ens = df[PROMOTED].mean(axis=1)  # equal-weight; each book already vol-shaped
-    d_sharpe, p_incr = _block_bootstrap_incr_sharpe(ens, cand)
+    # (6) drawdown overlap as LIFT: co-drawdown beyond the candidate's own base rate
+    #     (raw overlap is contaminated — a zero-drift series is in DD ~always; lift ~1 = independent)
+    def _in_dd(r):
+        nav = (1 + r).cumprod(); return nav < nav.cummax()
+    ens_dd = _in_dd(ens); cand_dd = _in_dd(cand)
+    p_cand = float(cand_dd.mean())
+    p_cand_given_ens = float((cand_dd & ens_dd).sum() / ens_dd.sum()) if ens_dd.sum() else 0.0
+    dd_overlap_lift = (p_cand_given_ens / p_cand) if p_cand > 0 else 0.0
 
-    flags = {
-        "independent_by_corr": bool(max_corr < INDEP_CORR_MAX and max_resid_corr < INDEP_RESID_MAX),
-        "has_residual_edge": bool(alpha_t > ALPHA_T_MIN),
-        "incremental": bool(p_incr > INCR_P_MIN),
-    }
-    if not flags["independent_by_corr"]:
+    # (7) rolling 63d corr stability to the ensemble (worst = max |corr|)
+    roll = cand.rolling(63).corr(ens).dropna()
+    roll_corr_max = float(roll.abs().max()) if len(roll) else 0.0
+
+    # (8) incremental ensemble Sharpe + maxDD effect; marginal contribution to risk
+    d_sharpe, d_maxdd, p_incr = _block_bootstrap(ens, cand)
+    w = ens.std() / cand.std() if cand.std() > 0 else 0.0
+    port = ens + w * cand
+    mcr_share = float(w * np.cov(cand, port)[0, 1] / port.var()) if port.var() > 0 else 0.0
+
+    indep = (max_corr < T_CORR and max_partial < T_PARTIAL and max_resid_corr < T_RESID
+             and downside_corr < T_DOWN and tail_dep < T_TAIL and dd_overlap_lift < T_DD_LIFT
+             and roll_corr_max < T_ROLL)
+    edge = alpha_t > T_ALPHA_T
+    pval = (p_incr > T_INCR_P) or (d_maxdd < T_DD_CUT and d_sharpe >= -0.02)
+    if not indep:
         tag = "NOT INDEPENDENT"
-    elif flags["has_residual_edge"] and flags["incremental"]:
+    elif pval:
         tag = "PORTFOLIO CANDIDATE"
-    elif flags["has_residual_edge"]:
-        tag = "MEASUREMENT SUPPORTED (independent, edge not yet portfolio-incremental)"
+    elif edge:
+        tag = "EDGE BUT NO PORTFOLIO VALUE"
     else:
-        tag = "INDEPENDENT BUT NO EDGE (diversifier only — judge on crisis/DD contribution)"
+        tag = "INDEPENDENT BUT NO EDGE"
 
     return {
-        "label": label, "n_days": len(df),
-        "window": f"{df.index[0].date()}..{df.index[-1].date()}",
-        "max_corr_to_book": round(float(max_corr), 3),
-        "argmax_corr_book": corr_to_books.abs().idxmax(),
-        "max_residual_corr": round(float(max_resid_corr), 3),
-        "resid_alpha_ann": round(float(alpha_ann), 4),
-        "resid_alpha_t": round(float(alpha_t), 2),
-        "resid_sharpe": round(float(resid_sharpe), 2),
-        "crisis_bps_per_day": round(crisis_bps, 2),
-        "incr_ens_dSharpe": round(float(d_sharpe), 3),
+        "label": label, "n_days": len(df), "window": f"{df.index[0].date()}..{df.index[-1].date()}",
+        "max_corr_to_book": round(max_corr, 3), "argmax_corr_book": corr_to_books.abs().idxmax(),
+        "max_partial_corr": round(max_partial, 3), "max_resid_corr_mkt": round(max_resid_corr, 3),
+        "downside_corr_ens": round(downside_corr, 3), "tail_dep_ens": round(tail_dep, 3),
+        "dd_overlap_lift": round(dd_overlap_lift, 3), "roll_corr_max_ens": round(roll_corr_max, 3),
+        "resid_alpha_ann": round(float(alpha_ann), 4), "resid_alpha_t": round(float(alpha_t), 2),
+        "resid_sharpe": round(resid_sharpe, 2), "mcr_share": round(mcr_share, 3),
+        "incr_ens_dSharpe": round(float(d_sharpe), 3), "incr_ens_dMaxDD": round(float(d_maxdd), 3),
         "incr_ens_P_gt0": round(float(p_incr), 3),
-        "flags": flags, "suggested_tag": tag,
+        "gates": {"independent": indep, "edge": edge, "portfolio_value": pval},
+        "outcome": tag,
     }
 
 
 def _selfcheck():
-    """Runnable check: an existing book must FAIL independence; orthogonal noise must read
-    independent-with-no-edge; orthogonal noise + real drift must clear the residual-edge gate."""
     books, factors = _load_panel_frames()
     idx = books.join(factors, how="inner").dropna().index
-
-    # 1) an existing book fed as a candidate -> NOT INDEPENDENT (max corr ~1 with itself)
-    dup = score_candidate(books["vol_core_svxy"].reindex(idx), "dup:vol_core_svxy")
-    assert dup["suggested_tag"] == "NOT INDEPENDENT", dup
-    assert dup["max_corr_to_book"] > 0.95, dup
-
+    spy = factors["SPY"].reindex(idx)
     rng = np.random.default_rng(7)
-    # 2) orthogonal zero-mean noise -> independent, but no residual edge
+
+    # 1) existing book -> NOT INDEPENDENT
+    dup = score_candidate(books["vol_core_svxy"].reindex(idx), "dup:vol_core_svxy")
+    assert dup["outcome"] == "NOT INDEPENDENT", dup
+
+    # 2) orthogonal noise -> INDEPENDENT BUT NO EDGE
     noise = pd.Series(rng.normal(0, 0.01, len(idx)), index=idx)
     n = score_candidate(noise, "noise")
-    assert n["flags"]["independent_by_corr"] and not n["flags"]["has_residual_edge"], n
+    assert n["outcome"] == "INDEPENDENT BUT NO EDGE", n
 
-    # 3) orthogonal noise + steady drift -> independent AND residual edge (t>2)
-    edge = pd.Series(rng.normal(0.0006, 0.008, len(idx)), index=idx)
-    e = score_candidate(edge, "noise+drift")
-    assert e["flags"]["independent_by_corr"] and e["flags"]["has_residual_edge"], e
+    # 3) orthogonal noise + drift -> PORTFOLIO CANDIDATE
+    e = score_candidate(pd.Series(rng.normal(0.0006, 0.008, len(idx)), index=idx), "noise+drift")
+    assert e["outcome"] == "PORTFOLIO CANDIDATE", e
 
-    print("SELF-CHECK PASSED")
-    for r in (dup, n, e):
-        print(f"  {r['label']:22s} tag={r['suggested_tag']:30s} "
-              f"maxcorr={r['max_corr_to_book']:.2f} residα_t={r['resid_alpha_t']:.1f} "
-              f"P(incr>0)={r['incr_ens_P_gt0']:.2f}")
+    # 4) LOW full-period corr but co-crashes with the ensemble in the worst decile -> NOT INDEPENDENT
+    #    (proves the tail gate bites even when full-period corr is well under 0.50)
+    ens = books.reindex(idx)[PROMOTED].mean(axis=1)
+    worst10 = spy <= spy.quantile(0.10)
+    downonly = pd.Series(rng.normal(0, 0.012, len(idx)), index=idx)   # noise dominates most days
+    downonly[worst10] = ens[worst10]                                  # co-crash only in worst decile
+    d = score_candidate(downonly, "tail-co-crash")
+    assert d["outcome"] == "NOT INDEPENDENT", d
+    assert d["max_corr_to_book"] < T_CORR, d       # full-period corr passes...
+    assert d["tail_dep_ens"] >= T_TAIL, d           # ...but the tail gate fires
+
+    print("SELF-CHECK PASSED (v2, 8 dimensions, 4 outcomes)")
+    for r in (dup, n, e, d):
+        print(f"  {r['label']:22s} {r['outcome']:28s} corr={r['max_corr_to_book']:.2f} "
+              f"partial={r['max_partial_corr']:.2f} down={r['downside_corr_ens']:.2f} "
+              f"tail={r['tail_dep_ens']:.2f} αt={r['resid_alpha_t']:.1f} P(incr)={r['incr_ens_P_gt0']:.2f}")
 
 
 if __name__ == "__main__":

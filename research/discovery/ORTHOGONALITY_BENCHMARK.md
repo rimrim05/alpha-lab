@@ -1,47 +1,56 @@
-# Experiment 5 — Orthogonality Benchmark (permanent gate)
+# Experiment 5 — Orthogonality Benchmark (permanent gate, v2 frozen 2026-07-10)
 
-The permanent Stage-4 residual-independence test. Every discovery candidate must clear it
-before it can be called independent. Implementation: [orthogonality_benchmark.py](orthogonality_benchmark.py).
+The permanent Stage-4 residual-independence test. Every discovery candidate clears it before it
+can be called independent. Implementation: [orthogonality_benchmark.py](orthogonality_benchmark.py).
+**v2 thresholds are frozen BEFORE EXP-A / EXP-B are evaluated — not retuned after seeing results.**
 
-## What it computes
-For a candidate daily return series it regresses on the control set
-**X = [1, SPY, QQQ, the 7 live books]** (trend / vol-targeting / leverage / momentum ARE the
-books, so this is the "beyond the existing Alpha Lab portfolio" test) and reports, component by
-component (charter § 3C — never one opaque score):
+## Control set
+`X = [1, SPY, QQQ, the 7 live books]` on the runner's exact P&L convention (reuses the frozen
+`compute_independence` reconstruction).
 
-| metric | meaning | independence threshold |
+## Frozen dimensions & thresholds
+Independence requires **all** of these (a candidate must stay independent *when the books lose*,
+so the downside/tail/drawdown gates can fail it even at low full-period correlation):
+
+| dimension | field | gate |
 |---|---|---|
-| `max_corr_to_book` | largest \|return corr\| to any single book | < 0.50 |
-| `max_residual_corr` | largest \|corr\| after removing SPY+QQQ from both | < 0.35 |
-| `resid_alpha_ann` / `resid_alpha_t` | alpha after the full control set + t | t > 2 for a residual edge |
-| `resid_sharpe` | Sharpe of the residual stream | — (reported) |
-| `crisis_bps_per_day` | mean candidate return on worst-decile SPY days | — (diversifier value) |
-| `incr_ens_dSharpe` / `incr_ens_P_gt0` | ΔSharpe adding it to the equal-risk 4-book ensemble, block-bootstrap P(Δ>0) | P > 0.90 for portfolio value |
+| full-period corr to any book | `max_corr_to_book` | < 0.50 |
+| partial corr to any book (control market + other books) | `max_partial_corr` | < 0.35 |
+| corr after removing SPY+QQQ | `max_resid_corr_mkt` | < 0.35 |
+| downside corr to ensemble (negative-SPY days) | `downside_corr_ens` | < 0.50 |
+| tail dependence (worst 10% SPY days) | `tail_dep_ens` | < 0.40 |
+| drawdown-overlap **lift** P(cand DD\|ens DD)/P(cand DD) | `dd_overlap_lift` | < 1.30 |
+| rolling 63d corr stability (worst) | `roll_corr_max_ens` | < 0.65 |
 
-## Suggested tags (the reviewer assigns the final charter verdict)
-- **NOT INDEPENDENT** — fails the corr gate (it's the existing cluster with new timing).
-- **INDEPENDENT BUT NO EDGE** — orthogonal but no residual α; judge purely on crisis / drawdown contribution.
-- **MEASUREMENT SUPPORTED** — independent + residual edge, but not yet portfolio-incremental.
-- **PORTFOLIO CANDIDATE** — independent + residual edge + incremental ensemble Sharpe.
+- **Edge:** `resid_alpha_t` > 2.0 (alpha after the full control set).
+- **Portfolio value:** `incr_ens_P_gt0` > 0.90 **or** (`incr_ens_dMaxDD` < −0.02 **and**
+  `incr_ens_dSharpe` ≥ −0.02). The DD path requires not harming Sharpe, so pure dilution can't pass.
+- Also reported (not gated): `resid_sharpe`, `mcr_share` (marginal risk contribution),
+  `incr_ens_dSharpe`, `incr_ens_dMaxDD`.
 
-## Self-check (runnable, `python research/discovery/orthogonality_benchmark.py`)
-Passed 2026-07-10:
-- existing book (`vol_core_svxy`) fed as candidate → **NOT INDEPENDENT**, max corr 1.00 ✓
-- orthogonal zero-mean noise → **INDEPENDENT BUT NO EDGE**, max corr 0.02, α t = −1.3, P(incr)=0.01 ✓
-- orthogonal noise + steady drift → **PORTFOLIO CANDIDATE**, max corr 0.03, α t = 5.5, P(incr)=1.00 ✓
+## Four outcomes
+1. **NOT INDEPENDENT** — fails any independence gate.
+2. **INDEPENDENT BUT NO EDGE** — independent, no residual α, no portfolio value.
+3. **EDGE BUT NO PORTFOLIO VALUE** — independent + residual α, but no ensemble Sharpe/DD benefit.
+4. **PORTFOLIO CANDIDATE** — independent + portfolio value (from α *or* pure diversification).
+
+## Self-check (runnable) — passed v2, 2026-07-10
+- existing book (`vol_core_svxy`) → **NOT INDEPENDENT** (corr 1.00) ✓
+- orthogonal noise → **INDEPENDENT BUT NO EDGE** (corr 0.02, α t −1.3, P(incr) 0.01) ✓
+- orthogonal noise + drift → **PORTFOLIO CANDIDATE** (corr 0.03, α t 5.5, P(incr) 1.00) ✓
+- **tail-co-crash** (co-losing only in the worst decile) → **NOT INDEPENDENT** despite full-period
+  corr 0.36 < 0.50, caught by `tail_dep_ens` 0.50 ≥ 0.40 ✓ — proves low full-period corr does not buy a pass.
 
 ## Usage
 ```python
 from orthogonality_benchmark import score_candidate
-report = score_candidate(candidate_daily_returns, label="my-candidate")
+report = score_candidate(candidate_daily_returns, label="my-candidate")  # -> dict incl. "outcome"
 ```
-Candidate series must be daily net returns with a DatetimeIndex overlapping the panel
-(≥252 common days). Reuses the frozen `compute_independence` reconstruction so the control set
-is identical to the runner's P&L convention. Fixed bootstrap seed → reproducible.
+Candidate = daily net returns, DatetimeIndex overlapping the panel (≥252 days). Fixed bootstrap
+seed → reproducible.
 
 ## Limits (honest)
-- Control set is SPY + QQQ + the 7 books; sector factors (XLK etc.) are a noted future extension.
-- Equal-weight promoted ensemble for the incremental test (each book is already vol-shaped);
-  an equal-risk inverse-vol variant is a one-line change if a candidate is borderline.
-- A pass here is necessary, not sufficient — Stage 5 Red Team (cost stress, execution delay,
-  regime, clean-room replication) still follows.
+- Control set is SPY+QQQ+7 books; sector factors are a noted future extension.
+- Equal-weight promoted ensemble for the incremental test (each book is already vol-shaped).
+- A pass is necessary, not sufficient — Stage-5 Red Team (cost stress, execution delay, regime,
+  clean-room replication) still follows.
