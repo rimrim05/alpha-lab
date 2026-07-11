@@ -104,3 +104,14 @@ SPY 41% — the 2015-2020 momentum winter dominates. The +16.6% 1y-blind excess 
 favorable draw of a regime-dependent sleeve.
 Status: DEMOTED to sleeve-only (diversifier in ensembles; its windows are near-uncorrelated
 with the vol-managed family's). Not a standalone.
+
+**F-016 — 12-1 cross-sectional momentum still ranks S&P 500 stocks (post-2015)**
+Result: FALSE by IC. Monthly rank IC vs 21d forward returns: −0.001 (t=−0.07, hit rate
+50%, 135 months); 63d horizon +0.008 (t=0.45). The signal has NO ranking power in this
+universe/era — momentum_concentrated's tolerable windows came from concentration + vol
+targeting (construction), not selection skill. Measured BEFORE portfolio construction,
+which is why it wasn't visible in return space (robustness/ic.md).
+Status: RETIRED as a large-cap ranking signal. Reopen on: a different universe (small
+caps), interaction conditioning (momentum × dispersion / × earnings), or an IC that
+returns in live regime monitoring. Rule adopted: every future cross-sectional signal
+reports rank IC before any portfolio is built.
