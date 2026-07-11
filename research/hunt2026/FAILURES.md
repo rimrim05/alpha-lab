@@ -309,3 +309,14 @@ n=252 long-only -0.53 bps t=-7.39; n=63 long-only -1.98 bps t=-5.99; unconstrain
 +18.4 t=+9.7 (252) / +36.9 t=+8.1 (63). The crossover "no crossover, monotone decay"
 conclusion STANDS without re-running. Operational rule can re-lock as stated in 238cf37;
 materiality unchanged (below deployment threshold on ~470-name S&P books).
+
+**F-021 final closure (2026-07-10, Director, post-audit c072ceb):** the reproducibility
+audit returned verdict (a) REPORTING DRIFT — both pipelines byte-identical (max per-month
+delta 2.7e-16); the divergence was PROSE (RESULTS.md:59 "economically zero" contradicting
+its own table's −0.6bps t=−8.2), inherited by the later "sign flip" narrative. Month-set
+discrepancy = labeling convention (hold-end vs rebalance dates) + one tail month from the
+panel regeneration (1 of 137 overlapping months changed, ≤0.8 vol-bps). Corrected final
+numbers: long-only k=3 −0.53bps t=−7.39 (n=252), −1.98bps t=−5.99 (n=63); unconstrained
++18.4bps t=+9.69 (n=252). Crossover conclusion STANDS. Operational rule locked: JSE
+always-on for long-only min-var, never unconstrained; below deployment materiality.
+Process lesson recorded: prose summaries must quote the table, not paraphrase it.
