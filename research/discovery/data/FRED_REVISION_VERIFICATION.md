@@ -60,6 +60,13 @@ Excluded macro (control — must be revised for exclusion to be justified):
 > frozen release-lag and market-calendar alignment rules. CPI and GDP are revised and require
 > ALFRED vintage retrieval before use.
 
+**Scope of this claim (not a universal all-date proof):** the verdict covers the two sampled
+observations per series (2020-06-01, 2023-03-15) across all nine ingested series — a
+representative check, not an exhaustive every-date audit. It establishes that these series
+belong to the *class* FRED does not revise (rates/vol vs restated macro), consistent with
+their known release mechanics; it does not certify every historical observation. No further
+provenance work is required before measurement.
+
 With the full nine-series table and the revision/timing distinction recorded, the data-layer
 PASS is **empirically verified**. The FRED key's forward value: if a future (gated)
 preregistration ever needs a revised macro series, the key enables true point-in-time vintage
