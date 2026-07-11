@@ -1,16 +1,41 @@
 # alpha-lab
 
-Personal quant signal-research monorepo. Reproduce a published edge, attack it honestly, and keep the
-dead ones. One shared, honest scorecard judges every strategy. **Paper trading only. Nothing here
-places real orders.**
+A systematic research and paper-trading platform for testing whether apparent alpha survives the
+things that kill it in practice — lookahead, survivorship, transaction costs, implementable P&L
+accounting, estimator choice, and forward validation. Several strategy tracks judged by one shared
+honest scorecard, every verdict kept on the record including the kills. **Paper-account orders only;
+no live capital.**
 
-**[▶ Live dashboard](https://rimrim05.github.io/alpha-lab/dashboard.html)** · **[📟 Paper status](STATUS.md)** · **[QuantStats tearsheet](https://rimrim05.github.io/alpha-lab/reports/statarb_tearsheet_costs.html)** · **[research notebook](notebooks/statarb_research.ipynb)**
+**Featured case study — a Sharpe-3.8 backtest, retired.** A market-neutral stat-arb strategy
+backtested at 3.80 gross Sharpe and passed seven robustness audits, then a diagnostic decomposition
+traced the number to P&L scored in *residual space* — crediting each position with its own trailing
+drift, which no hedge can earn. The engine was corrected to score only implementable returns, a
+pre-registered salvage failed, and the strategy was retired. **The post-mortem is the deliverable —
+[read the case study](CASE_STUDY.md).**
 
-The flagship track (`tracks/statarb`) carries a full research lifecycle end to end — a market-neutral
-statistical-arbitrage strategy taken through seven robustness audits, a production-layer ablation, a
-per-signal outcome log, a meta-model, live paper trading, and finally a **Stage-4 kill**: the headline
-result was traced to a subtle implementability bug, the fix was applied to the engine, a pre-registered
-salvage was attempted, and the strategy was retired. The post-mortem is the deliverable.
+**Start here:** **[CASE_STUDY.md](CASE_STUDY.md)** (the failure, start to verdict) ·
+**[audit-bundle/](audit-bundle/)** (self-contained reproducibility package) ·
+**[hourly-refreshed sanitized paper status](STATUS.md)** ·
+**[dashboard](https://rimrim05.github.io/alpha-lab/dashboard.html)**
+
+The hardest problem here was proving an apparent edge was an accounting artifact and rebuilding the
+engine so a backtest can only book P&L a portfolio could actually hold. The lesson, now a house rule:
+**an audit suite must test the *P&L definition*, not just the signal and the data.**
+
+## Architecture
+
+```mermaid
+flowchart LR
+    D[Data<br/>point-in-time panel] --> S[Signal<br/>per-track]
+    S --> B[Backtest engine<br/>implementable P&L]
+    B --> R[Robustness<br/>deflated Sharpe · walk-forward]
+    R --> V{Verdict<br/>Stage-4 gate}
+    V -->|promote| P[Paper trading<br/>Alpaca paper · broker reconciliation]
+    V -->|kill| K[Post-mortem<br/>negative-result registry]
+    P --> M[Monitoring<br/>read-only status]
+    SC[(Shared scorecard)] -.-> R
+    E[Estimator experiments<br/>PCA / JSE] -.-> B
+```
 
 ---
 
@@ -83,6 +108,35 @@ it).
 - **`audit-bundle/`** a self-contained reproducibility package (spec, code, recompute steps, return series).
 - **[`dashboard.html`](https://rimrim05.github.io/alpha-lab/dashboard.html)** an at-a-glance project overview.
 
+## Selected technical contributions
+
+- **Implementable-P&L engine** — scores hedged returns (stock − lagged-beta·sector-ETF) and charges
+  the hedge overlay's own turnover, after the residual-space accounting bug was found.
+- **Shared evaluation scorecard** (`core/eval/scorecard.py`) — net-of-cost + deflated Sharpe applied
+  to every scored track; one yardstick, no per-strategy goalposts.
+- **Exact C++/Python parity gate** — the C++ band state machine must reproduce the pure-Python
+  positions bit-for-bit (`tests/test_fastbands_parity.py`), enforced in the suite.
+- **Point-in-time universe + survivorship audit** (`tests/test_universe.py`) — index membership
+  as-of date; today's constituents are never back-filled.
+- **Walk-forward + deflated Sharpe** — rolling 12-month windows stepped quarterly (82 windows for
+  ETF specs, 44–48 for stock specs), with honest trial counts.
+- **Broker reconciliation + read-only status monitoring** (`tests/test_reconcile.py`,
+  `test_paper_monitor.py`) against Alpaca paper.
+- **Negative-result registry** — dead strategies retained with reproducible post-mortems.
+
+## Verified metrics
+
+All repo-supported; none are live-trading claims.
+
+- **212 passed, 1 skipped** (`pytest`), including the exact C++/Python parity gate.
+- **Five research tracks** scored by one shared scorecard (see the program table below); **two retired
+  at Stage 4** with post-mortems (statarb residual reversion, GKX rotation).
+- A frozen candidate slate evaluated **once on a blind 12-month holdout**, followed by robustness
+  analysis across **82 rolling ETF windows and 44–48 stock windows**.
+- **Self-contained audit bundle** — spec + code + recompute steps + return series.
+- **Isolated backtest / reporting environments** (`.venv` vs `.venv-report`) so the headline number is
+  never re-run inside a notebook.
+
 ## The research program (one scorecard, honest verdicts)
 
 Dead strategies with clean post-mortems are the portfolio. Every track is judged by the same
@@ -105,7 +159,7 @@ Dead strategies with clean post-mortems are the portfolio. Every track is judged
 | 2 Replication | reproduce the paper's headline (validates pipeline, not alpha) |
 | 3 OOS + robustness | net of costs, deflated Sharpe, subperiods, decay |
 | 4 Verdict | kill-or-promote memo |
-| 5 Paper trading | forward, survivorship-immune |
+| 5 Paper trading | forward, point-in-time controlled |
 
 ## Layout
 

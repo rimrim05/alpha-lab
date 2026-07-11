@@ -1,0 +1,4 @@
+# Generated tearsheets/dashboards — exclude from GitHub Linguist language stats.
+# Source of the HTML-heavy language bar: two ~1.2MB QuantStats tearsheets in reports/.
+reports/**/*.html linguist-generated=true
+dashboard.html linguist-generated=true
