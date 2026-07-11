@@ -59,4 +59,12 @@ four unseen windows (42, 90, 126, 189), the monotonicity claim, and the ψ̂ pre
 test (no prior run logged ψ̂ per month). Flagged in the ledger.
 
 ---
-**Result** (filled after the run, never edited above this line):
+**Result** (filled after the run, never edited above this line): NOT KILLED — both kill
+clauses pass (long-only significant at all six n; pooled Spearman ρ=+0.177, p=3e-07). But
+the hypothesis is only half right: monotone decay CONFIRMED, crossover REJECTED — long-only
+JSE helps at EVERY n (−2.6 bps at n=42 → −0.5 bps at n=252, all p<0.0001, never harmful);
+unconstrained hurts at every n as predicted. The ψ̂ predictor is a regime label, not a
+month-level signal: within fixed n, ρ ≈ 0 (6/6, p>0.3); both pre-committed cuts (0.90,
+0.95) rejected as stated. Final rule: JSE always-on long-only / never unconstrained,
+benefit ≈ −0.24 bps per unit p/n. F-021 CLOSED (FAILURES.md, final block). Full report:
+research/estimator_lab/CROSSOVER.md.

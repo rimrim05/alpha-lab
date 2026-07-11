@@ -75,3 +75,16 @@ is explained by the pinv+cap regularization and confirmed by its 8.7 turnover. N
 here reads as too-good-to-be-true.
 
 Runtime: ~20s single-core for the full 9-estimator × 2-book × 137-month grid.
+
+## Follow-ups (2026-07-10, later)
+
+- **n=63 reopen** (`results_w63.csv`, `summary_w63.csv`): long-only JSE significantly
+  beats PCA at every k (k=3: −2.0 bps, t=−6.0); unconstrained still worse. F-021 partially
+  reopened — see FAILURES.md.
+- **EXP-EST-CROSSOVER** (`CROSSOVER.md`, `crossover.csv`): mapped n ∈ {42,63,90,126,189,252}
+  at k=3. **No crossover exists**: long-only JSE helps at every n (−2.6 bps at n=42 decaying
+  monotonically to −0.5 bps at n=252, always p<0.0001); unconstrained JSE hurts at every n.
+  ψ̂ predicts the regime only through p/n — within a fixed n it has zero month-level timing
+  content. Deployable rule: JSE always-on in long-only, never unconstrained; benefit
+  ≈ −0.24 bps per unit p/n. This supersedes the "economically zero at n=252" long-only
+  reading above: tiny but real and significant at every window.

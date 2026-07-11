@@ -245,6 +245,25 @@ publishable claim is the boundary itself, not a headline return. Effect is small
 vol) but robust; next: log ψ̂ per month to plot benefit vs ψ̂, and test n∈{42,90,126} to map
 the crossover. Artifacts: research/estimator_lab/{results_w63,summary_w63}.csv.
 
+**F-021 FINAL — the crossover mapped (EXP-EST-CROSSOVER, 2026-07-10): there is no crossover**
+Pre-registered n-sweep (42/63/90/126/189/252, k=3, same 138 months, prereg
+preregistrations/est-crossover-2026-07-10.md). Two corrections to the record above:
+1. "Dead at n=252" was wrong in sign-language for the long-only book: long-only JSE helps
+   at EVERY n, monotone −2.6 bps (n=42) → −0.5 bps (n=252), always p<0.0001. It never turns
+   harmful; it just decays. Unconstrained JSE hurts at every n (+18 to +49 bps), worst at
+   small n. The correct scope statement is by BOOK, not by window: long-only always-on,
+   unconstrained never. Benefit ≈ −0.24 bps realized vol per unit p/n (in-sample fit).
+2. The hoped-for ψ̂ month-level gate is dead: pooled Spearman(Δ, median ψ̂) = +0.18
+   (p=3e-07) but WITHIN each fixed n, ρ ≈ 0 (all p>0.3, 6/6) — ψ̂ is an observable
+   re-parameterization of p/n, not a timing signal. Pre-committed cuts both rejected:
+   ψ̂<0.90 bucket (N=26, nearly all n=42, calm months) insignificant at −0.4 bps;
+   ψ̂≥0.95 still −1.0 bps at t=−11. Eigengap: no content (p=0.32).
+Status: F-021 CLOSED. Goldberg program final form: a real but tiny long-only estimator
+edge that scales with p/n; not worth a deployment on ~470-name S&P books (max ~2.6 bps
+vol/yr at n=42), but the mechanism is confirmed and correctly bounded on all sides. No
+month-level timing signal exists in the estimation-state observables tested. Artifacts:
+research/estimator_lab/{CROSSOVER.md,crossover.csv,run_crossover.py}.
+
 **F-020 — Gold is structurally the right third asset in the dual-momentum risk menu**
 Result: FALSE — regime artifact, by pre-registered rule. GLD beats the two-asset {SPY,QQQ}
 menu in only 21% of 70 rolling windows (2009-2026) and 13% of pre-2024 windows (median
