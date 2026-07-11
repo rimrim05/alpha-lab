@@ -44,6 +44,12 @@ GEM was added at Kristen's explicit request after the 6-book gate — 7 books is
 Also logged nightly per book: exposure-matched SPY nav, gross, targets; account row `_account`
 carries the aggregate submission + h26-filtered fills.
 
+## Roster freeze
+
+**The 7-book roster is FROZEN as of 2026-07-10.** No additions before the +3-month gate:
+more books now dilutes paper capital, muddies attribution, and adds correlated variation,
+not information. Exception requires a manifest change + Kristen's approval.
+
 ## Review schedule (no edits to frozen books outside these gates)
 
 - **+20 trading days (~2026-08-07): operational review only** — orders executed, positions

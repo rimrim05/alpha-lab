@@ -277,3 +277,16 @@ Status: hypothesis RETIRED. The live dual_momentum_gold book stays frozen mid-fo
 whether to retire its gold slot at the next legitimate re-freeze is a Stage-4 call. Any
 replacement asset picked from this experiment's table would itself be hindsight — the only
 clean fix on current evidence is the two-asset menu.
+
+
+**F-021 status amendment (2026-07-10, Director): PROVISIONAL, not closed.**
+The crossover sweep (69f5489) indicates a small long-only JSE benefit at EVERY n
+(−2.6bps@42 → −0.5bps@252) and persistent unconstrained harm — but this conflicts with
+earlier narrative reports ("long-only identical at n=252", "sign flipped at n=63") and
+with a month-set discrepancy (137 months 2015-02→ vs 138 months 2015-01→). A matched-run
+reproducibility audit (AUDIT_JSE_RECONCILIATION.md) must identify the first divergence
+(reporting language vs pipeline difference vs bug) before any operational rule is locked.
+Until then the operational rule is UNLOCKED and the three conclusions stay separate:
+scientific (directionally useful long-only), operational (0.5-2.6bps/yr is below
+deployment materiality regardless), paper (constraint-dependent sign + p/n monotonicity
+is the publishable shape, pending audit).
