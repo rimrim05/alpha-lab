@@ -17,10 +17,10 @@ observable asset characteristics. Both questions are now answered: no, and not t
 | **Uncertainty** | NW(6) t=1.53, 95% CI [−0.0004, +0.0032] straddles 0; rank-IC t=0.43. |
 | **Economic materiality** | none as standalone alpha: sleeve 2.4% ret / 5.8% vol / Sharpe 0.41 — and that Sharpe is duration/curve beta (β_TLT 0.33, t 21.9), not carry. After ΔDGS10 control, carry z-coef → t=1.05. |
 | **Orthogonality verdict** | **NOT INDEPENDENT** — 7/8 dims pass (corr 0.27, partial 0.22, resid 0.13, downside −0.12, tail 0.09, dd-lift 1.00) but `roll_corr_max_ens`=0.737 > 0.65: the duration ladder's 63d rolling corr to the equity/vol book spikes risk-off. (resid_alpha_t 2.85 but independence fails.) |
-| **Belief update** | free-data Treasury-ladder carry is a decayed, rate-regime-driven **duration bet**, not independent alpha. |
-| **Supported / narrowed / inconclusive / killed** | **KILLED / REJECTED** (4 frozen kill triggers fire independently). → Failure DB F-022. |
+| **Belief update** | in the **tested free-data Treasury-ETF form**, carry is a decayed, rate-regime-driven **duration bet**, not independent alpha. The future-ΔDGS10 regression is **ex-post attribution, not the primary predictive test** — the ex-ante coefficient (t=1.53) is what fails. |
+| **Supported / narrowed / inconclusive / killed** | **REJECTED for the tested free-data Treasury-ETF implementation** (4 frozen kill triggers). This is **not** a disproof of bond carry in general → Failure DB F-022. |
 | **Portfolio justified?** | **No.** |
-| **Remaining unknown** | FX / commodity term-structure carry (materially different instruments) — **BLOCKED BY DATA** (vendor futures/roll). Free-data Treasury lane closed. |
+| **Remaining unknown** | carry in a **materially different** term-structure / futures instrument set (FX, commodity) — **BLOCKED BY DATA** (vendor futures/roll). Reopening requires that data upgrade, **not** another ETF-yield variation. |
 
 Runner `experiments/exp_a_bond_carry.py`; carry formula recorded verbatim in the prereg Result.
 Bug-checked: coef reproduced without HAC to machine precision; leakage clean (forward ΔDGS10 used
@@ -38,9 +38,9 @@ only as in-sample attribution, never in the tradable signal); n=771 pooled obs, 
 | **Economic materiality** | benefit concentrates in high-premium/high-clustering **US equity + gold** (SPY +7.2%, GLD +5.7%, XLK/XLP ~+6.5%), ~0/negative for broad intl (EEM −0.8%), silver, energy, IWM. |
 | **Orthogonality verdict** | n/a (mechanism study, no candidate sleeve). |
 | **Belief update** | P(general transportable mechanism) drops ~0.55→~0.25; belief that benefit tracks equity risk premium + vol clustering specifically rises. |
-| **Supported / narrowed / inconclusive / killed** | **UNSUPPORTED as a transportable mechanism; NARROWS F-020 descriptively** (vol-management is not universal — it is a US-large-cap/high-premium-equity + gold fact). |
-| **Portfolio justified?** | **No** (and it never could be a book — it's a mechanism test). |
-| **Remaining unknown** | whether a properly-powered test (more independent markets/instruments, not more features on this ETF panel) would establish the mechanism. Closed on this panel. |
+| **Supported / narrowed / inconclusive / killed** | **MECHANISM UNSUPPORTED ON THE CURRENT PANEL.** Three of four signs are descriptively consistent, but the pre-registered cluster-level joint test fails with only five clusters. **Do NOT read this as the mechanism disproved** — the current evidence is *insufficient to establish a transportable rule*. NARROWS F-020 descriptively. |
+| **Portfolio justified?** | **No.** No trading switch or portfolio follows (and it never could be a book — it's a mechanism test). |
+| **Remaining unknown** | whether a properly-powered test (more *independent markets/instruments*, not more features on this ETF panel) would establish the mechanism. Insufficient-evidence, not disproof. |
 
 Runner `experiments/EXP-B-conditional-vol-mechanism.py`. Bug-checked: vol-managed weights reproduce
 the frozen `vol_managed_qqq` spec exactly; the anomalous F=1632 traced to an ill-conditioned G=5,q=4

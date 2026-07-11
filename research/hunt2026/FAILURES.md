@@ -323,7 +323,11 @@ Process lesson recorded: prose summaries must quote the table, not paraphrase it
 
 ---
 
-### F-022 — Bond-carry (Treasury-ladder, free data) does not predict; it is mechanical duration
+### F-022 — Bond-carry, in the tested free-data Treasury-ETF form, does not predict; it is mechanical duration
+
+*Scope: REJECTED for the tested free-data Treasury-ETF implementation only — NOT a disproof of bond
+carry in general. Reopening requires materially different term-structure/futures data, not another
+ETF-yield variation. The future-ΔDGS10 regression is ex-post attribution, not the primary test.*
 
 **Registered:** EXP-A (research/discovery/prereg/EXP-A-bond-carry-predictability.md), Discovery
 Program, 2026-07-10. Trial #23. First non-price/volume *market* source tested.

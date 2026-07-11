@@ -28,6 +28,14 @@ so the downside/tail/drawdown gates can fail it even at low full-period correlat
 - Also reported (not gated): `resid_sharpe`, `mcr_share` (marginal risk contribution),
   `incr_ens_dSharpe`, `incr_ens_dMaxDD`.
 
+**Diagnostic context (report these in every future candidate report — frozen verdict unchanged):**
+`roll_breach_count` and `roll_breach_max_run_days` (number and duration of rolling-corr breaches),
+`roll_corr_median_ens` and `roll_corr_max_ens` (median and worst rolling corr), `downside_corr_ens`
+and `tail_dep_ens` (downside/tail correlation), `dd_overlap_lift` (drawdown-overlap lift),
+`binding_gate` (which gate failed first) and `responsible_book`/`worst_book` (the existing book the
+candidate co-moves with most in its worst window). These explain *why* a candidate failed, not just
+that it did — e.g. EXP-A failed on `roll_corr_max_ens` driven by the vol/trend books in risk-off windows.
+
 ## Four outcomes
 1. **NOT INDEPENDENT** — fails any independence gate.
 2. **INDEPENDENT BUT NO EDGE** — independent, no residual α, no portfolio value.

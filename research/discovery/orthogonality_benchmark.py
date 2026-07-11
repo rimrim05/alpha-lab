@@ -142,9 +142,19 @@ def score_candidate(candidate: pd.Series, label: str = "candidate") -> dict:
     p_cand_given_ens = float((cand_dd & ens_dd).sum() / ens_dd.sum()) if ens_dd.sum() else 0.0
     dd_overlap_lift = (p_cand_given_ens / p_cand) if p_cand > 0 else 0.0
 
-    # (7) rolling 63d corr stability to the ensemble (worst = max |corr|)
+    # (7) rolling 63d corr stability to the ensemble + breach diagnostics (frozen verdict unchanged;
+    #     these are REPORTING fields for future reports, not new gates)
     roll = cand.rolling(63).corr(ens).dropna()
-    roll_corr_max = float(roll.abs().max()) if len(roll) else 0.0
+    roll_abs = roll.abs()
+    roll_corr_max = float(roll_abs.max()) if len(roll) else 0.0
+    roll_corr_median = float(roll.median()) if len(roll) else 0.0
+    breach = roll_abs >= T_ROLL
+    breach_count = int(breach.sum())
+    # longest consecutive run of breaches (in trading days)
+    breach_max_run = int(breach.groupby((~breach).cumsum()).sum().max()) if breach.any() else 0
+    # which single book the candidate co-moves with most in its worst 63d window (failure attribution)
+    per_book_worst = {b: float(cand.rolling(63).corr(df[b]).abs().max()) for b in BOOKS}
+    worst_book = max(per_book_worst, key=per_book_worst.get)
 
     # (8) incremental ensemble Sharpe + maxDD effect; marginal contribution to risk
     d_sharpe, d_maxdd, p_incr = _block_bootstrap(ens, cand)
@@ -152,9 +162,15 @@ def score_candidate(candidate: pd.Series, label: str = "candidate") -> dict:
     port = ens + w * cand
     mcr_share = float(w * np.cov(cand, port)[0, 1] / port.var()) if port.var() > 0 else 0.0
 
-    indep = (max_corr < T_CORR and max_partial < T_PARTIAL and max_resid_corr < T_RESID
-             and downside_corr < T_DOWN and tail_dep < T_TAIL and dd_overlap_lift < T_DD_LIFT
-             and roll_corr_max < T_ROLL)
+    gate_checks = [
+        ("max_corr_to_book", max_corr, T_CORR), ("max_partial_corr", max_partial, T_PARTIAL),
+        ("max_resid_corr_mkt", max_resid_corr, T_RESID), ("downside_corr_ens", downside_corr, T_DOWN),
+        ("tail_dep_ens", tail_dep, T_TAIL), ("dd_overlap_lift", dd_overlap_lift, T_DD_LIFT),
+        ("roll_corr_max_ens", roll_corr_max, T_ROLL),
+    ]
+    failed = [name for name, v, thr in gate_checks if not (v < thr)]
+    indep = not failed
+    binding_gate = failed[0] if failed else None
     edge = alpha_t > T_ALPHA_T
     pval = (p_incr > T_INCR_P) or (d_maxdd < T_DD_CUT and d_sharpe >= -0.02)
     if not indep:
@@ -171,7 +187,11 @@ def score_candidate(candidate: pd.Series, label: str = "candidate") -> dict:
         "max_corr_to_book": round(max_corr, 3), "argmax_corr_book": corr_to_books.abs().idxmax(),
         "max_partial_corr": round(max_partial, 3), "max_resid_corr_mkt": round(max_resid_corr, 3),
         "downside_corr_ens": round(downside_corr, 3), "tail_dep_ens": round(tail_dep, 3),
-        "dd_overlap_lift": round(dd_overlap_lift, 3), "roll_corr_max_ens": round(roll_corr_max, 3),
+        "dd_overlap_lift": round(dd_overlap_lift, 3),
+        "roll_corr_max_ens": round(roll_corr_max, 3), "roll_corr_median_ens": round(roll_corr_median, 3),
+        "roll_breach_count": breach_count, "roll_breach_max_run_days": breach_max_run,
+        "worst_book": worst_book, "binding_gate": binding_gate,
+        "responsible_book": (worst_book if not indep else None),
         "resid_alpha_ann": round(float(alpha_ann), 4), "resid_alpha_t": round(float(alpha_t), 2),
         "resid_sharpe": round(resid_sharpe, 2), "mcr_share": round(mcr_share, 3),
         "incr_ens_dSharpe": round(float(d_sharpe), 3), "incr_ens_dMaxDD": round(float(d_maxdd), 3),

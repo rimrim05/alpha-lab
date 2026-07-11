@@ -49,3 +49,34 @@ Hypotheses already generated, deduped, and ranked live in
 [../hunt2026/FAILURES.md](../hunt2026/FAILURES.md). The Discovery lanes 1-6 map onto the existing
 lanes A-F — this program **extends** that backlog, it does not re-run hypothesis generation.
 See [INITIAL_PROGRAM_DEDUP.md](INITIAL_PROGRAM_DEDUP.md) for the Experiment 1-5 reconciliation.
+
+---
+
+## Maintenance mode (entered 2026-07-10)
+
+After EXP-A (REJECTED) and EXP-B (MECHANISM UNSUPPORTED on the current panel), the Discovery Program
+shifts from active hunting to maintenance. Standing rules:
+
+1. **Keep accumulating point-in-time earnings events** (Finnhub collector, enabled + read-only,
+   toward n≥300 — the highest-value unresolved lane).
+2. **Maintain the data + orthogonality infrastructure** (FRED/VIX state layer; Orthogonality
+   Benchmark v2). Keep the data-layer gate: no revised macro (GDP/CPI/payrolls) without ALFRED
+   vintages; VIX/VIX3M state-only.
+3. **A genuine data upgrade is required before reopening carry** (FX/commodity term-structure or
+   futures/roll data) — NOT another free-data ETF-yield variation.
+4. **Do not launch another broad free-data hypothesis hunt.** In-repo price/volume is exhausted;
+   free-data carry and cross-asset vol-management are closed on their tested panels.
+5. **Keep all candidates outside the funded seven-book roster.** Nothing promotes to paper without
+   Research Director → Red Team → Stage-4.
+
+Do not reopen EXP-A or EXP-B with nearby parameter variations (charter § 5).
+
+## Current Discovery conclusion (2026-07-10)
+
+- **No validated independent return source has been found.**
+- **Free-data bond carry is REJECTED in the tested Treasury-ETF form** (mechanical duration; fails
+  orthogonality via risk-off rolling-corr breach). Not a general disproof.
+- **Volatility management remains market-specific**, not a mechanistically transportable rule (F-020
+  narrowed, not overturned; insufficient cluster-level power).
+- **Earnings and revisions remain the highest-value unresolved lane** — data-gated, accruing.
+- **Further progress now depends more on new data than on new transformations.**
