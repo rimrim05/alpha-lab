@@ -1,4 +1,22 @@
-# Macro Data Layer (FRED rates/curve + VIX/VIX3M term structure) — audit-first
+> **SUPERSEDED 2026-07-11 — and this file corrects an error it originally made.**
+> A concurrent session built the authoritative data layer at `research/discovery/data/`
+> (commit `ab4d367`, VERDICT **PASS**). It found what this file got WRONG: **FRED is NOT
+> blocked-on-key** — FRED serves a **keyless CSV endpoint** (`fredgraph.csv?id=`, verified
+> working: returns DGS10 etc. with no API key). The authoritative layer ingests DGS*/DFF/
+> T10Y2Y/VIXCLS/VXVCLS keyless, excludes revised macro (GDP/CPI) to avoid vintage
+> contamination, admits VIX/VIX3M as **state only** (curve shape, not vol-carry return), and
+> passes a full leakage audit (poison-stable, VIXCLS==panel ^VIX corr 1.0). Item-7 preregs
+> (EXP-A bond-carry, EXP-B conditional-vol) and item-8 orthogonality benchmark were also
+> built there. **Use `research/discovery/data/` — not this directory.**
+>
+> The one finding here worth keeping: **yfinance `^VIX3M` is ~6 business days stale**
+> (last 2026-07-02), so if anyone reaches for yfinance VIX3M for a *live* signal it would
+> starve — prefer FRED VXVCLS (the authoritative layer already does). Kept as a record of
+> the error and this caveat; not a live project.
+
+---
+
+# Macro Data Layer (FRED rates/curve + VIX/VIX3M term structure) — audit-first [SUPERSEDED]
 
 Per the program: **the data audit is the deliverable before any strategy is built.** No
 signal, sleeve, or book may be created until the relevant sub-layer earns an explicit PASS.
