@@ -99,3 +99,17 @@ Run 1→3 first: all three are ≤40-line diffs on in-repo panels, each <1 min, 
 3. EXP-IC-EARNINGS-FWD (medium exploration, layer A): forward-only earnings-surprise
    point-in-time collector + IC-as-data-accrues (the new-information track; Finnhub
    forward feed, no backfilled history claimed).
+
+---
+## Priority update — 2026-07-10 (post-review, Kristen's audit directive)
+
+1. **AUDIT-JSE-RECONCILIATION** (running) — reproducibility investigation, blocks any
+   estimator-rule lock. Not an experiment; produces a verdict class (reporting drift /
+   method difference / bug) + the first-divergence line.
+2. Maintain forward earnings collector (autopilot; no action until n grows).
+3. Execution measurement (accrues nightly from Monday; first review ~Aug 7).
+4. H-conditional-volmgmt (Priority D: pre-registered conditional form of vol management —
+   risk premium × vol clustering × drawdown convexity), after the audit clears.
+5. H-overnight-exec / H-band-turnover / H-ewma-cov as previously ranked.
+DO NOT START: minute-bar work, new strategy hunts, roster additions (frozen in
+DEPLOYMENT_MANIFEST.md until the +3m gate).
