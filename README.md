@@ -4,7 +4,7 @@ Personal quant signal-research monorepo. Reproduce a published edge, attack it h
 dead ones. One shared, honest scorecard judges every strategy. **Paper trading only. Nothing here
 places real orders.**
 
-**[▶ Live dashboard](https://rimrim05.github.io/alpha-lab/dashboard.html)** · **[QuantStats tearsheet](https://rimrim05.github.io/alpha-lab/reports/statarb_tearsheet_costs.html)** · **[research notebook](notebooks/statarb_research.ipynb)**
+**[▶ Live dashboard](https://rimrim05.github.io/alpha-lab/dashboard.html)** · **[📟 Paper status](STATUS.md)** · **[QuantStats tearsheet](https://rimrim05.github.io/alpha-lab/reports/statarb_tearsheet_costs.html)** · **[research notebook](notebooks/statarb_research.ipynb)**
 
 The flagship track (`tracks/statarb`) carries a full research lifecycle end to end — a market-neutral
 statistical-arbitrage strategy taken through seven robustness audits, a production-layer ablation, a
