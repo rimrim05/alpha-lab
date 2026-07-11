@@ -290,3 +290,22 @@ Until then the operational rule is UNLOCKED and the three conclusions stay separ
 scientific (directionally useful long-only), operational (0.5-2.6bps/yr is below
 deployment materiality regardless), paper (constraint-dependent sign + p/n monotonicity
 is the publishable shape, pending audit).
+
+**F-021 audit verdict (2026-07-10, reproducibility audit): REPORTING DRIFT — pipelines agree, F-021 may re-close.**
+Full audit: research/estimator_lab/AUDIT_JSE_RECONCILIATION.md. Findings: (a) no method
+difference, no bug — run_minvar and run_crossover produce IDENTICAL monthly delta series
+(max 2.7e-16; crossover imports run_minvar's universe/cap/vol code and asserts estimator
+equivalence), and both committed CSVs are byte-reproducible on the current panel.
+(b) The paired t on long-only WAS run and reported in the original RESULTS.md table
+(-0.6 bps, t=-8.2); the "economically zero" narrative two paragraphs later rounded a
+small significant negative to zero — that prose line is the first divergence, and the
+n=63 "sign flip" framing inherited it (nothing flipped; the effect grew 4x).
+(c) The 137-vs-138 / 2015-02-vs-2015-01 month-set scare is labeling: RESULTS.md described
+hold-END months, CROSSOVER.md rebalance dates; the head never differed. The one real
+change is the panel regeneration (phantom 2026-05-25 fix): 136/137 overlapping months
+identical, only 2026-05-01 moved (<=0.8 vol-bps), plus a new 2026-06 tail month
+(-0.56 t=-8.2 -> -0.53 t=-7.4). Corrected numbers (current panel, 138m, k=3, paired t):
+n=252 long-only -0.53 bps t=-7.39; n=63 long-only -1.98 bps t=-5.99; unconstrained
++18.4 t=+9.7 (252) / +36.9 t=+8.1 (63). The crossover "no crossover, monotone decay"
+conclusion STANDS without re-running. Operational rule can re-lock as stated in 238cf37;
+materiality unchanged (below deployment threshold on ~470-name S&P books).
