@@ -1,5 +1,6 @@
 """Estimator Lab walk-forward: monthly min-var books 2015->2026 on PIT S&P 500
 members, judged on realized next-month vol. See PLAN.md (pre-registered)."""
+import os
 from pathlib import Path
 
 import numpy as np
@@ -10,7 +11,8 @@ from estimators import ESTIMATORS
 
 HERE = Path(__file__).parent
 PANEL = HERE.parent / "hunt2026" / "panel_2005.parquet"
-WINDOW = 252
+WINDOW = int(os.environ.get("EL_WINDOW", 252))  # ponytail: knob for the F-021 weak-factor reopen (n=63)
+SUFFIX = "" if WINDOW == 252 else f"_w{WINDOW}"
 CAP = 0.05
 COST = 0.001  # 10bps/side, stocks
 START = "2015-01-01"
@@ -111,7 +113,18 @@ def main():
     df["ret_net"] = df["ret"] - COST * df["turnover"].fillna(0.0)
 
     out = df.drop(columns="weights")
-    out.to_csv(HERE / "results.csv", index=False)
+    out.to_csv(HERE / f"results{SUFFIX}.csv", index=False)
+
+    print(f"\n=== WINDOW={WINDOW} :: JSE vs PCA paired delta (the F-021 weak-factor test) ===")
+    print("negative = JSE improves (lower realized vol); this is the decisive statistic.")
+    for book, g in out.groupby("book"):
+        wide = g.pivot(index="date", columns="est", values="vol").dropna()
+        for k in (1, 3, 5):
+            j, p = f"jse{k}", f"pca{k}"
+            if j in wide and p in wide:
+                d = (wide[j] - wide[p]) * 100  # in vol %-points
+                t, pv = stats.ttest_rel(wide[j], wide[p])
+                print(f"  {book:13} k={k}: jse-pca = {d.mean():+.3f} vol%pts  t={t:+.2f} p={pv:.3f}")
 
     print("\n=== mean realized ann. vol per estimator (paired t vs sample) ===")
     summary = []
@@ -132,7 +145,7 @@ def main():
                 "months": len(v),
             })
     sm = pd.DataFrame(summary)
-    sm.to_csv(HERE / "summary.csv", index=False)
+    sm.to_csv(HERE / f"summary{SUFFIX}.csv", index=False)
     print(sm.to_string(index=False, float_format=lambda x: f"{x:.4f}"))
 
 

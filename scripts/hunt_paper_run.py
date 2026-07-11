@@ -38,6 +38,7 @@ BOOKS = {
     "defensive_ensemble": "6040",
     "dual_momentum_gold": "spy",       # watch-tier (gold-menu hindsight; forward test decides)
     "momentum_concentrated": "spy",    # watch-tier (rank IC ~ 0, F-015/16; construction on trial)
+    "dual_momentum_gem": "spy",        # watch-tier (whipsaw-fragile per 5y; forward test decides)
 }
 
 

@@ -33,7 +33,8 @@ def _fixture_panel():
 
 def test_registry_loads():
     assert set(BOOKS) == {"vol_managed_qqq", "vol_core_svxy", "trend_vol_qqq",
-                          "defensive_ensemble", "dual_momentum_gold", "momentum_concentrated"}
+                          "defensive_ensemble", "dual_momentum_gold", "momentum_concentrated",
+                          "dual_momentum_gem"}
     assert set(BOOKS.values()) <= {"qqq", "6040", "spy"}
 
 
