@@ -61,4 +61,15 @@ same commit (1 experiment, 0 spec variants, thresholds fixed before any fill exi
 going live (Kristen's 2026-07-10 gate), not to any out-of-sample performance number.
 
 ---
-**Result** (filled after the run, never edited above this line): pending.
+**Result** (filled after the run, never edited above this line): Night-1 run
+(--since 2026-07-10) executed 2026-07-10 late evening: 0 h26 fills, 0 rejects — as
+pre-registered, "no fills yet — nothing to measure" (304 open orders queued for Monday's
+open, incl. the statarb flatten). 68 closed orders were all self-cancels from the day's
+3 live re-runs (cancel_all_orders idempotency); the harness classifies these separately
+from rejects — a measurement-harness fix made on night 1 before any fill existed, bands
+untouched. Position gap 257% of notional is the expected pre-fill state (legacy statarb
+book ~$150k gross still on until Monday). Harness + 8 offline tests green; row appended
+to ledgers/hunt2026/_reconcile.jsonl. Bands untested until fills accrue; ACCUMULATING
+nightly. Recommended wiring (Director to apply, one line in the plist): run
+scripts/hunt_paper_reconcile.py right after hunt_paper_run.py --live in
+com.rimrim.hunt2026-paper — an evening reconcile measures the previous run-date's fills.
