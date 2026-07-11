@@ -76,3 +76,26 @@
 
 ## Sequencing note
 Run 1→3 first: all three are ≤40-line diffs on in-repo panels, each <1 min, and together they retire two pre-registered docket items (F-021 reopen, F-006 reopen) plus the strongest external claim. #4 (band-turnover) chains naturally after — it reuses the same harness. The five medium items are independent and parallelizable; the two moonshots wait until a high-value slot opens, and rie-vs-mp only if obsfactor-cov's new Layer-B axis shows life.
+---
+## Queue audit — 2026-07-10 (Research Director reconciliation pass)
+
+- #1 H-jse-weakfactor: **EXECUTED** (bd3054f) — JSE beats PCA at n=63 long-only, worse
+  unconstrained. Superseded by EXP-EST-CROSSOVER (full boundary map, pre-registered next).
+- #7 H-max-lottery, #9 H-dispersion-timing: **DEPRIORITIZED** — price-only transforms;
+  NR-2/F-016-019 argue the marginal IC probe on this universe is low-information. Reopen
+  only per the failure-DB reopen rules (new data source or pre-registered conditioning).
+- #6 H-sector-leadlag: retained in queue but ranked below the new-information track
+  (earnings events) for the same reason.
+- #2 H-overnight-exec, #4 H-band-turnover-core, #5 H-ewma-cov: retained as specced
+  (pre-registered/sanctioned; next in line after the current trio).
+- Moonshots #10/#11: retained.
+
+**Selected next three (info-gain/cost, one per bucket):**
+1. EXP-OPS-REALITY (high-confidence, layer D): paper execution reality agreement —
+   measurement harness + pre-registered agreement thresholds.
+2. EXP-EST-CROSSOVER (estimator, layer B): JSE crossover map — n ∈ {42,63,90,126,189,252},
+   paired jse−pca, with ψ̂/eigengap logged per window; question: do observable estimation-
+   state variables PREDICT when JSE helps, before portfolio construction.
+3. EXP-IC-EARNINGS-FWD (medium exploration, layer A): forward-only earnings-surprise
+   point-in-time collector + IC-as-data-accrues (the new-information track; Finnhub
+   forward feed, no backfilled history claimed).

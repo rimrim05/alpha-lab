@@ -191,11 +191,16 @@ def live_run() -> None:
     from alpaca.data.historical import StockHistoricalDataClient
 
     panel = build_live_panel()
-    # every tradable symbol across the four books (^VIX is signal-only, never held)
+    # every tradable symbol across the books (^VIX is signal-only, never held) PLUS every
+    # currently-held name: reconcile must be able to price stale/foreign positions to
+    # flatten them, or they silently persist (the price_fn returns None -> symbol skipped)
     symbols = sorted({t for name in BOOKS
                       for t in compute_book(panel, name, 1.0)["targets"]
                       if t not in META["signal_only"]})
     dc = StockHistoricalDataClient(key, secret)
+    from alpaca.trading.client import TradingClient
+    held_syms = [p.symbol for p in TradingClient(key, secret, paper=True).get_all_positions()]
+    symbols = sorted(set(symbols) | set(held_syms))
     broker = alpaca_paper_broker(snapshot_price_fn(dc, symbols))   # repo's current-quote path
     acct = broker.account()
     equity = float(getattr(acct, "equity", None) or acct.cash)
