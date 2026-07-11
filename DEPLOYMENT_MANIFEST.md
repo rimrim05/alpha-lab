@@ -27,13 +27,25 @@ GEM was added at Kristen's explicit request after the 6-book gate — 7 books is
   `hunt_paper_run.py --live` then `hunt_paper_reconcile.py` (read-only reality-agreement
   measurement, EXP-OPS-REALITY), logs to artifacts/hunt2026/paper/nightly.log. Loaded, exit 0.
 - `com.rimrim.earnings-collect` — weekdays 21:15, `scripts/earnings_collect.py` forward
-  point-in-time earnings/surprise collector (EXP-IC-EARNINGS-FWD). Read-only (collects data,
-  **never trades**, no capital path). **STATE 2026-07-10: currently loaded in launchctl
-  (`- 0 com.rimrim.earnings-collect`).** ⚠ CONTRADICTION FLAGGED — commit `07f0d3b` recorded
-  this plist as "left DISABLED"; it is now enabled. Directive tension pending Kristen:
-  (#4) continue the collector toward n=300 vs (#5) keep it disabled until an explicit
-  deployment gate. No capital risk either way. Coordinator will set the intended state once
-  disambiguated; until then left as-found (loaded) — one more read-only collection run only.
+  point-in-time earnings/surprise collector (EXP-IC-EARNINGS-FWD).
+  **ENABLED and READ-ONLY** (resolved 2026-07-10, Kristen; loaded in launchctl,
+  `- 0 com.rimrim.earnings-collect`):
+  1. **Enabled** — the plist stays loaded and in place (do NOT unload or rename).
+  2. **No trading or capital path** — it only writes PIT earnings/surprise data; it cannot
+     submit an order, size a position, or alter any book.
+  3. **Purpose: point-in-time data accumulation only** — grow the sample toward the
+     registered target (n ≥ 300).
+  4. **Deployment gate is separate from data collection.** Any earnings-based research object
+     (signal, shadow sleeve, allocation change, or paper book) must still pass IC,
+     residual-independence, replication, and incremental-value evidence AND a separate
+     Stage-4 deployment approval before ANY paper trading. Data may grow now; nothing
+     earnings-based deploys until gated.
+  5. **Health review each run** — log and review collector health: event count, timestamp
+     integrity, duplicate handling, and missing-data rate (nightly.log / the EXP-IC-EARNINGS-FWD
+     report).
+
+  *Supersedes the earlier "left DISABLED" note (commit `07f0d3b`): the manifest and the actual
+  launchd state now agree — enabled, read-only. Collection ≠ deployment.*
 
 ## Active books (7) — started 2026-07-10, equal capital = equity/7 (~$14.4k)
 
@@ -120,3 +132,8 @@ subagent may enable live-paper submission (charter rule 20).
   control plane (§ Governance). Flagged the earnings-collect enabled-vs-"left DISABLED"
   contradiction for Kristen (#4 vs #5); left as-found pending her call. Roster stays frozen
   through the +3-month gate — no new books, no retune, no new price/volume hunt.
+- 2026-07-10 (Coordinator, resolution): Kristen resolved the earnings-collect tension —
+  collector stays **ENABLED and READ-ONLY** for PIT data accumulation; the deployment gate
+  applies to earnings-based *research objects*, not to *data collection*. Scheduler entry
+  rewritten to state this unambiguously (5 points), plist left in place, manifest now agrees
+  with actual launchd state. Documentation-only; no logic, spec, allocation, or scheduler change.
