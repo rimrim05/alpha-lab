@@ -55,4 +55,9 @@ survived the hunt-2 5y blind holdout (+29.1%) and the ledger already flags "gold
 hindsight". This is an adaptive loop and is flagged as such in the hunt-level table.
 
 ---
-**Result** (filled after the run, never edited above this line):
+**Result** (filled after the run, never edited above this line): REGIME ARTIFACT —
+hypothesis confirmed, stronger than expected. GLD beats NONE in 21% of 70 windows overall,
+13% pre-2024 (median delta −0.61%, vs kill threshold +0.5%); 70% / +18.6% in the 10 windows
+ending 2024-2026. NONE has the best median excess vs SPY (+11.3%) of all 10 variants; GLD
+variant +6.9%. Full tables: robustness/defensive_asset.md. Live book untouched — Stage-4
+decision flagged for Kristen.

@@ -104,3 +104,35 @@ median delta <= +0.5%; structural if >= 55% AND >= +1.5%; else indeterminate.
 | 2024 | -1.81% | 4 |
 | 2025 | +62.43% | 4 |
 | 2026 | +50.53% | 2 |
+
+## Interpretation
+
+- Fidelity check: the GLD variant reproduces the official frozen-spec walk-forward
+  exactly (walkforward/dual_momentum_gold.json: 70w, median +17.7%, >=18% 50%,
+  excess +6.9%, worst -25.7%). The comparison is apples-to-apples.
+- The pre-registered hypothesis (regime artifact) is CONFIRMED, and more strongly than
+  expected: GLD beats the two-asset {SPY,QQQ} menu in only 21% of all windows and 13%
+  of pre-2024 windows (pre-2024 median delta -0.61%). The entire GLD edge sits in the
+  10 windows ending 2024-2026 (70% wins, median delta +18.6%; by-year table: the only
+  big positive years are 2025 +62% and 2026 +51%, plus one +21% blip in 2010).
+- Stronger than "gold won recently": for ~15 years the third slot was a net DRAG under
+  this framework, whatever filled it. NONE has the best median excess vs SPY (+11.3%)
+  of all ten variants; every third asset except UUP/DBC lowers it, and those two only
+  match NONE because they are rarely picked (16-20% of risk-on picks) - DBC also brings
+  a -58.7% worst window (GFC). Windows where GLD was actually held: 60% positive,
+  median +4.6%; windows where it wasn't: 96% positive, median +31.0%. (Not causal -
+  third assets get picked when equities are weak - but the same split holds for every
+  candidate, so the slot is not buying crisis protection either: the defensive TLT/BIL
+  leg already does that job in the NONE variant.)
+- Caveat: adjacent 12m windows overlap (63d step) -> roughly 4x fewer independent
+  draws; 13% vs a 50% null is still decisive.
+
+## Stage-4 flag (no action taken)
+
+This experiment recommends AGAINST trusting the GLD slot, and mechanically the NONE
+variant dominates historically - but the LIVE dual_momentum_gold book stays exactly as
+frozen. Changing the menu mid-forward-test invalidates the forward test, and per the
+pre-registered kill rule, picking a replacement third asset from this table would
+itself be hindsight. Decision for Kristen at Stage 4: keep dual_momentum_gold's
+"survivor (discounted)" status with this evidence attached, or retire the gold slot at
+the next legitimate re-freeze point.

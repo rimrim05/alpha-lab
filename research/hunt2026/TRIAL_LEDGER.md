@@ -19,7 +19,7 @@ holdout result must add a row here and say so in this column.
 
 | Exp | Date | Variants registered | Derived from prior holdout results? | Decisive stat |
 |---|---|---|---|---|
-| defensive-asset (dual_momentum_gold third-asset menu) | 2026-07-10 | 10 (GLD/TLT/DBC/XLU/XLP/UUP/SLV/VNQ/NONE/EQW-def) | **yes — adaptive loop: reacts to hunt-2 blind result + ledger's "gold hindsight" flag** | GLD-vs-NONE window win share, split pre/post 2024-01-01 (preregistrations/defensive-asset-2026-07-10.md) |
+| defensive-asset (dual_momentum_gold third-asset menu) | 2026-07-10 | 10 (GLD/TLT/DBC/XLU/XLP/UUP/SLV/VNQ/NONE/EQW-def) | **yes — adaptive loop: reacts to hunt-2 blind result + ledger's "gold hindsight" flag** | GLD-vs-NONE window win share, split pre/post 2024-01-01 (preregistrations/defensive-asset-2026-07-10.md) — **result: REGIME ARTIFACT** (GLD wins 13% of pre-2024 windows; robustness/defensive_asset.md); live book unchanged, Stage-4 flag |
 
 ## Spec-level registry
 
