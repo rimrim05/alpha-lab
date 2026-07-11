@@ -244,3 +244,17 @@ on BOTH sides: dead at n=252 (F-021) and unconstrained; alive at n=63 long-only.
 publishable claim is the boundary itself, not a headline return. Effect is small (1-2 bps
 vol) but robust; next: log ψ̂ per month to plot benefit vs ψ̂, and test n∈{42,90,126} to map
 the crossover. Artifacts: research/estimator_lab/{results_w63,summary_w63}.csv.
+
+**F-020 — Gold is structurally the right third asset in the dual-momentum risk menu**
+Result: FALSE — regime artifact, by pre-registered rule. GLD beats the two-asset {SPY,QQQ}
+menu in only 21% of 70 rolling windows (2009-2026) and 13% of pre-2024 windows (median
+delta −0.61%); its entire edge sits in the 10 windows ending 2024-2026 (+18.6% median).
+Stronger finding: the third slot is a net drag no matter what fills it — NONE has the best
+median SPY-excess (+11.3%) of all ten variants; the defensive TLT/BIL leg already supplies
+the crisis protection. Windows where GLD was actually held: 60% positive / +4.6% median vs
+96% / +31.0% when not held. (robustness/defensive_asset.md, prereg
+preregistrations/defensive-asset-2026-07-10.md)
+Status: hypothesis RETIRED. The live dual_momentum_gold book stays frozen mid-forward-test;
+whether to retire its gold slot at the next legitimate re-freeze is a Stage-4 call. Any
+replacement asset picked from this experiment's table would itself be hindsight — the only
+clean fix on current evidence is the two-asset menu.
