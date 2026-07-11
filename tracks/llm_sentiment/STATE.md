@@ -1,7 +1,7 @@
 # STATE — LLM headline sentiment (Lopez-Lira & Tang)
 
-**Stage:** 0 → 1 (hypothesis drafted, pipeline built, no real data run yet)
-**Last session:** 2026-07-06
+**Stage:** 1 (news data flowing; scoring gated on API key + Stage-0 sign-off)
+**Last session:** 2026-07-10
 
 ## Built
 - `prompt.py` — paper's zero-shot YES/NO/UNKNOWN prompt
@@ -17,12 +17,21 @@
 2. Entity-masked scoring as robustness check on any window.
 3. Primary evidence = live forward test (daily scoring → paper portfolio).
 
+## News source — LIVE (2026-07-10)
+Alpaca (Benzinga) news API, free with the existing paper keys, history to ~2015:
+- `core/data/news.py` — paginated fetcher → source-agnostic schema (date, ticker, company,
+  headline); ET-date attribution (no look-ahead), universe filter, dedup. Unit-tested offline.
+- `scripts/news_fetch_run.py` — S&P 500 pull → `data/raw/news.parquet` + manifest row.
+  Default start = model cutoff (2026-01-31), the Decision-A unmasked window; pass an
+  earlier `--start` for masked-mode history.
+- Company names for the masking protocol come from the Wikipedia composite (new `company`
+  column in `extract_symbols`).
+
 ## Blocked / Next
-1. **Historical news source** — need one of: Refinitiv/LSEG news export (Kristen,
-   on-campus, save CSV → convert to parquet with columns date,ticker,company,headline),
-   or Alpaca news API history (needs ALPACA keys).
-2. **ANTHROPIC_API_KEY** in env for scoring runs.
-3. **HYP-003 sign-off** (vault) — Stage 0 gate, Kristen approves before verdicts count.
+1. **ANTHROPIC_API_KEY** in alpha-lab/.env for scoring runs (runner now reads .env).
+2. **HYP-003 sign-off** (vault) — Stage 0 gate, Kristen approves before verdicts count.
+   Then: `.venv/bin/python scripts/llm_sentiment_run.py --news data/raw/news.parquet`
+   (post-cutoff unmasked primary; add `--masked` for the contamination check).
 4. Then: first masked backfill run + unmasked post-cutoff run, compare.
 5. Later (Stage 5, only after Stage 4 promote): Alpaca paper-trading live loop + nightly job.
 

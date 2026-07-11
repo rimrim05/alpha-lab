@@ -16,6 +16,7 @@ import pandas as pd
 from core.backtest.engine import backtest
 from core.backtest.portfolio import quantile_weights
 from core.data.prices import daily_returns, fetch_prices_yf
+from core.env import load_dotenv
 from core.data.registry import register
 from core.eval.scorecard import scorecard, to_markdown
 from tracks.llm_sentiment.scorer import score_headlines
@@ -32,6 +33,7 @@ def main():
     ap.add_argument("--cost-bps", type=float, default=10.0)
     args = ap.parse_args()
 
+    load_dotenv()
     if not os.environ.get("ANTHROPIC_API_KEY"):
         sys.exit("ANTHROPIC_API_KEY not set — cannot score headlines.")
     if args.start < MODEL_CUTOFF and not args.masked:

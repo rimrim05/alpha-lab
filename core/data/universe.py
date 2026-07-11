@@ -27,7 +27,7 @@ def clean_ticker(t: str) -> str:
 
 def extract_symbols(tables: list[pd.DataFrame]) -> pd.DataFrame:
     """From the tables on a Wikipedia constituents page, pull the one with a
-    symbol/ticker column into a (ticker, sector) frame."""
+    symbol/ticker column into a (ticker, sector, company) frame."""
     for df in tables:
         cols = {str(c).lower(): c for c in df.columns}
         sym = next((cols[k] for k in cols if k in ("symbol", "ticker symbol", "ticker")), None)
@@ -36,6 +36,8 @@ def extract_symbols(tables: list[pd.DataFrame]) -> pd.DataFrame:
         out = pd.DataFrame({"ticker": df[sym].map(clean_ticker)})
         sec = next((cols[k] for k in cols if "sector" in k), None)
         out["sector"] = df[sec].astype(str).values if sec else "Unknown"
+        name = next((cols[k] for k in cols if k in ("security", "company", "company name")), None)
+        out["company"] = df[name].astype(str).values if name else out["ticker"]
         return out
     raise ValueError("no symbol/ticker column found in any table")
 

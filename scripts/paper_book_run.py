@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from core.broker.base import FakeBroker
+from core.env import load_dotenv as _load_dotenv
 from core.data.prices import daily_returns
 from tracks.statarb.paper.ledger import Ledger
 from tracks.statarb.paper.reconcile import Reconciler
@@ -30,20 +31,6 @@ from tracks.statarb.paper.signal import target_book
 DEEP_BUCKETS = ("long_deep", "long_verydeep")
 PANEL_CACHE = Path("data/raw/daily_px_statarb_wide.parquet")
 NOTIONAL = 1_000_000.0
-
-
-def _load_dotenv(path: Path | None = None) -> None:
-    """Populate os.environ from alpha-lab/.env (KEY=VALUE lines), no dependency. An already-set env
-    var wins (setdefault), so an explicit `export` still overrides the file. Quotes/#comments handled."""
-    path = path or Path(__file__).resolve().parents[1] / ".env"
-    if not path.exists():
-        return
-    for line in path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, _, v = line.partition("=")
-        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
 def _load_panel(days: int, window: int) -> pd.DataFrame:
