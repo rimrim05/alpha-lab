@@ -371,8 +371,10 @@ def _recon_foreign(row: dict | None) -> tuple[int | None, float | None]:
     return fp.get("n"), fp.get("flatten_remaining_total")
 
 
-def main() -> int:
-    now = dt.datetime.now()
+def build_status(now: dt.datetime | None = None) -> tuple[dict, int]:
+    """Assemble the full status dict and its exit code. Pure-ish: all writes are absent; the
+    only side effects are read-only broker/file/launchctl reads. Reused by the monitor."""
+    now = now or dt.datetime.now()
     holidays = US_HOLIDAYS_2026
     session = expected_session(now, holidays)
 
@@ -439,8 +441,13 @@ def main() -> int:
         "silent_flat": silent_flat if recon else "NO DATA",
         "alarms": alarms, "next_action": na,
     }
+    return status, exit_code(essential_bad, clock["state"] == "INCONSISTENT", bool(alarms))
+
+
+def main() -> int:
+    status, code = build_status()
     print(render(status))
-    return exit_code(essential_bad, clock["state"] == "INCONSISTENT", bool(alarms))
+    return code
 
 
 if __name__ == "__main__":
