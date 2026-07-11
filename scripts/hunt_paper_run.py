@@ -153,8 +153,14 @@ def compute_book(panel: pd.DataFrame, name: str, notional: float) -> dict:
 def _write_ledger(row: dict) -> Path:
     LEDGER_DIR.mkdir(parents=True, exist_ok=True)
     path = LEDGER_DIR / f"{row['book']}.jsonl"
-    with path.open("a") as f:
-        f.write(json.dumps(row) + "\n")
+    # ponytail: same-date re-runs replace the day's row instead of appending a dup
+    # (idempotent per book+date). Full rewrite is fine — ledgers are a few hundred rows.
+    kept = []
+    if path.exists():
+        kept = [ln for ln in path.read_text().splitlines()
+                if ln.strip() and json.loads(ln).get("date") != row["date"]]
+    kept.append(json.dumps(row))
+    path.write_text("\n".join(kept) + "\n")
     return path
 
 
