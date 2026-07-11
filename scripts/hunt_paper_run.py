@@ -29,12 +29,15 @@ PANEL = HUNT / "panel_2005.parquet"
 LEDGER_DIR = Path(__file__).resolve().parents[1] / "ledgers" / "hunt2026"
 NAV_WINDOW = 252  # trailing days for the nav / benchmark-nav index (base 1.0)
 
-# Fixed registry: book -> naive benchmark. "qqq" = bench_qqq_buyhold; "6040" = 60/40 SPY/BIL.
+# Fixed registry: book -> naive benchmark. "qqq" = bench_qqq_buyhold; "6040" = 60/40 SPY/BIL;
+# "spy" = SPY buy-and-hold.
 BOOKS = {
     "vol_managed_qqq": "qqq",   # core
     "vol_core_svxy": "qqq",
     "trend_vol_qqq": "qqq",
     "defensive_ensemble": "6040",
+    "dual_momentum_gold": "spy",       # watch-tier (gold-menu hindsight; forward test decides)
+    "momentum_concentrated": "spy",    # watch-tier (rank IC ~ 0, F-015/16; construction on trial)
 }
 
 
@@ -49,6 +52,10 @@ def build_live_panel(lookback_days: int = 20) -> pd.DataFrame:
 
     panel = pd.read_parquet(PANEL)
     tickers = [t for t in META["etfs"] + META["signal_only"] if t in panel["close"].columns]
+    # stock books (momentum_concentrated) need fresh member-stock closes too
+    member_last = panel["member"].iloc[-1]
+    tickers += [t for t in member_last.index[member_last > 0]
+                if t not in tickers and t in panel["close"].columns]
     start = (panel.index[-1] - pd.Timedelta(f"{lookback_days} days")).strftime("%Y-%m-%d")
     fresh = fetch_prices_yf(tickers, start=start, end=None)  # adjusted closes
     # ponytail: adjusted-close seam between panel and fresh may jog a few bps; fine for a signal
@@ -59,6 +66,7 @@ def build_live_panel(lookback_days: int = 20) -> pd.DataFrame:
             close[t] = fresh[t].reindex(idx).combine_first(close[t])
     out = {f: panel[f].reindex(idx) for f in ("open", "close", "volume", "member")}
     out["close"] = close
+    out["member"] = out["member"].ffill()  # membership carries onto new dates
     p = pd.concat(out, axis=1)
     p.columns.names = ["field", "ticker"]
     return _heal_etfs(p)
@@ -98,6 +106,15 @@ def _spec_from_weights(W: pd.DataFrame):
 def _naive_spec(kind: str):
     if kind == "qqq":
         return harness.load_spec(SPECS / "bench_qqq_buyhold")
+    if kind == "spy":
+        class _Sspy:  # SPY buy-and-hold
+            @staticmethod
+            def target_weights(p):
+                c = p["close"]
+                df = pd.DataFrame(0.0, index=c.index, columns=["SPY"])
+                df.loc[c["SPY"].notna(), "SPY"] = 1.0
+                return df
+        return _Sspy
 
     class _S6040:  # 60/40 SPY/BIL buy-and-hold
         @staticmethod
@@ -184,18 +201,34 @@ def live_run() -> None:
     notional = equity / len(BOOKS)
     print(f"Alpaca paper equity ${equity:,.0f} -> ${notional:,.0f}/book across {len(BOOKS)} books")
 
+    # Books are virtual: the account holds their SUM. Reconciling per book against shared
+    # account positions would sell sibling books' shares (and zero any name the current book
+    # doesn't hold), so aggregate all books into ONE account-level target and submit once.
     broker.cancel_all_orders()   # clear leftovers so the run is idempotent
+    agg: dict[str, float] = {}
+    rows = []
     for name in BOOKS:
         row = compute_book(panel, name, notional)
-        broker.submit_targets(row["target_dollars"], tag=name)   # per-book client_order_id tag
-        row["mode"], row["fills"] = "live", broker.fills()
-        errs = broker.order_errors()
-        if errs:
-            print(f"  {name}: {len(errs)} order(s) rejected (e.g. {errs[0]['ticker']}: "
-                  f"{errs[0]['error'][:70]})")
+        row["mode"], row["fills"] = "live", []
+        for t, d in row["target_dollars"].items():
+            agg[t] = agg.get(t, 0.0) + d
+        rows.append(row)
+    broker.submit_targets(agg, tag="h26")
+    fills = [f for f in broker.fills()
+             if str(f.get("client_order_id") or "").startswith("h26")]
+    errs = broker.order_errors()
+    if errs:
+        print(f"  account: {len(errs)} order(s) rejected (e.g. {errs[0]['ticker']}: "
+              f"{errs[0]['error'][:70]})")
+    for row in rows:
         _print_row(row)
         _write_ledger(row)
-    print(f"\nledgers -> {LEDGER_DIR}/  (live: submitted to Alpaca PAPER)")
+    _write_ledger({"date": rows[0]["date"], "book": "_account", "mode": "live",
+                   "targets": {}, "target_dollars": {t: round(d, 2) for t, d in sorted(agg.items())},
+                   "gross": round(sum(abs(d) for d in agg.values()) / equity, 4),
+                   "notional": round(equity, 2), "nav": None, "bench_spy_nav": None,
+                   "bench_naive_nav": None, "fills": fills})
+    print(f"\nledgers -> {LEDGER_DIR}/  (live: one aggregate submission to Alpaca PAPER)")
 
 
 def main() -> None:

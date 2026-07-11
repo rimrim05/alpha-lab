@@ -80,7 +80,8 @@ class AlpacaBroker(Broker):
                 out.append({"ticker": o.symbol,
                             "side": str(getattr(o.side, "value", o.side)),
                             "qty": float(o.filled_qty),
-                            "fill_price": float(o.filled_avg_price) if o.filled_avg_price else None})
+                            "fill_price": float(o.filled_avg_price) if o.filled_avg_price else None,
+                            "client_order_id": getattr(o, "client_order_id", None)})
         return out
 
     def asset_status(self, ticker: str) -> str:
