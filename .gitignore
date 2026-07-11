@@ -26,3 +26,4 @@ build/
 
 # Polygon reference cache (bulk external data, reproducible from the API)
 research/stock_universe_repair/polygon_raw/
+research/stock_universe_repair/sec_company_tickers.json
