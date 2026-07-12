@@ -35,7 +35,7 @@ sys.path.insert(0, str(ROOT))
 
 PUBLISHER_DIR = Path.home() / "projects" / "alpha-lab-status-publisher"
 FULL_LOCAL = ROOT / "artifacts" / "hunt2026" / "paper" / "STATUS_full.md"  # gitignored (artifacts/*)
-PAGES_DASHBOARD = "https://rimrim05.github.io/alpha-lab/dashboard.html"
+PAGES_DASHBOARD = "https://kristenharim.github.io/alpha-lab/dashboard.html"
 ALPACA_LIVE = "https://app.alpaca.markets/paper/dashboard/overview"
 
 _VERDICT = {0: "🟢 NOMINAL", 1: "🟡 TRANSITION", 2: "🔴 ACTION"}

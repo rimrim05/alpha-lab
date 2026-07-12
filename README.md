@@ -28,8 +28,8 @@ strategy was retired. **The post-mortem is the deliverable → [read the full ca
 **Start here** &nbsp;·&nbsp; [**Case study**](CASE_STUDY.md) &nbsp;·&nbsp;
 [audit bundle](audit-bundle/) (reproducibility package) &nbsp;·&nbsp;
 [live paper status](STATUS.md) &nbsp;·&nbsp;
-[dashboard](https://rimrim05.github.io/alpha-lab/dashboard.html) &nbsp;·&nbsp;
-[tearsheet](https://rimrim05.github.io/alpha-lab/reports/statarb_tearsheet_costs.html)
+[dashboard](https://kristenharim.github.io/alpha-lab/dashboard.html) &nbsp;·&nbsp;
+[tearsheet](https://kristenharim.github.io/alpha-lab/reports/statarb_tearsheet_costs.html)
 
 The hardest problem here was proving an apparent edge was an accounting artifact and rebuilding the
 engine so a backtest can only book P&L a portfolio could actually hold. The lesson, now a house rule:
