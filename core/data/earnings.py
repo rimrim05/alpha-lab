@@ -58,6 +58,7 @@ def earnings_blackout(earnings: pd.DataFrame, on_date, window: int = 2) -> set[s
     in Friday's blackout, and the simplicity is worth the extra weekend day of caution.
     """
     on_date = pd.Timestamp(on_date).normalize()
-    lo, hi = on_date - pd.Timedelta(days=window), on_date + pd.Timedelta(days=window)
+    delta = pd.Timedelta(window, unit="D")
+    lo, hi = on_date - delta, on_date + delta
     hit = earnings[(earnings["report_date"] >= lo) & (earnings["report_date"] <= hi)]
     return set(hit["ticker"])

@@ -1,3 +1,6 @@
+import warnings
+
+import numpy as np
 import pandas as pd
 
 import core.data.earnings as earnings_mod
@@ -36,3 +39,15 @@ def test_blackout_window():
     assert earnings_blackout(cal, "2026-07-09", window=2) == {"SOON"}
     # window straddles a weekend: Friday check catches a Monday report
     assert earnings_blackout(cal, "2026-07-17", window=2) == {"LATER"}
+
+
+def test_blackout_window_uses_explicit_timedelta_unit():
+    cal = pd.DataFrame({
+        "ticker": ["EDGE", "OUT"],
+        "report_date": [pd.Timestamp("2026-07-11"), pd.Timestamp("2026-07-12")],
+    })
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        result = earnings_blackout(cal, pd.Timestamp("2026-07-09"), window=np.int64(2))
+    assert result == {"EDGE"}
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]

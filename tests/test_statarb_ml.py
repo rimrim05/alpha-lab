@@ -19,7 +19,7 @@ def _fake_log(n=140):
     starts = pd.date_range("2024-01-01", periods=8, freq="MS")
     rows = []
     for _ in range(n):
-        d = starts[rng.integers(0, 8)] + pd.Timedelta(days=int(rng.integers(0, 20)))
+        d = starts[rng.integers(0, 8)] + pd.Timedelta(int(rng.integers(0, 20)), unit="D")
         s = float(rng.choice([-1, 1]) * rng.uniform(1.25, 3.0))
         rows.append({
             "entry_s": s, "residual": float(rng.normal(0, 0.02)),
