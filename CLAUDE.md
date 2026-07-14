@@ -51,3 +51,11 @@ partner, not a cheerleader.
 - **Stage 0 (hypothesis) and Stage 4 (verdict) are Kristen's calls.** Do not skip her gate.
 - Starting a new experiment run or parameter sweep → use the **`quant-experiment`** skill; it stamps
   params + code version so every scorecard is reproducible.
+
+## Git: pull before push, always
+
+- Before pushing, always `git pull --rebase origin main` first, then push. Don't stop to ask —
+  just do it as part of the commit/push flow.
+- The hourly `paper_publish.py` job pushes `STATUS.md`-only commits from a separate clone, so a
+  rejected push here almost always means just that — rebase resolves it with no real conflict.
+- Still narrate what's being committed and pushed as it happens — don't do it silently.
