@@ -263,6 +263,9 @@ def render(s: dict) -> str:
     L.append(f"  Alarms ({len(alarms)}):" + ("" if alarms else " none"))
     for a in alarms:
         L.append(f"    !! {a}")
+    if alarms and s.get("reconcile_ts"):
+        L.append(f"    (reconcile-derived alarms are as of {s['reconcile_ts']}, "
+                 f"not the live broker snapshot in section 2 above)")
     L.append(f"  Next action:           {s['next_action']}")
     return "\n".join(L)
 

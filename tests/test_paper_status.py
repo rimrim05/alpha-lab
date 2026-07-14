@@ -107,6 +107,28 @@ def test_historical_and_live_order_counts_are_separate():
     assert "Open orders (now):     271" in out and "not historical" in out
 
 
+def test_public_transition_keeps_healthy_cycle_distinct_from_readiness():
+    from scripts.paper_publish import sanitize
+
+    rows = dict(sanitize({
+        "run_health": {"status": "HEALTHY"},
+        "sched": {"health": "PENDING FIRST RUN"},
+        "broker": {"ok": True},
+        "gate": {"overall": "NOT COMPLETE", "g4": "FAIL"},
+        "clock": {"state": "NOT STARTED"},
+    }, code=1))
+    assert rows == {
+        "System": "🟡 TRANSITION",
+        "Trader scheduler": "PENDING FIRST RUN",
+        "Latest cycle": "Healthy",
+        "Broker connection": "Healthy",
+        "Legacy flatten gate": "In progress",
+        "Target reconciliation": "Mismatch",
+        "Clean-forward clock": "Not started",
+        "Manual intervention": "Recommended",
+    }
+
+
 # ---------- broker-unreachable degradation ----------
 
 def test_broker_unreachable_renders_without_crash():
