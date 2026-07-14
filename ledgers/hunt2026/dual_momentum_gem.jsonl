@@ -1,3 +1,2 @@
 {"date": "2026-07-10", "book": "dual_momentum_gem", "targets": {"QQQ": 1.5}, "target_dollars": {"QQQ": 21598.79}, "gross": 1.5, "notional": 14399.19, "nav": 1.627815, "bench_spy_nav": 1.339057, "bench_naive_nav": 1.219704, "mode": "live", "fills": []}
-{"date": "2026-07-10", "book": "dual_momentum_gem", "targets": {"QQQ": 1.5}, "target_dollars": {"QQQ": 21598.79}, "gross": 1.5, "notional": 14399.19, "nav": 1.627815, "bench_spy_nav": 1.339057, "bench_naive_nav": 1.219704, "mode": "live", "fills": []}
 {"date": "2026-07-13", "book": "dual_momentum_gem", "targets": {"QQQ": 1.5}, "target_dollars": {"QQQ": 21182.97}, "gross": 1.5, "notional": 14121.98, "nav": 1.604518, "bench_spy_nav": 1.330696, "bench_naive_nav": 1.214636, "mode": "live", "fills": []}
