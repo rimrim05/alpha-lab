@@ -35,9 +35,11 @@ TRACKS = [
          dir=None, stage="Tested v1", verdict="decaying",
          headline="Clear pre-2020, roughly gone by 2024. Needs an XBI-adjusted v2."),
     dict(id="003", name="LLM headline sentiment", source="Informational · slow processing",
-         dir="llm_sentiment", stage="Stage 1", verdict="blocked",
-         headline="News source live: Alpaca (Benzinga) headlines flowing to parquet, history to 2015. "
-                  "Scoring awaits an ANTHROPIC_API_KEY in .env and Stage-0 sign-off."),
+         dir="llm_sentiment", stage="Stage 1", verdict="promising",
+         headline="Stage 0 approved 2026-07-13. Alpaca/Benzinga news is live; the scorer now has "
+                  "a hard request cap, resumable cache, deterministic smoke sample, and timestamp "
+                  "guard. Controlled 200-headline smoke awaits ANTHROPIC_API_KEY; no efficacy "
+                  "claim or deployment authorization yet."),
     dict(id="004", name="GKX signal rotation", source="Behavioral · factor momentum",
          dir="gkx", stage="Stage 4", verdict="dead", verdict_label="Retired",
          headline="Rotation 0.78 and PC-timing 0.27 Sharpe — both lose to 2.10 just holding "

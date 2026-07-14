@@ -19,20 +19,28 @@ REQUEST_PAUSE = 0.35     # seconds between requests — stays under the 200/min 
 def news_to_frame(items: list[dict], names: dict[str, str] | None = None) -> pd.DataFrame:
     """Flatten raw Alpaca news items to one row per (headline, symbol).
 
-    Dates are the US/Eastern calendar date of publication: a headline stamped 8pm ET on
-    day d is attributed to d and (via the engine's one-day lag) traded on d+1 — no
-    look-ahead. `names` maps ticker -> company name for the masking protocol; unmapped
-    tickers fall back to the ticker string.
+    `published_at` preserves the provider's UTC instant. `date` remains the US/Eastern
+    calendar date for display only; evaluation must use `published_at` to prevent
+    after-close/weekend headlines from trading early.
     """
     names = names or {}
     rows = []
     for it in items:
-        date = str(pd.Timestamp(it["created_at"]).tz_convert("America/New_York").date())
+        published = pd.Timestamp(it["created_at"])
+        if published.tzinfo is None:
+            published = published.tz_localize("UTC")
+        published = published.tz_convert("UTC")
+        date = str(published.tz_convert("America/New_York").date())
         for sym in it.get("symbols", []):
-            rows.append({"date": date, "ticker": sym,
+            rows.append({"published_at": published.isoformat(), "date": date, "ticker": sym,
                          "company": names.get(sym, sym), "headline": it["headline"]})
-    df = pd.DataFrame(rows, columns=["date", "ticker", "company", "headline"])
-    return df.drop_duplicates(["date", "ticker", "headline"]).reset_index(drop=True)
+    cols = ["published_at", "date", "ticker", "company", "headline"]
+    df = pd.DataFrame(rows, columns=cols)
+    if df.empty:
+        return df
+    return (df.sort_values("published_at")
+              .drop_duplicates(["date", "ticker", "headline"], keep="first")
+              .reset_index(drop=True))
 
 
 def fetch_news_alpaca(symbols: list[str], start: str, end: str | None,

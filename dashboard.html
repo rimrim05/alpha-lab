@@ -67,12 +67,6 @@ h1{font-size:24px;font-weight:500;margin:0}
 .foot{font-size:12px;color:var(--muted);border-top:.5px solid var(--border);padding-top:1rem}
 </style></head>
 <body><div class="wrap">
-  <div style="background:var(--bg-warning);border:1px solid var(--warning);color:var(--warning);border-radius:8px;padding:12px 14px;margin-bottom:18px;font:600 14px/1.45 var(--sans)">
-    HISTORICAL SNAPSHOT — generated 2026-07-10 by <code>scripts/build_dashboard.py</code>. Not live.
-    This page is a point-in-time picture of the retired stat-arb book (verdict: dead, 2026-07-10) and
-    is <strong>not refreshed automatically</strong>. For current state see
-    <code>DEPLOYMENT_MANIFEST.md</code> and <code>research/hunt2026/STATUS.md</code> in the repo.
-  </div>
   <h1>alpha-lab</h1>
   <p class="sub">Personal signal-research lab — reproduce a published edge, attack it honestly,
     keep the dead ones. Paper only.</p>
@@ -146,7 +140,7 @@ h1{font-size:24px;font-weight:500;margin:0}
       </div>
       <p class="headline">Clear pre-2020, roughly gone by 2024. Needs an XBI-adjusted v2.</p>
     </div>
-    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--border-strong);">
+    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--accent);">
       <div class="card-head">
         <div>
           <span style="font-weight:500;font-size:14px">HYP-003 · LLM headline sentiment</span>
@@ -154,10 +148,10 @@ h1{font-size:24px;font-weight:500;margin:0}
         </div>
         <div class="tags">
           <span class="pill">Stage 1</span>
-          <span class="badge" style="background:var(--chip);color:var(--muted)">Blocked</span>
+          <span class="badge" style="background:var(--bg-accent);color:var(--accent)">Promising</span>
         </div>
       </div>
-      <p class="headline">News source live: Alpaca (Benzinga) headlines flowing to parquet, history to 2015. Scoring awaits an ANTHROPIC_API_KEY in .env and Stage-0 sign-off.</p>
+      <p class="headline">Stage 0 approved 2026-07-13. Alpaca/Benzinga news is live; the scorer now has a hard request cap, resumable cache, deterministic smoke sample, and timestamp guard. Controlled 200-headline smoke awaits ANTHROPIC_API_KEY; no efficacy claim or deployment authorization yet.</p>
     </div>
     <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--border);">
       <div class="card-head">
@@ -201,6 +195,6 @@ h1{font-size:24px;font-weight:500;margin:0}
     <div class="room"><div class="l">Design spec</div><div class="v">quant.rim/docs/specs</div></div>
   </div>
 
-  <div class="foot">Generated 2026-07-10 19:10 by scripts/build_dashboard.py · stages read live from each
+  <div class="foot">Generated 2026-07-13 18:53 by scripts/build_dashboard.py · stages read live from each
     track's STATE.md · re-run after a session to refresh.</div>
 </div></body></html>

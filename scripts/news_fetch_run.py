@@ -1,6 +1,6 @@
 """Pull historical headlines from the Alpaca (Benzinga) news API into the source-agnostic
-news parquet that scripts/llm_sentiment_run.py consumes (columns: date, ticker, company,
-headline). Free with the existing Alpaca paper keys; history reaches ~2015.
+news parquet that scripts/llm_sentiment_run.py consumes (columns: published_at, date,
+ticker, company, headline). Free with the existing Alpaca paper keys; history reaches ~2015.
 
 Usage: .venv/bin/python scripts/news_fetch_run.py [--start 2026-02-01] [--end YYYY-MM-DD]
        [--universe mega|wide] [--out data/raw/news.parquet]

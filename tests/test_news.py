@@ -13,6 +13,7 @@ def test_fan_out_and_company_map():
     assert len(df) == 2
     apple = df[df["ticker"] == "AAPL"].iloc[0]
     assert apple["company"] == "Apple Inc."
+    assert apple["published_at"] == "2026-02-02T15:00:00+00:00"
     assert df[df["ticker"] == "MSFT"].iloc[0]["company"] == "MSFT"   # fallback = ticker
 
 
@@ -25,9 +26,11 @@ def test_dates_are_us_eastern():
 def test_dedup_same_headline_same_day():
     items = [_item("2026-02-02T15:00:00Z", ["AAPL"], "Repeat"),
              _item("2026-02-02T18:00:00Z", ["AAPL"], "Repeat")]
-    assert len(news_to_frame(items)) == 1
+    df = news_to_frame(items)
+    assert len(df) == 1
+    assert df.iloc[0]["published_at"] == "2026-02-02T15:00:00+00:00"
 
 
 def test_empty_input_gives_typed_empty_frame():
     df = news_to_frame([])
-    assert list(df.columns) == ["date", "ticker", "company", "headline"] and df.empty
+    assert list(df.columns) == ["published_at", "date", "ticker", "company", "headline"] and df.empty
