@@ -225,3 +225,37 @@ section and only then submit a clean-start manifest edit for Kristen approval.
 *Populated 2026-07-13 ~18:01 PT. Council transcript:
 `runtime/council/2026-07-14T01-00-18-697Z-537bf159.md` (vault). Codex seat was offline
 (`spawn codex ENOENT`); Claude + Cursor only.*
+
+---
+
+## 13. Amendment — first automated cycle + Kristen approval (2026-07-14)
+
+**The §9/§10 blocker "launchd never fired" is now CLEARED.** The first scheduled cycle ran
+unattended:
+
+| Field | Value | Source |
+|---|---|---|
+| launchd runs / last exit | `runs=2`, `exit 0` | `launchctl print gui/501/com.rimrim.hunt2026-paper` |
+| Reconcile timestamp (automated) | `2026-07-13T20:31:51` | `_reconcile.jsonl` latest row |
+| Orders / fills / rejects / partial | `304 / 304 / 0 / 0` | reconcile row |
+| Flatten gate | `4/4 PASS` (foreign=0, remaining=0, no failed flatten, broker==ledger) | `paper_status.py` §3 |
+| Silent-flat books / alarms | `0 / 0` | reconcile row |
+
+**Still blocking a clean-start (unchanged from §5, NOT resolved by the automated cycle):**
+- **AMAT wrong-side −1** (Jul-10 held-for-orders residue) did **not** net to its long target on the
+  automated cycle — still short 1 share vs a long target.
+- **position_gap_frac WIDENED** `4.99% → 5.77%` (moved the wrong direction).
+
+**Amended readiness verdict:** still **OPERATIONAL CYCLE PASSED, CLEAN CLOCK NOT STARTED** — but the
+reason narrows from "scheduler unproven + gap/AMAT" to **"gap/AMAT only."** The automated path is now
+proven.
+
+**Approval (Kristen, 2026-07-14):** **APPROVED** as an operational-cycle-passed status record.
+Scope of this approval, explicit:
+- It **does NOT** start the clean-forward clock (§11 timestamp stays **BLANK** — AMAT + gap unresolved).
+- It **does NOT** authorize a `DEPLOYMENT_MANIFEST.md` edit (that remains a separate Coordinator action).
+- Starting the clock requires a **subsequent cycle that nets AMAT to its long target and brings the gap
+  back down**, then a fresh amendment here + the Coordinator manifest edit.
+
+*Amended 2026-07-14 by Claude on Kristen's instruction; automated-cycle evidence from this session's
+`paper_status.py` / `launchctl` / `_reconcile.jsonl` reads.*
