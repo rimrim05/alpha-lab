@@ -322,4 +322,15 @@ def main():
 
 
 if __name__ == "__main__":
+    # DEPRECATED 2026-07-15: this generator renders the retired HYP-001..006 stage-gate framing
+    # AND pulls private paper equity into a sparkline. dashboard.html is now a hand-maintained
+    # forward-looking page (the live 7-book alpha-isolation test, no private P&L). Running this
+    # would clobber dashboard.html and leak equity. See HISTORY.md for the old framing; edit
+    # dashboard.html directly after a program change.
+    import sys
+    if "--force" not in sys.argv:
+        raise SystemExit(
+            "build_dashboard.py is deprecated — it restores the retired framing and leaks paper "
+            "equity. Edit dashboard.html by hand. Pass --force only if you truly mean to regenerate."
+        )
     main()

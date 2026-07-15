@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>alpha-lab — project overview</title>
+<title>alpha-lab — live forward test</title>
 <style>
 :root{
   --page:#faf9f7; --card:#ffffff; --chip:#f2f1ee;
@@ -29,172 +29,92 @@ body{margin:0;background:var(--page);color:var(--text);font-family:var(--sans);
 .wrap{max-width:760px;margin:0 auto;padding:2.2rem 1.4rem 3rem}
 h1{font-size:24px;font-weight:500;margin:0}
 .sub{color:var(--secondary);margin:.35rem 0 1.6rem}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.8rem}
 .metric{background:var(--chip);border-radius:8px;padding:.85rem 1rem}
 .metric .l{font-size:13px;color:var(--secondary)}
-.metric .v{font-size:24px;font-weight:500;margin-top:2px}
-.lbl{font-size:13px;color:var(--secondary);margin-bottom:8px}
-.spine{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:1.9rem}
-.step{text-align:center}
-.rail{height:4px;background:var(--border-strong);border-radius:2px;margin-bottom:6px}
-.snum{font-size:12px;font-weight:500}
-.slbl{font-size:11px;color:var(--muted);line-height:1.3}
+.metric .v{font-size:22px;font-weight:500;margin-top:2px}
+.lbl{font-size:13px;color:var(--secondary);margin:1.6rem 0 8px;font-weight:500}
+.hero{background:var(--card);border-radius:12px;border:2px solid var(--accent);
+  padding:1.1rem 1.3rem;margin-bottom:1.6rem}
+.hero .t{font-weight:500;font-size:16px}
+.hero .headline{margin:8px 0 0;font-size:13.5px;color:var(--secondary)}
+.timeline{display:flex;gap:8px;margin-top:.9rem;flex-wrap:wrap}
+.tl{flex:1;min-width:150px;background:var(--chip);border-radius:8px;padding:.6rem .8rem}
+.tl .d{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.tl .w{font-size:12.5px;color:var(--secondary);margin-top:2px}
 .card{background:var(--card);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
-.src{font-size:12px;color:var(--secondary);margin-top:2px}
-.tags{display:flex;gap:6px}
-.pill{font-size:12px;padding:3px 9px;border-radius:8px;background:var(--chip);
-  color:var(--secondary);white-space:nowrap}
-.badge{font-size:12px;padding:3px 10px;border-radius:8px;white-space:nowrap}
-.headline{margin:8px 0 0;font-size:13.5px;color:var(--secondary)}
-.paper{border:.5px solid var(--border);border-left:3px solid var(--success)}
-.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:.9rem}
-.pstat .l{font-size:12px;color:var(--secondary)}
-.pstat .v{font-size:22px;font-weight:500;margin-top:2px;font-family:var(--mono)}
-.spark{width:100%;height:56px;display:block;margin:.2rem 0 .7rem}
-.holds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.2rem}
-.hold{font-size:12px;font-family:var(--mono);padding:3px 8px;border-radius:7px;
-  background:var(--chip)}
-.hold em{font-style:normal;opacity:.6;margin-left:3px;font-size:10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:0 0 1.5rem}
-.grid .card{margin-bottom:0}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--secondary);margin-bottom:1.9rem}
-.dot{width:9px;height:9px;border-radius:50%;display:inline-block;vertical-align:1px;margin-right:5px}
+.cluster{border:.5px solid var(--border);border-left:3px solid var(--accent)}
+.cluster h3{margin:0 0 .6rem;font-size:14px;font-weight:500}
+.book{display:flex;gap:10px;align-items:baseline;padding:.35rem 0;
+  border-top:.5px solid var(--border)}
+.book:first-of-type{border-top:none}
+.book code{font-family:var(--mono);font-size:12.5px;color:var(--text);
+  background:var(--chip);padding:2px 7px;border-radius:6px;white-space:nowrap}
+.book .d{font-size:12.5px;color:var(--secondary)}
+.badge{font-size:12px;padding:3px 10px;border-radius:8px;white-space:nowrap;
+  background:var(--bg-accent);color:var(--accent)}
 .rooms{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:1.6rem}
 .room{background:var(--chip);border-radius:8px;padding:.8rem 1rem}
 .room .l{font-size:12px;color:var(--muted)}
 .room .v{font-size:13px;margin-top:3px;font-family:var(--mono);word-break:break-all}
-.foot{font-size:12px;color:var(--muted);border-top:.5px solid var(--border);padding-top:1rem}
+.foot{font-size:12px;color:var(--muted);border-top:.5px solid var(--border);padding-top:1rem;margin-top:1.6rem}
 </style></head>
 <body><div class="wrap">
   <h1>alpha-lab</h1>
-  <p class="sub">Personal signal-research lab — reproduce a published edge, attack it honestly,
-    keep the dead ones. Paper only.</p>
+  <p class="sub">Personal signal-research lab. What's live now — everything retired is in
+    <a href="https://github.com/kristenharim/alpha-lab/blob/main/HISTORY.md">HISTORY.md</a>. Paper only.</p>
 
   <div class="metrics">
-    <div class="metric"><div class="l">Hypotheses</div><div class="v">6</div></div>
-    <div class="metric"><div class="l">Live signal</div><div class="v" style="color:var(--success)">0</div></div>
-    <div class="metric"><div class="l">Dead / flat</div><div class="v">4</div></div>
-    <div class="metric"><div class="l">In progress</div><div class="v">2</div></div>
+    <div class="metric"><div class="l">Live books</div><div class="v">7</div></div>
+    <div class="metric"><div class="l">Clusters</div><div class="v">3</div></div>
+    <div class="metric"><div class="l">Active test</div><div class="v">1</div></div>
+    <div class="metric"><div class="l">System</div><div class="v" style="color:var(--success)">🟢</div></div>
   </div>
 
-  <div class="lbl">The framework — every idea walks this gate</div>
-  <div class="spine"><div class="step"><div class="rail" style=""></div><div class="snum" style="">0</div><div class="slbl">Hypothesis</div></div><div class="step"><div class="rail" style=""></div><div class="snum" style="">1</div><div class="slbl">Data</div></div><div class="step"><div class="rail" style=""></div><div class="snum" style="">2</div><div class="slbl">Replicate</div></div><div class="step"><div class="rail" style=""></div><div class="snum" style="">3</div><div class="slbl">OOS + robust</div></div><div class="step"><div class="rail" style=""></div><div class="snum" style="">4</div><div class="slbl">Verdict</div></div><div class="step"><div class="rail" style="background:var(--accent)"></div><div class="snum" style="color:var(--accent)">5</div><div class="slbl">Paper trade</div></div></div>
-
-  
-    <div class="card" style="border:2px solid var(--accent);">
-      <div class="card-head">
-        <div>
-          <span style="font-weight:500;font-size:16px">HYP-005 · StatArb residual reversion</span>
-          <div class="src">Structural · forced liquidity flows</div>
-        </div>
-        <div class="tags">
-          <span class="pill">Stage 4</span>
-          <span class="badge" style="background:var(--chip);color:var(--muted)">Killed</span>
-        </div>
-      </div>
-      <p class="headline">Backtested at 2.67 net Sharpe and passed 7 audits — then a P&amp;L decomposition showed the engine scored unhedgeable residual-space returns. Implementable edge: ~1.3%/yr gross vs 5.3%/yr costs (net −0.88). Drift-corrected salvage failed pre-registered (−1.06). Verdict: dead, 2026-07-10. The post-mortem is the deliverable; paper trading stopped.</p>
+  <div class="hero">
+    <span class="t">Forward alpha-isolation test</span>
+    <p class="headline">The books are <strong>factor-premium harvesters</strong> — the live question is
+      whether <em>any</em> return survives beyond a frozen factor-replication benchmark (M2: FF5 + Momentum
+      + TSMOM + QQQ-residual, plus GLD for the gold books), after costs and financing. Each book's daily
+      residual is logged write-once; no allocation or strategy change is made from it before the gates.
+      James-Stein shrinkage is <strong>not deployed</strong> — it's a structural null at S&amp;P scale.</p>
+    <div class="timeline">
+      <div class="tl"><div class="d">2026-07-15</div><div class="w">Forward start — clock running</div></div>
+      <div class="tl"><div class="d">2027-01-14</div><div class="w">6-month review — descriptive only</div></div>
+      <div class="tl"><div class="d">2027-07-14</div><div class="w">12-month verdict gate (t ≥ 2.4)</div></div>
     </div>
-  
-  <div class="lbl">Paper book (stopped at verdict) — HYP-005 · Alpaca paper · as of 2026-07-10</div>
-  <div class="card paper">
-    <div class="pstats">
-      <div class="pstat"><div class="l">Sessions</div><div class="v">4</div></div>
-      <div class="pstat"><div class="l">Cumulative</div>
-        <div class="v" style="color:var(--success)">+1.06%</div></div>
-      <div class="pstat"><div class="l">Last day</div>
-        <div class="v" style="color:var(--warning)">-0.15%</div></div>
-      <div class="pstat"><div class="l">Positions</div><div class="v">293</div></div>
-    </div>
-    <svg viewBox="0 0 680 56" preserveAspectRatio="none" class="spark"><polyline fill="none" stroke="var(--success)" stroke-width="1.5" points="4.0,52.0 228.0,19.3 452.0,4.0 676.0,8.3"/></svg>
-    <div class="holds"><span class="hold" style="color:var(--success)">A<em>L</em></span><span class="hold" style="color:var(--success)">AAPL<em>L</em></span><span class="hold" style="color:var(--warning)">ABBV<em>S</em></span><span class="hold" style="color:var(--warning)">ABNB<em>S</em></span><span class="hold" style="color:var(--warning)">ABT<em>S</em></span><span class="hold" style="color:var(--warning)">ACGL<em>S</em></span><span class="hold" style="color:var(--success)">ADI<em>L</em></span><span class="hold" style="color:var(--warning)">ADP<em>S</em></span></div>
-    <p class="headline">Forward test stopped 2026-07-10 at the Stage-4 kill — the implementability
-      decomposition settled the question before the paper book had to. Ledger frozen as the record.
-      <a href="reports/statarb_paper_live_tearsheet.html">Paper tearsheet →</a></p>
   </div>
 
-  <div class="grid">
-    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--accent);">
-      <div class="card-head">
-        <div>
-          <span style="font-weight:500;font-size:14px">HYP-001 · PEAD drift</span>
-          <div class="src">Behavioral · underreaction</div>
-        </div>
-        <div class="tags">
-          <span class="pill">Stage 1</span>
-          <span class="badge" style="background:var(--bg-accent);color:var(--accent)">Promising</span>
-        </div>
-      </div>
-      <p class="headline">+8.45% 60-day drift, textbook shape — but survivorship + no costs yet. Stage 3 next.</p>
-    </div>
-    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--warning);">
-      <div class="card-head">
-        <div>
-          <span style="font-weight:500;font-size:14px">HYP-002 · Outbreak overreaction</span>
-          <div class="src">Behavioral · overreaction</div>
-        </div>
-        <div class="tags">
-          <span class="pill">Tested v1</span>
-          <span class="badge" style="background:var(--bg-warning);color:var(--warning)">Decaying</span>
-        </div>
-      </div>
-      <p class="headline">Clear pre-2020, roughly gone by 2024. Needs an XBI-adjusted v2.</p>
-    </div>
-    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--accent);">
-      <div class="card-head">
-        <div>
-          <span style="font-weight:500;font-size:14px">HYP-003 · LLM headline sentiment</span>
-          <div class="src">Informational · slow processing</div>
-        </div>
-        <div class="tags">
-          <span class="pill">Stage 1</span>
-          <span class="badge" style="background:var(--bg-accent);color:var(--accent)">Promising</span>
-        </div>
-      </div>
-      <p class="headline">Stage 0 approved 2026-07-13. Alpaca/Benzinga news is live; the scorer now has a hard request cap, resumable cache, deterministic smoke sample, and timestamp guard. Controlled 200-headline smoke awaits ANTHROPIC_API_KEY; no efficacy claim or deployment authorization yet.</p>
-    </div>
-    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--border);">
-      <div class="card-head">
-        <div>
-          <span style="font-weight:500;font-size:14px">HYP-004 · GKX signal rotation</span>
-          <div class="src">Behavioral · factor momentum</div>
-        </div>
-        <div class="tags">
-          <span class="pill">Stage 4</span>
-          <span class="badge" style="background:var(--chip);color:var(--muted)">Retired</span>
-        </div>
-      </div>
-      <p class="headline">Rotation 0.78 and PC-timing 0.27 Sharpe — both lose to 2.10 just holding every anomaly equally. Timing the factor zoo loses to diversification.</p>
-    </div>
-    <div class="card" style="border:.5px solid var(--border);border-left:3px solid var(--border);">
-      <div class="card-head">
-        <div>
-          <span style="font-weight:500;font-size:14px">HYP-006 · Asset-growth contrarian</span>
-          <div class="src">Behavioral · glamour</div>
-        </div>
-        <div class="tags">
-          <span class="pill">Stage 1</span>
-          <span class="badge" style="background:var(--chip);color:var(--muted)">Flat</span>
-        </div>
-      </div>
-      <p class="headline">Corrected Sharpe ~0.01, and confirmed not a hidden size/sector tilt. No premium this era.</p>
-    </div></div>
+  <div class="lbl">The seven books under monitoring — three clusters</div>
 
-  <div class="legend">
-    <span><span class="dot" style="background:var(--success)"></span>Alive</span>
-    <span><span class="dot" style="background:var(--accent)"></span>Promising</span>
-    <span><span class="dot" style="background:var(--warning)"></span>Decaying</span>
-    <span><span class="dot" style="background:var(--muted)"></span>Dead / flat</span>
-    <span><span class="dot" style="background:var(--border-strong)"></span>Blocked</span>
+  <div class="card cluster">
+    <h3>QQQ vol / trend</h3>
+    <div class="book"><code>vol_managed_qqq</code><span class="d">vol-managed QQQ — target-vol leverage on the Nasdaq</span></div>
+    <div class="book"><code>vol_core_svxy</code><span class="d">short-vol core (SVXY)</span></div>
+    <div class="book"><code>trend_vol_qqq</code><span class="d">SMA200 trend gate + vol targeting — the robust single-asset design</span></div>
   </div>
 
-  <div class="lbl">Where it all lives — three rooms, not one folder</div>
+  <div class="card cluster">
+    <h3>Momentum</h3>
+    <div class="book"><code>dual_momentum_gem</code><span class="d">dual-momentum GEM — regime switch across global equity</span></div>
+    <div class="book"><code>dual_momentum_gold</code><span class="d">dual momentum with a gold sleeve</span></div>
+    <div class="book"><code>momentum_concentrated</code><span class="d">concentrated cross-sectional stock momentum (sub-market beta)</span></div>
+  </div>
+
+  <div class="card cluster">
+    <h3>Defensive / TSMOM</h3>
+    <div class="book"><code>defensive_ensemble</code><span class="d">trend + vol-managed equity + cross-asset TSMOM — the risk-adjusted winner, flat through 2022</span></div>
+  </div>
+
+  <div class="lbl">Where it lives</div>
   <div class="rooms">
-    <div class="room"><div class="l">Code + backtests</div><div class="v">~/projects/alpha-lab</div></div>
-    <div class="room"><div class="l">Research journal</div><div class="v">vault / trading-lab</div></div>
-    <div class="room"><div class="l">Design spec</div><div class="v">quant.rim/docs/specs</div></div>
+    <div class="room"><div class="l">Code + forward ledger</div><div class="v">~/projects/alpha-lab</div></div>
+    <div class="room"><div class="l">Operational status</div><div class="v"><a href="https://github.com/kristenharim/alpha-lab/blob/main/STATUS.md">STATUS.md</a></div></div>
+    <div class="room"><div class="l">Full history</div><div class="v"><a href="https://github.com/kristenharim/alpha-lab/blob/main/HISTORY.md">HISTORY.md</a></div></div>
   </div>
 
-  <div class="foot">Generated 2026-07-13 18:53 by scripts/build_dashboard.py · stages read live from each
-    track's STATE.md · re-run after a session to refresh.</div>
+  <div class="foot">Detailed positions, equity, and reconciliation are kept private — this page shows
+    what is being tested, not live P&amp;L. Hand-maintained; edit after a program change. Paper account only.</div>
 </div></body></html>

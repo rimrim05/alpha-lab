@@ -3,79 +3,95 @@
 ![paper only](https://img.shields.io/badge/orders-paper%20account%20only-blue)
 ![tests](https://img.shields.io/badge/pytest-219%20passed%2C%201%20skipped-brightgreen)
 ![python](https://img.shields.io/badge/python-3.11-blue)
+![status](https://img.shields.io/badge/system-%F0%9F%9F%A2%20nominal-brightgreen)
 
 A systematic research platform for testing whether apparent alpha survives the things that kill it in
 practice — lookahead, survivorship, transaction costs, implementable P&L accounting, estimator choice,
-and forward validation. Several strategy tracks, **one shared honest scorecard**, every verdict kept on
-the record including the kills.
+and forward validation. **One shared honest scorecard**, every verdict kept on the record.
 
-### 📄 Featured case study — a Sharpe-3.8 backtest, retired
+**Right now the lab is running one live forward test.** Everything below is what is *currently being
+monitored and tested*. The full back-history — the retired Sharpe-3.8 case study, the hunt2026
+tournament, the James-Stein program, and every kill — lives in **[HISTORY.md](HISTORY.md)**.
 
-A market-neutral stat-arb strategy backtested at **3.80 gross Sharpe** and survived seven robustness checks before the accounting flaw was
-identified. A diagnostic decomposition traced the number to P&L scored in *residual space* — crediting
-each position with its own trailing drift, which no hedge can earn. Decomposing identical positions on
-identical data (an exact accounting identity) split the headline number into what is real and what is not:
+---
 
-| book | gross Sharpe | ann. return |
-| ---- | :----------: | :---------: |
-| residual book (what the old engine scored) | **3.80** | +17.9% |
-| raw stock book (implementable baseline) | 0.30 | +2.0% |
-| beta-hedged book (implementable) | 0.42 | +2.0% |
+## What's live now — the forward alpha-isolation test
 
-The engine was corrected to book only implementable returns, a pre-registered salvage failed, and the
-strategy was retired. **The post-mortem is the deliverable → [read the full case study](CASE_STUDY.md).**
+Seven paper books trade on Alpaca paper. The open question, set by the [factor-risk
+program](HISTORY.md#james-stein--factor-risk-program-2026-07-14): these books are **factor-premium
+harvesters** — so the test is whether *any* return survives beyond a frozen factor-replication
+benchmark, after costs and financing. Each book's daily residual is logged write-once; no allocation,
+weight, or strategy-logic change is made from it before the gates below.
 
-**Start here** &nbsp;·&nbsp; [**Case study**](CASE_STUDY.md) &nbsp;·&nbsp;
-[audit bundle](audit-bundle/) (reproducibility package) &nbsp;·&nbsp;
-[live paper status](STATUS.md) &nbsp;·&nbsp;
+**Started 2026-07-15 · next gate 6m (2027-01-14, descriptive) · verdict gate 12m (2027-07-14).**
+JSE is not deployed anywhere in this layer.
+
+### The three clusters under monitoring
+
+**QQQ vol / trend**
+| book | what it is |
+| ---- | ---------- |
+| `vol_managed_qqq` | vol-managed QQQ — target-vol leverage on the Nasdaq |
+| `vol_core_svxy` | short-vol core (SVXY) |
+| `trend_vol_qqq` | SMA200 trend gate + vol targeting on QQQ (the robust single-asset design) |
+
+**Momentum**
+| book | what it is |
+| ---- | ---------- |
+| `dual_momentum_gem` | dual-momentum GEM — regime switch across global equity |
+| `dual_momentum_gold` | dual momentum with a gold sleeve |
+| `momentum_concentrated` | concentrated cross-sectional stock momentum (sub-market beta) |
+
+**Defensive / TSMOM**
+| book | what it is |
+| ---- | ---------- |
+| `defensive_ensemble` | trend + vol-managed equity + cross-asset TSMOM — the round-2 risk-adjusted winner (flat through 2022) |
+
+### How each book is judged forward
+
+- **Benchmark:** `residual_t = book net return_t − replication_t − financing_t`, where replication is
+  `RF + Σ βⱼ·Fⱼ` on **M2** (FF5 + Momentum + TSMOM proxy + QQQ-residual), plus a GLD factor for the two
+  gold books. Betas frozen from blind-window estimates ([`research/attribution/`](research/attribution/)).
+- **Write-once ledger:** `ledgers/hunt2026/alpha_forward/<series>.jsonl`, append-only, recompute-drift
+  guarded. Monthly descriptive review via [`scripts/hunt_alpha_review.py`](scripts/hunt_alpha_review.py).
+- **Pre-committed 12m rule:** residual-alpha claim needs NW-lag-5 t ≥ 2.4, positive in both halves, all
+  placebo bands passing, surviving financing/cost stress → then independent replication. Otherwise
+  **factor-premium harvesting confirmed** and factor-adjusted kill/demote rules replace raw-vs-SPY.
+- **Placebos** (SPY/QQQ buy-hold, 1.5× static) run in the same framework, judged on pre-registered
+  bands. A band miss is a pipeline stop, not a result.
+
+Setup record (frozen thresholds): [`memos/alpha-forward-setup-2026-07-14.md`](memos/alpha-forward-setup-2026-07-14.md).
+
+**Live status** &nbsp;·&nbsp; [operational status](STATUS.md) &nbsp;·&nbsp;
 [dashboard](https://kristenharim.github.io/alpha-lab/dashboard.html) &nbsp;·&nbsp;
-[tearsheet](https://kristenharim.github.io/alpha-lab/reports/statarb_tearsheet_costs.html)
-
-The hardest problem here was proving an apparent edge was an accounting artifact and rebuilding the
-engine so a backtest can only book P&L a portfolio could actually hold. The lesson, now a house rule:
-**an audit suite must test the *P&L definition*, not just the signal and the data.**
+[Alpaca paper](https://app.alpaca.markets/paper/dashboard/overview) &nbsp;·&nbsp;
+**History** → [HISTORY.md](HISTORY.md) · [case study](CASE_STUDY.md)
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    D[Data<br/>point-in-time panel] --> S[Signal<br/>per-track]
+    D[Data<br/>point-in-time panel] --> S[Signal<br/>per-book]
     S --> B[Backtest engine<br/>implementable P&L]
     B --> R[Robustness<br/>deflated Sharpe · walk-forward]
     R --> V{Verdict<br/>Stage-4 gate}
     V -->|promote| P[Paper trading<br/>Alpaca paper · reconciliation]
     V -->|kill| K[Post-mortem<br/>negative-result registry]
-    P --> M[Monitoring<br/>read-only status]
+    P --> F[Forward alpha-isolation<br/>residual vs frozen factor benchmark]
+    F --> M[Monthly review<br/>descriptive · 6m / 12m gates]
     SC[(Shared scorecard)] -.-> R
-    E[Estimator experiments<br/>PCA / JSE] -.-> B
 ```
-
-## The research program — one scorecard, honest verdicts
-
-Dead strategies with clean post-mortems are the portfolio. Every track is judged by the same
-[`core/eval/scorecard.py`](core/eval/scorecard.py) (net-of-cost Sharpe, deflated Sharpe, subperiods) —
-one yardstick, no per-strategy goalposts.
-
-| track | source of edge | verdict |
-| ----- | -------------- | ------- |
-| statarb residual reversion | structural (liquidity) | **dead** (Stage 4) — P&L was residual-space; implementable edge ~4× below costs |
-| GKX signal rotation | behavioral (factor momentum) | **dead** (Stage 4) — rotation & PC-timing both lose to equal-weight |
-| PEAD drift | behavioral (underreaction) | promising, +8.45% 60-day drift, caveated |
-| asset-growth contrarian | behavioral (glamour) | flat, no premium this era |
-| LLM headline sentiment | informational | specified, awaiting data |
-
-Each track moves through a six-stage gate (hypothesis → data → replication → OOS/robustness → verdict →
-paper), with kill criteria written *before* the data. Full lifecycle in the [case study](CASE_STUDY.md#the-validation-protocol).
 
 ## Selected engineering
 
 - **Implementable-P&L engine** — scores hedged returns (stock − lagged-beta·sector-ETF) and charges the
-  hedge overlay's own turnover, after the residual-space accounting bug was found.
+  hedge overlay's own turnover, after the residual-space accounting bug was found ([history](HISTORY.md)).
+- **Frozen-benchmark forward accounting** — write-once daily residual ledger, revision embargo (day must
+  trail the FF file by ≥ 10 trading days), first-append factor vintage is the series of record.
 - **Exact C++/Python parity gate** — the C++ band state machine reproduces the pure-Python positions
-  bit-for-bit ([`tests/test_fastbands_parity.py`](tests/test_fastbands_parity.py)), enforced in the test suite.
+  bit-for-bit ([`tests/test_fastbands_parity.py`](tests/test_fastbands_parity.py)).
 - **Point-in-time universe + survivorship audit** — index membership as-of date; today's constituents
   are never back-filled ([`tests/test_universe.py`](tests/test_universe.py)).
-- **Walk-forward + deflated Sharpe** — rolling 12-month windows stepped quarterly, honest trial counts.
 - **Broker reconciliation + read-only monitoring** against Alpaca paper ([`tests/test_reconcile.py`](tests/test_reconcile.py)).
 - **Isolated environments** — backtest (`.venv`) vs reporting/ML (`.venv-report`); the headline number
   is never re-run inside a notebook.
@@ -85,44 +101,34 @@ paper), with kill criteria written *before* the data. Full lifecycle in the [cas
 All repo-supported; none are live-trading claims.
 
 - **219 passed, 1 skipped** (`pytest`), including the exact C++/Python parity gate.
-- **Five research tracks**, one shared scorecard; **two retired at Stage 4** with post-mortems.
-- A frozen candidate slate evaluated **once on a blind 12-month holdout**, then robustness across
-  **82 rolling ETF windows and 44–48 stock windows**.
+- **Seven paper books** under one forward alpha-isolation test against a frozen factor benchmark.
+- Books selected from a frozen candidate slate evaluated **once on a blind 12-month holdout**, then a
+  **5-year backdated blind re-test** through the 2022 bear (see [HISTORY.md](HISTORY.md)).
 - **Self-contained [audit bundle](audit-bundle/)** — spec + code + recompute steps + return series.
 
 ## Repository layout
 
 | path | what |
 | ---- | ---- |
-| [`CASE_STUDY.md`](CASE_STUDY.md) | the featured post-mortem (start here) |
+| [`README.md`](README.md) | this — what's live now |
+| [`HISTORY.md`](HISTORY.md) | retired tracks, the tournament, the JSE program, every kill |
+| [`CASE_STUDY.md`](CASE_STUDY.md) | the featured Sharpe-3.8 post-mortem |
 | [`core/`](core/) | shared data loaders, backtest engine, evaluation scorecard, broker adapter |
-| [`tracks/`](tracks/) | one package per research track (signal, filters, ML meta-model, paper scaffold) |
-| [`reports/`](reports/), [`notebooks/`](notebooks/) | committed deliverables (tearsheets, research narrative) |
-| [`memos/`](memos/) | verdicts and post-mortems ([diagnostics](memos/diagnostics-2026-07-10.md)) |
+| [`research/attribution/`](research/attribution/) | frozen betas + the forward attribution pipeline |
+| [`ledgers/hunt2026/`](ledgers/hunt2026/) | the live paper books' ledgers |
+| [`memos/`](memos/) | verdicts, post-mortems, and the forward-test setup record |
 | [`audit-bundle/`](audit-bundle/) | self-contained reproducibility package |
-| `data/`, `artifacts/` | gitignored heavy files; scorecards + manifest are the durable record |
 
 ## Reproduce
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/pytest                                   # full suite, incl. the parity gate
-.venv/bin/python scripts/statarb_ablation_run.py   # the ablation sweep + per-signal logs
-
-# reporting / ML stack (isolated env; keeps the audited env pristine)
-python3 -m venv .venv-report && .venv-report/bin/pip install -e ".[report,ml]"
-.venv-report/bin/python reports/tearsheet.py --config costs
+.venv/bin/python scripts/hunt_alpha_review.py --selfcheck   # validate the forward replication chain
 ```
 
 The backtest runs in `.venv`; the reporting/ML layer runs in an isolated `.venv-report` that only reads
 the artifacts the backtest wrote — so the headline number stays reproducible.
-
-## Technical Appendix
-
-- [`notebooks/statarb_research.ipynb`](notebooks/statarb_research.ipynb) — the research narrative
-  (pre-fix numbers; superseded by the post-mortem, kept for the record).
-- [`reports/shap_beeswarm_costs.png`](reports/shap_beeswarm_costs.png) — SHAP attribution for the
-  meta-model.
 
 ---
 
