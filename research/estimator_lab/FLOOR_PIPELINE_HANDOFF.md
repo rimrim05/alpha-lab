@@ -62,9 +62,23 @@ alpha-lab repo (github.com/kristenharim/alpha-lab), `research/estimator_lab/`:
   must not be represented as it. Theory derivations (finite-p slack law, MP-edge threshold,
   hybrid Corollary 1) are HERS to take to the lab — sims may motivate, not substitute.
 
-## Declared next step (not started)
-Real Fama-French-residualized S&P data: which real residual statistical factors survive the
-screen, and what is their leakage-score distribution — are the "ending parts of risk"
-genuine, leaked, or noise? Data available in-repo: PIT S&P membership + daily prices
-(`data/raw/daily_px_statarb_wide.parquet` etc.); FF factor returns are free (Ken French
-library, would need a fresh, manifest-logged pull).
+## Phase 6 (real data) — DONE 2026-07-14
+FF3+MOM-residualized S&P, 14 primary 63d windows (2021-11→2025-11, p≈460-500, p/n≈7.5).
+Prereg + reviewer dispositions: `FLOOR_REALDATA_MEMO.md`; runner `run_floor_realdata.py`;
+results `FLOOR_REALDATA.md` (+ story, research log); diagnostics `run_floor_realdata_diag.py`
+→ `FLOOR_REALDATA_DIAG.md`; per-slot rows `floor_realdata.csv`. FF pull manifest-logged
+(`data/raw/ff_factors_daily.parquet`). Headlines:
+6. **C4 does not transfer as calibrated:** on real heteroskedastic heavy-tailed residuals
+   (even vol-standardized) the shuffled-panel false-pass rate is ~14% (10-20% across seeds);
+   the isotropic 0.5 safety margin is fully consumed. Real-data screening needs an empirical
+   per-rank shuffled null; against that null, real PC2-5 pass 14/14 per rank (61/70 total).
+7. **Phase-4's trap materializes on real data and the detector catches it:** residual PC1 =
+   leakage footprint (high D 0.49 + lowest floors ~0.19 = one mechanical event, corr(D,floor)
+   = -0.70; beta drift median 17° between adjacent windows). Low PC1 floors are NOT
+   trustworthy-as-genuine. D vs D′ gaps (published-FF vs B̂-implied regressors) expose
+   estimated-factor leakage the published series can't see.
+8. Bucket shares are qualitative only (27-60% material range under disjoint-beta
+   subsampling); low-D factors are NOT "risk beyond standard models" (industry blindness).
+Open fork (Kristen's call): FF+industry known-model arm (do sectors absorb PC2-3?) with an
+empirical-null screen, vs consolidate-and-stop. C4-recalibration-under-heteroskedasticity is
+a THEORY item — hers to take to the lab.
