@@ -166,8 +166,11 @@ def main():
         rec = {}
         for arm in ("A", "B"):
             Yr, fhat, rank, cond = arms[arm][wi]
-            k = KP if arm == "A" else KMATCH
-            theta, ell, X, H = pca(Yr, k)
+            # stats ALWAYS at k=KP so SNR/floor match the k=KP shuffled null
+            # (bug fixed post-adversarial: k=KMATCH ell inflated arm-B SNR ~6%)
+            theta, ell, X, H = pca(Yr, KP)
+            if arm == "B":
+                _, _, X7, _ = pca(Yr, KMATCH)
             snr = theta / ell - 1.0
             floor_raw = ell / theta
             p = Yr.shape[0]
@@ -191,11 +194,13 @@ def main():
                             pn_ok=pn_ok, D=D, Dp=Dp, sec=sec, L=L, X=X, H=H,
                             exact_p=exact_p, cond=cond,
                             shuf_max=float(shuf[arm][wi][:, :KP].max()))
+            if arm == "B":
+                rec[arm]["X7"] = X7
         # a_match: arm-A slots vs arm-B top-7 series
-        am = r2(rec["A"]["X"][:KP], rec["B"]["X"].T)
+        am = r2(rec["A"]["X"][:KP], rec["B"]["X7"].T)
         for j in range(KP):
             null_pool[("A", "am", j)].append(shift_scores(rec["A"]["X"][j],
-                                                          rec["B"]["X"].T))
+                                                          rec["B"]["X7"].T))
         rec["am"] = am
         per_win.append(rec)
     # pooled per-rank null quantiles

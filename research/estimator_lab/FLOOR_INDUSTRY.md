@@ -32,67 +32,50 @@ Descriptive only. Prereg: FLOOR_INDUSTRY_MEMO.md rev 2 (frozen). 14 primary wind
 
 ## Vetted panel for Stage 2 (arm-B label 4)
 - 5 slots across 4 windows; recurrent: 0
-- floors: median 0.365
+- floors: median 0.385
 - L-cut sensitivity (label-4 count at L ≤ 0.25/0.30/0.40/0.50): [2, 2, 3, 5]
 - shuffled-panel L quantiles (q50/q90/q99): A [0.22 0.55 0.79], B [0.24 0.59 0.81]
 
 ## Story
 
-The pre-committed verdict is FAIL — the industry control missed its bar (sector-R² of
-detectable non-PC1 slots dropped 0.607 → 0.347 = 43%, bar ≥ 50%) — and the mechanism
-diagnosis says the bar was mis-set, not that the projection malfunctioned. Three facts,
-established read-only, no tuning:
+(appended post-run)
 
-1. Market embedding refuted: FF-orthogonalizing the sector regressors moves med_B only
-   0.347 → 0.285. The persistent association is genuinely sector-linked, not leaked
-   market inside the sector series.
-2. Sector-MEAN content of arm-B slots is zero BY CONSTRUCTION (residuals are
-   cross-sectionally orthogonal to the dummies), so the 0.285 must ride on
-   within-sector loading heterogeneity — structure finer than the 11-dummy span.
-3. The slots are diffuse, not sector tilts: median top-sector loading mass 24%
-   (uniform reference 16%); only 7% of slots put >40% mass in one sector. The
-   persistence is cross-sector THEME structure (e.g., cyclical/defensive,
-   rate-sensitivity complexions) that co-moves with sector returns without living
-   inside any sector.
+## Errata & adversarial corrections (post-run, 2026-07-14)
 
-So the 50% bar implicitly assumed residual-PC sector association was mostly removable
-sector-mean content; roughly half of it is theme/sub-sector structure that the memo's
-own coarseness limitation said the model could not remove. Rule-drafting
-miscalibration, owned (third in project history). The verdict stands as recorded.
+The adversarial review materially corrected the story above; the corrections BIND all
+downstream use (Stage 2, final memo):
 
-Main-line findings that survive this:
-- The Phase-6 fork question is answered: detectable FF-residual factors are NOT coarse
-  sector risk. Zero arm-A slots were "explained-by-industry"; median a_match 0.877 —
-  the factor directions persist nearly intact under 11-sector removal; only their
-  sector-mean component (the 43%) was absorbed.
-- The vetted Stage-2 panel is thin and fragile: 5 label-4 slots across 4 windows, zero
-  recurrent, L-cut sensitivity 2→5 slots over L ∈ [0.25, 0.50]. As pre-stated, the
-  gate is exclusion-biased; Stage 2 receives scores alongside labels.
-- Arm-B "high-known-association" (28/70) exceeds arm A (20/70) — consistent with the
-  pre-stated label-3 inflation caveat plus 15 regressors carrying more of the panel.
-
-**Research Lead decision (documented, adversarial review invited to attack it):**
-Stage 2 proceeds using this panel. Rationale: the FAIL isolates to a control whose bar
-encoded a wrong assumption; the plumbing controls passed (positive; calibration 0.5%
-vs 3% bar; rank asserts; floors 100% valid), and the label machinery is intact with
-caveats pre-stated. Binding language for Stage 2: "industry-controlled" means
-"11-GICS-sector-MEAN-controlled" — nothing finer. No rerun, no re-verdict, no bar
-adjustment: the mechanistically-correct control (sector-mean removal, verifiable as an
-identity) cannot be swapped in post-hoc without exactly the tuning the process forbids.
-
-## Research log (Phase 7)
-
-- Verdict: FAIL on the industry control by a mis-set bar (43% vs 50%); mechanism
-  diagnosed as pre-stated model coarseness (theme/sub-sector persistence), not
-  pipeline malfunction.
-- Supported: sector-mean removal (by construction, verified); factor persistence under
-  industry projection (a_match 0.877); thin vetted panel (5 slots, 0 recurrent);
-  screen calibration-consistency.
-- Not supported: "detectable residual factors are sector risk" (refuted at 11-sector
-  granularity); any provenance claim; label-3 prevalence as a leakage RATE (inflation
-  caveats); the industry control's original bar as a meaningful test.
-- Validity: descriptive; same 14 primary windows; sectors non-PIT (2023-03 GICS
-  restructure backfilled pre-2023 windows); labels mean association w.r.t. THIS model.
-- Next per decision rule + documented judgment: Stage 2 attribution with this panel,
-  FAIL context carried; Stage-1 adversarial review runs alongside Stage-2 prereg
-  review.
+1. **a_match headline RETRACTED.** The correct null for a_match (arm-B top-7 spanning
+   arm-A top-5 after removing a RANDOM 11-dim cross-sectional subspace, sector sizes
+   preserved) has median 0.991. The observed 0.877 sits BELOW that mechanical floor —
+   "factor directions persist nearly intact" was measured against the wrong null and
+   carries zero positive information; read correctly, the sector projection removed
+   MORE factor content than a random 11-dim projection would.
+2. **Null-relative control arithmetic.** Sector-R² on 11 regressors at n=63 has a dof
+   baseline ≈ 0.177. As EXCESS over that baseline — the memo's own frozen "levels are
+   meaningless" principle — the industry projection removed (0.430−0.169)/0.430 =
+   60.6% ≥ the 50% bar: the control PASSES in its own spirit. The FAIL isolates to a
+   raw-ratio metric that contradicted the memo's stated principle; this was catchable
+   pre-freeze and passed two review rounds — a process defect, recorded.
+3. **"Theme structure" downgraded to UNRESOLVED.** Shared-calendar vol-regime coupling
+   (sector series built from the same stale-vol-standardized names) explains the same
+   three diagnostic facts; the persistence magnitude was also overstated ~2× by quoting
+   raw medians (null-relative persistent excess ≈ 0.11–0.17, not "roughly half").
+   Split-half + vol-orthogonalized experiment deferred; NO downstream claim may lean on
+   the theme identity.
+4. **"Not coarse sector risk" downgraded** to: "not annihilated by 11-GICS-sector-MEAN
+   projection." Zero label-2 slots partly reflects gate insensitivity (a_match's
+   mechanical floor ~0.97–0.99 makes the no-counterpart condition nearly unfireable).
+5. **Code fix + rerun:** arm-B SNR̂/floors had used ell from k=7 PCA against a k=5
+   null (~6% SNR inflation / floors 6% low). Fixed; rerun; ZERO label changes
+   (detectability margins 1.48–2.12× the cut); label-4 floor median 0.365 → 0.385.
+6. **Vetted panel evidential value ≈ nil for control purposes** (0/5 recurrent, 2/5 in
+   one window, exact-permutation p on D 0.21–0.51). Stage 2 must treat L4 results as
+   spot-checks, never as "survived residual controls."
+7. Phase 6 log erratum (propagates here): the 14 primary windows span window-starts
+   2022-11-21 → 2026-03-02 (ending 2026-05-29), not "2021-11 → 2025-11" as the Phase 6
+   research log stated.
+8. **Proceed-decision assessment (adversarial):** defensible on content, irregular on
+   process — a documented consequence-override, NOT verdict-shopping; its validity
+   rests on point 2 above, not on the retracted persistence claims. Conditions (a)-(d)
+   of the assessment are adopted as binding and reflected in points 1–6.

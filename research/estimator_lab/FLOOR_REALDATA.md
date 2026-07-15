@@ -99,7 +99,7 @@ leaked known-factor risk masquerading as low-floor residual structure.
   (27–60% range under honest dependence handling); any genuine/leaked truth claim; any
   "risk beyond standard models" reading of low-D factors (industry blindness, memo A7);
   Phase-4/5 error rates for the published-FF variant of D_j.
-- **Validity regime:** descriptive; 14 primary windows 2021-11→2025-11, p ≈ 458–496,
+- **Validity regime:** descriptive; 14 primary windows (window-starts 2022-11-21 → 2026-03-02, ending 2026-05-29; span mislabeled "2021-11→2025-11" in the original log — erratum 2026-07-14), p ≈ 458–496,
   n = 63, FF3+MOM, S&P 500 PIT universe with window-level completeness look-ahead
   (memo A3); pre-2021 windows survivorship-tilted and excluded from all claims.
 - **Next decision (per prereg):** SUCCESS branch → the fork goes to Kristen:
