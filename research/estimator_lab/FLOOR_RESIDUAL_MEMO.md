@@ -65,3 +65,32 @@ bulk that accounts for the k_F dimensions consumed by residualization; compare s
 Heavy-tail arm; subspace drift across windows; real FF/Barra + real S&P residuals; the hybrid
 Corollary-1 theorem and the formal n_eff derivation (theory, only if the empirics justify it);
 any portfolio/min-var metric (explicitly out of scope).
+
+---
+
+# Phase 2 addendum — finite-sample calibration of the floor (pre-committed before run)
+
+## Question
+When does the observable floor ℓ/θ_j become a good approximation of the true out-of-subspace
+error in finite samples, and how biased is it before that?
+
+## Design
+Sweep p ∈ {100, 250, 500, 1000} × n ∈ {40, 63, 126}, k_R=5 heterogeneous SNR ladder
+{3, 1.5, 0.8, 0.4, 0.15} (straddles the detection edge); k=3 row and an A1
+oracle-residualization spot-check at (500, 63) to test transfer. N_MC=200, seeded. Slack
+S_j = (a)_j − ℓ/θ_j recorded PER FACTOR with the observable SNR proxy SNR̂_j = θ_j/ℓ − 1.
+Dual-space computation (n×n Gram; h_j = Yv_j/√(npθ_j), exact per the paper's Lemma 1).
+
+## Corrections tested (frozen)
+- C1 (n_eff-style): floor × n/(n−k).
+- C2 (empirical calibration): linear model of slack on [log p, log n, logit(floor)], fit on
+  half the (p,n) cells, evaluated on the HELD-OUT half (and on the A1 spot-check).
+
+## Decision rule (pre-committed)
+- CALIBRATABLE: a correction using observables only cuts held-out median |slack| to < 0.05
+  and ≤ 1/3 of uncorrected.
+- REGIME-LIMITED: slack concentrates below an observable detectability cut (small SNR̂);
+  above the cut uncorrected |slack| < 0.05. Deliverable = the trust-region rule
+  ("interpret the floor only when SNR̂ > c"), not a correction.
+- UNCALIBRATABLE: neither — floor bias depends on unobservables everywhere.
+Stop-iterating: one run; no new correction forms after seeing results.
