@@ -392,3 +392,16 @@ but that is descriptive, not a transportable mechanism. Vol clustering is the st
 DESCRIPTIVE predictor on this ETF panel (not generally proven). Reproduced byte-identical.
 Status: RETIRED on this panel. Do NOT reopen with nearby variables/thresholds/ETF permutations;
 next reopen needs new markets/instruments. Canonical: research/discovery/CANONICAL_CONCLUSIONS.md.
+
+**F-024 — EWMA vol estimation beats the rolling realized window inside vol_managed_qqq**
+Result: FALSE, decisively (EXP-2026-07-14-ewma-vol, matched pair, prereg
+preregistrations/ewma-vol-2026-07-14.md). Memory-matched EWMA (com=10) loses −63.6 bps median
+12m / 35% win share vs the frozen realized-21 estimator through the identical band/cap path;
+ALL three registered memories lose (−63.6/−74.3/−138.6 bps), the industry-default λ=0.94 worst.
+Mechanism reversed: the 21d window's hard forget ("ghost vol" cliff) is a FEATURE — it fully
+releverages sooner after vol spikes, paying in sharp recoveries (covid −323 bps, 2023 rally
+−210 for EWMA); the exponential tail never quite forgets. EWMA also raised turnover 42%
+(smooth drift crosses the tolerance band more often), though cost is negligible vs the timing
+loss. Both gates passed (byte-exact frozen-spec reproduction; holdout Sharpe == published).
+Status: ANSWERED — keep realized-21; do not retest estimator shape (EWMA/GARCH-family smooth
+decay) on this book without a new mechanism claim. Full tables: robustness/ewma_vol.md.
