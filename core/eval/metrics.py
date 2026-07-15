@@ -23,6 +23,39 @@ def hit_rate(returns: pd.Series) -> float:
     return float((r > 0).mean()) if len(r) else 0.0
 
 
+def sharpe_bootstrap(returns: pd.Series, periods_per_year: int, n_sims: int = 1000,
+                     block: int = 20, seed: int = 0) -> dict:
+    """Circular block bootstrap of net returns -> resampled annualized-Sharpe distribution.
+
+    Path-luck check, complementary to deflated_sharpe (selection across trials) and the
+    perturbation red-team (parameter sensitivity): how much does the point Sharpe depend on
+    this particular composition of the return path? Read p05 against the repo kill bar
+    (net Sharpe < 0.5 is dead) — a wide interval or p05 < 0 means the headline number leans
+    on a few lucky returns. Blocks preserve short-range autocorrelation.
+    """
+    r = returns.dropna().to_numpy(dtype=float)
+    T = len(r)
+    if T < 2 * block:
+        raise ValueError(f"need >= {2 * block} obs for block={block}, got {T}")
+    rng = np.random.default_rng(seed)
+    n_blocks = -(-T // block)                                   # ceil
+    starts = rng.integers(0, T, size=(n_sims, n_blocks, 1))
+    idx = (starts + np.arange(block)) % T                       # circular wrap
+    sims = r[idx.reshape(n_sims, -1)[:, :T]]
+    std = sims.std(axis=1, ddof=1)
+    sr = np.where(std > 0, sims.mean(axis=1) / np.where(std > 0, std, 1.0), 0.0)
+    sr = np.sort(sr * np.sqrt(periods_per_year))
+    original = sharpe(returns, periods_per_year)
+    return {
+        "sharpe": original,
+        "p05": float(np.quantile(sr, 0.05)),
+        "median": float(np.quantile(sr, 0.50)),
+        "p95": float(np.quantile(sr, 0.95)),
+        "pct_original": float(np.searchsorted(sr, original) / n_sims),
+        "n_sims": n_sims, "block": block,
+    }
+
+
 def deflated_sharpe(returns: pd.Series, n_trials: int, periods_per_year: int) -> float:
     """Probability the true Sharpe exceeds zero, deflating for n_trials searches."""
     r = returns.dropna()
