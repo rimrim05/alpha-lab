@@ -85,3 +85,32 @@ untouched by rollback (they were never modified). No historical data is lost.
   cash does not distort the tracking-drag signal.
 - Broker-marked MC evidence has no history until cutover; the 30 bps/month tripwire needs a few weeks to
   be meaningful.
+
+## Final status (2026-07-15, pre-cutover)
+
+- **Implemented + pushed** (commit on `main`): `route_targets` split + no-cross-leak invariant;
+  two-account `live_run` with fail-closed guards (missing `ALPACA_MC_*`, shared==MC key id, symbol
+  overlap, MC buying power < gross, non-paper endpoint); per-leg fail-safe submission (`submit_leg`)
+  so one account's failure never loses the other's ledger row; `_account_mc` execution-reality row;
+  exact dedicated MC reconcile (`_reconcile_mc.jsonl`, 30 bps/mo band, order-state census).
+- **Sizing used:** `notional = shared_equity / 7` for every book (UNCHANGED). MC trades exactly its
+  1/7 dollar share; ETF books unchanged.
+- **Tests:** 228 passed, 1 skipped (full suite). 14 new offline tests in `tests/test_mc_isolation.py`
+  (routing split, no-cross-leak fail, sizing invariant, shared-reconcile MC exclusion, MC reconcile
+  alarms, per-leg fail-safe, second-account cred wiring).
+- **Reviewers:** two independent audits (routing/safety + data-integrity). One Critical (no
+  atomicity/record-loss on a mid-submit exception) and one low-severity (`--since` replay backfilling
+  pre-cutover MC rows) — both fixed and retested. Data-integrity reviewer confirmed sizing continuity,
+  ledger continuity (no history rewritten), and forward-test integrity.
+- **Dry-run (offline, $100k):** SHARED = 16 ETF names, gross $111,108 (levered ETF books). DEDICATED =
+  24 single stocks, gross $14,286 = exactly equity/7 (14.3%). Zero symbol overlap between the two sets.
+- **Shared account excludes MC:** confirmed — the six ETF books aggregate to the shared account;
+  MC's old shares there flatten as foreign; the shared reconcile no longer judges MC.
+- **Dedicated account receives only MC:** confirmed — `momentum_concentrated` alone, tag `h26mc`.
+- **Exact cutover timestamp:** NOT YET — the nightly `com.rimrim.hunt2026-paper` job (`--live`,
+  weekdays 20:30 local) now fails closed until `ALPACA_MC_API_KEY_ID` / `ALPACA_MC_API_SECRET_KEY`
+  are in `.env`. The FIRST successful `--live` run after the keys are present IS the cutover; stamp its
+  timestamp here then. Until then the whole book pauses trading (safe; nothing submitted).
+- **Rollback:** `git revert` this commit; next nightly run reverts to the seven-book single-account
+  aggregate. Flatten the dedicated MC account from the Alpaca paper UI. Model + forward-alpha ledgers
+  are untouched by rollback.
