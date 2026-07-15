@@ -64,6 +64,12 @@ def main():
 
     panels = fetch_ohlcv(stocks + ETFS + SIGNAL_ONLY, START, END)
     close = validate_prices(panels["close"])
+    # drop phantom days (e.g. ^VIX-only holidays from the calendar union): a single
+    # near-all-NaN row inside a rolling window silently nulls SMAs/vols and zeroes P&L
+    # (2026-05-25 Memorial Day bug, memos/panel-phantom-row-correction.md; same guard
+    # as extend_panel.py)
+    tradable = [t for t in close.columns if t not in SIGNAL_ONLY]
+    close = close[close[tradable].notna().any(axis=1)]
     cal = close.index
 
     member = membership_mask(changes, cal, [t for t in close.columns if t in stocks])

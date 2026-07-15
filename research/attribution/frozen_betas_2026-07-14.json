@@ -1,0 +1,277 @@
+{
+ "freeze_date": "2026-07-14",
+ "forward_start": "2026-07-15",
+ "review_dates": {
+  "6m": "2027-01-14",
+  "12m": "2027-07-14"
+ },
+ "source": "research/attribution/attribution.csv (EXP-2026-07-14-factor-attribution, as-run)",
+ "panel_correction": "memos/panel-phantom-row-correction.md (corrected panels used for all forward accounting)",
+ "model": "M2 = FF5 + Mom + TSMOM + QQQRES, daily, NW lag 5 at review",
+ "tsmom_spec": {
+  "menu": [
+   "SPY",
+   "QQQ",
+   "IWM",
+   "EFA",
+   "GLD",
+   "TLT"
+  ],
+  "lookback": 252,
+  "skip": 21,
+  "vol_target_ann": 0.1,
+  "vol_window": 63,
+  "note": "sign(trailing 252d ret, skip 21d) at close t earns t+1; PIT vol scale"
+ },
+ "qqqres_projection": {
+  "const": 0.00013171041319915626,
+  "Mkt-RF": 1.1021762469214205,
+  "SMB": -0.120672570061366,
+  "HML": -0.30508221127032376,
+  "RMW": 0.04910867380695661,
+  "CMA": -0.19384705198437271,
+  "Mom": 0.04207934854936211,
+  "fit_through": "2026-05-29",
+  "fit_n": 3119
+ },
+ "financing": "daily (gross_t - 1)+ * (RF_t + 0.005/252); gross_t from the book ledger",
+ "books": {
+  "vol_managed_qqq": {
+   "window": "blind",
+   "n_obs": 219,
+   "model": "M2",
+   "alpha_ann_asrun": 0.0142162081180237,
+   "t_alpha_asrun": 0.2518856518632932,
+   "avg_gross_asrun": 1.427227598532789,
+   "betas": {
+    "Mkt-RF": 1.5435592056371037,
+    "SMB": -0.2077948755253197,
+    "HML": -0.4535316400997214,
+    "RMW": 0.1410557687459443,
+    "CMA": -0.3425419145100146,
+    "Mom": 0.0254751512180269,
+    "TSMOM": 0.2318064848419704,
+    "QQQRES": 1.5868782701835351
+   },
+   "role": "live_book"
+  },
+  "vol_core_svxy": {
+   "window": "blind",
+   "n_obs": 219,
+   "model": "M2",
+   "alpha_ann_asrun": 0.0054451093547405,
+   "t_alpha_asrun": 0.1005057863563706,
+   "avg_gross_asrun": 1.7586303703361257,
+   "betas": {
+    "Mkt-RF": 1.7925299960167849,
+    "SMB": -0.1481986955078163,
+    "HML": -0.2041348325940595,
+    "RMW": 0.1528995341487437,
+    "CMA": -0.2431325680687774,
+    "Mom": -0.0150860147390703,
+    "TSMOM": 0.1160533737846348,
+    "QQQRES": 0.7984781354829862
+   },
+   "role": "live_book"
+  },
+  "dual_momentum_gem": {
+   "window": "blind",
+   "n_obs": 219,
+   "model": "M2",
+   "alpha_ann_asrun": 0.1578641300524381,
+   "t_alpha_asrun": 1.123828512499642,
+   "avg_gross_asrun": 1.5,
+   "betas": {
+    "Mkt-RF": 1.1828496317674762,
+    "SMB": -0.2095704815398965,
+    "HML": -0.242863962931593,
+    "RMW": 0.1175028366724512,
+    "CMA": 0.2535524044895061,
+    "Mom": 0.1429641705931226,
+    "TSMOM": 0.7389665276872632,
+    "QQQRES": 0.6253384365880834
+   },
+   "role": "live_book"
+  },
+  "momentum_concentrated": {
+   "window": "blind",
+   "n_obs": 219,
+   "model": "M2",
+   "alpha_ann_asrun": -0.0746560864905058,
+   "t_alpha_asrun": -0.6815441212097487,
+   "avg_gross_asrun": 0.8896193911174628,
+   "betas": {
+    "Mkt-RF": 0.6939640088318432,
+    "SMB": 0.1781465216963086,
+    "HML": -0.1546694311216115,
+    "RMW": -0.1534071959653388,
+    "CMA": 0.1371949354820481,
+    "Mom": 0.573343373361576,
+    "TSMOM": 0.3557995395182636,
+    "QQQRES": 0.3570842183356396
+   },
+   "role": "live_book"
+  },
+  "trend_vol_qqq": {
+   "window": "blind",
+   "n_obs": 1223,
+   "model": "M2",
+   "alpha_ann_asrun": 0.0911155859112741,
+   "t_alpha_asrun": 1.4999146925819598,
+   "avg_gross_asrun": 1.3673081446372837,
+   "betas": {
+    "Mkt-RF": 0.4795950162194559,
+    "SMB": 0.0305628548637647,
+    "HML": -0.2059413627475539,
+    "RMW": 0.0148667764942959,
+    "CMA": -0.4174655096318401,
+    "Mom": 0.3249971420448728,
+    "TSMOM": 0.6619816124483165,
+    "QQQRES": 1.3063223131832833
+   },
+   "role": "live_book"
+  },
+  "defensive_ensemble": {
+   "window": "blind",
+   "n_obs": 1223,
+   "model": "M2g",
+   "alpha_ann_asrun": 0.067248943604038,
+   "t_alpha_asrun": 1.7738033569450418,
+   "avg_gross_asrun": 1.9225981137770944,
+   "betas": {
+    "Mkt-RF": 0.27840708843182604,
+    "SMB": -0.06289024900462975,
+    "HML": -0.0669540115019808,
+    "RMW": -0.029584406383057097,
+    "CMA": -0.11177852458780327,
+    "Mom": 0.11188718762274727,
+    "TSMOM": 0.6842954439393676,
+    "QQQRES": 0.3230872880228938,
+    "GLD": 0.21952994950182894
+   },
+   "role": "live_book",
+   "alpha_ann_frozen": 0.038935818574213354,
+   "t_alpha_frozen": 1.151396213403676,
+   "m2g_note": "M2+GLD refit on corrected panel, blind_5y window; as-run M2 alpha kept in alpha_ann_asrun"
+  },
+  "dual_momentum_gold": {
+   "window": "blind",
+   "n_obs": 1223,
+   "model": "M2g",
+   "alpha_ann_asrun": 0.1298151498269016,
+   "t_alpha_asrun": 1.3211506952275334,
+   "avg_gross_asrun": 1.4243630573248407,
+   "betas": {
+    "Mkt-RF": 0.2592827022606094,
+    "SMB": -0.19190827516046827,
+    "HML": -0.0011524238196328044,
+    "RMW": 0.08916308116821361,
+    "CMA": -0.4892724407080593,
+    "Mom": 0.11782595212523903,
+    "TSMOM": 0.9275642559852257,
+    "QQQRES": 0.31378249909484074,
+    "GLD": 0.7849266108368712
+   },
+   "role": "live_book",
+   "alpha_ann_frozen": 0.025368005140210308,
+   "t_alpha_frozen": 0.3239425823113943,
+   "m2g_note": "M2+GLD refit on corrected panel, blind_5y window; as-run M2 alpha kept in alpha_ann_asrun"
+  },
+  "CTRL_spy_buyhold": {
+   "window": "blind_5y",
+   "n_obs": 1223,
+   "model": "M2",
+   "alpha_ann_asrun": 0.0020595430205213,
+   "t_alpha_asrun": 0.4632871131672271,
+   "avg_gross_asrun": 1.0,
+   "betas": {
+    "Mkt-RF": 0.9988343083616272,
+    "SMB": -0.0866792005992379,
+    "HML": 0.0047867297639118,
+    "RMW": 0.0614309857386839,
+    "CMA": 0.0493483235587264,
+    "Mom": -0.0024593378820897,
+    "TSMOM": -0.0021234278807458,
+    "QQQRES": 0.0070786693083803
+   },
+   "role": "placebo",
+   "expected_resid_ann": {
+    "center": 0.0020595430205213,
+    "band": 0.005
+   }
+  },
+  "CTRL_qqq_buyhold": {
+   "window": "blind_5y",
+   "n_obs": 1223,
+   "model": "M2",
+   "alpha_ann_asrun": 0.0322976619823641,
+   "t_alpha_asrun": 31750826755991.58,
+   "avg_gross_asrun": 1.0,
+   "betas": {
+    "Mkt-RF": 1.1022037843971109,
+    "SMB": -0.1210726869031851,
+    "HML": -0.3062286029432251,
+    "RMW": 0.0508397427916777,
+    "CMA": -0.1926345186544261,
+    "Mom": 0.0411086189798661,
+    "TSMOM": -5.297181996680431e-17,
+    "QQQRES": 0.9999999999999994
+   },
+   "role": "placebo",
+   "expected_resid_ann": {
+    "center": 0.0322976619823641,
+    "band": 0.005,
+    "extra": "TE_ann must be < 0.5%; deterministic tautology control, never judged on t"
+   }
+  },
+  "CTRL_qqq_1.5x_static": {
+   "window": "blind_5y",
+   "n_obs": 1223,
+   "model": "M2",
+   "alpha_ann_asrun": 0.0662393255281593,
+   "t_alpha_asrun": 90.81929446273833,
+   "avg_gross_asrun": 1.5,
+   "betas": {
+    "Mkt-RF": 1.6532869880848142,
+    "SMB": -0.1817783865908628,
+    "HML": -0.4593163177674007,
+    "RMW": 0.0760551318367577,
+    "CMA": -0.2893783322063117,
+    "Mom": 0.0616063191063025,
+    "TSMOM": 0.0002134021255352,
+    "QQQRES": 1.499797073243848
+   },
+   "role": "placebo",
+   "expected_resid_ann": {
+    "center": 0.0637393255281593,
+    "band": 0.007,
+    "extra": "as-run alpha minus the 50bps-spread leg now charged externally"
+   }
+  },
+  "CTRL_qqq_buyhold_M1": {
+   "window": "blind_5y",
+   "n_obs": 1223,
+   "model": "M1",
+   "alpha_ann_asrun": 0.0335846450681725,
+   "t_alpha_asrun": 1.5473251244255584,
+   "avg_gross_asrun": 1.0,
+   "betas": {
+    "Mkt-RF": 1.1488815586555556,
+    "SMB": -0.1506169351782328,
+    "HML": -0.2686500591354726,
+    "RMW": 0.0158227489590081,
+    "CMA": -0.1055805806841645,
+    "Mom": 0.0301743080091441,
+    "TSMOM": 0.0,
+    "QQQRES": 0.0
+   },
+   "role": "placebo",
+   "expected_resid_ann": {
+    "center": 0.0335846450681725,
+    "band": "2 * 4.9%/sqrt(n_days/252) (QQQRES vol band)",
+    "extra": "the informative control: tests whether the frozen projection still describes QQQ"
+   }
+  }
+ },
+ "attribution_csv_sha256": "57431c2d13d9317b2ced86db22f0d8b0b10db69cee19884cfa559837f1c042cb"
+}

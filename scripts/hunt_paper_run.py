@@ -137,6 +137,7 @@ def compute_book(panel: pd.DataFrame, name: str, notional: float) -> dict:
     last = W.iloc[-1]
     targets = {t: float(w) for t, w in last.items() if abs(w) > 1e-9}
     nav_start = panel.index[-min(NAV_WINDOW, len(panel) - 1)]
+    res = harness.run(spec, panel, start=nav_start)
     return {
         "date": str(panel.index[-1].date()),
         "book": name,
@@ -144,7 +145,11 @@ def compute_book(panel: pd.DataFrame, name: str, notional: float) -> dict:
         "target_dollars": {t: round(w * notional, 2) for t, w in targets.items()},
         "gross": round(float(last.abs().sum()), 4),
         "notional": round(notional, 2),
-        "nav": round(_nav(spec, panel, nav_start), 6),
+        "nav": round(1.0 + res["total_net"], 6),
+        # measurement-only: today's true net daily return. The `nav` above is a rolling
+        # 252d-rebased index, so nav.pct_change() is NOT the daily return — the alpha-forward
+        # layer (scripts/hunt_alpha_review.py) must read ret_1d.
+        "ret_1d": round(float(res["net_daily"].iloc[-1]), 8),
         "bench_spy_nav": round(_nav(_spec_from_weights(W), panel, nav_start), 6),
         "bench_naive_nav": round(_nav(_naive_spec(BOOKS[name]), panel, nav_start), 6),
     }
@@ -154,11 +159,14 @@ def _write_ledger(row: dict) -> Path:
     LEDGER_DIR.mkdir(parents=True, exist_ok=True)
     path = LEDGER_DIR / f"{row['book']}.jsonl"
     # ponytail: same-date re-runs replace the day's row instead of appending a dup
-    # (idempotent per book+date). Full rewrite is fine — ledgers are a few hundred rows.
+    # (idempotent per book+date+mode; a --dry-run after the nightly --live must not
+    # erase the live row). Full rewrite is fine — ledgers are a few hundred rows.
     kept = []
     if path.exists():
         kept = [ln for ln in path.read_text().splitlines()
-                if ln.strip() and json.loads(ln).get("date") != row["date"]]
+                if ln.strip() and not (
+                    json.loads(ln).get("date") == row["date"]
+                    and json.loads(ln).get("mode") == row.get("mode"))]
     kept.append(json.dumps(row))
     path.write_text("\n".join(kept) + "\n")
     return path

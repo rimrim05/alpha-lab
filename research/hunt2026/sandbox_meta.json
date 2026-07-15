@@ -46,9 +46,10 @@
     "^VIX"
   ],
   "train_rows": 2897,
-  "holdout_rows": 252,
+  "holdout_rows": 251,
   "built_at": "2026-07-11T01:57:50.358928+00:00",
   "cut5y": "2021-07-10",
   "train5y_rows": 1893,
-  "holdout5y_rows": 1256
+  "holdout5y_rows": 1255,
+  "correction_2026_07_14": "phantom 2026-05-25 (^VIX-only) row dropped from holdout/holdout5y; originals in archive/; memos/panel-phantom-row-correction.md"
 }

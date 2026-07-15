@@ -81,3 +81,22 @@ holdout result must add a row here and say so in this column.
 4. Implementation claims are reported as the delta vs the naive benchmark, not the raw return.
 
 > 2026-07-10 (later): statuses revised by the 82-window walk-forward (walkforward/summary.md); see FAILURES.md F-013..F-015.
+
+## 2026-07-14 program additions (autonomous JS/factor-risk program, Kristen Stage-0 via program directive)
+
+| Exp | Date | Variants registered | Derived from prior holdout results? | Decisive stat |
+|---|---|---|---|---|
+| factor-attribution (layer B diagnostic, live books vs known factors) | 2026-07-14 | 1 experiment: 4 nested models × 7 books + 4 controls, all reported | **yes — adaptive loop: targets blind-promoted books** | blind-window M2 NW-t ≥ 2 per book, Bonferroni m=3 tier at t ≥ 2.4 (preregistrations/factor-attribution-2026-07-14.md) — **result: NO CANDIDATE** (best defensive_ensemble t=1.77; adversarial review decomposes all 4 best cells to ≤2%/yr or t<1.2 residual; verdict "factor-premium harvesting with some unexplained residual return"; research/attribution/) |
+| jse-benchrel (layer B, benchmark-relative TE adjudication, Estimator Lab; cumulative JSE-line chances 9) | 2026-07-14 | 1 one-shot run, thresholds from the adversarial review | **yes — adaptive loop: adjudicates the one UNTESTED boundary-map cell after review of completed results** | jse5−pca5 paired TE: overturn iff rel ≤ −0.5%, p<0.05, abs ≤ −10 bps (preregistrations/jse-benchrel-2026-07-14.md) — **result: VERDICT STANDS** (ΔTE −0.04 bps, p=0.42; MP best again; estimator_lab/BENCHREL.md) |
+
+## Data correction (2026-07-14, not a trial)
+
+Phantom 2026-05-25 (^VIX-only) row in holdout.parquet / holdout5y.parquet corrupted all
+frozen book returns after that date (~6 weeks). Builder fixed, row dropped surgically,
+originals archived, every frozen number recomputed: **no pass/fail set changes, no
+promoted-book changes; two beta-matched-excess sign flips on non-promoted specs
+(deep_dip_reversion 1y −4.2%→+8.1%, vol_core_svxy −1.1%→+1.2%); corrected SPY 1y +21.97%.**
+Correction of record: memos/panel-phantom-row-correction.md. Frozen results/*.json remain
+as-run (write-once); cite corrected values from the memo for the affected stretch.
+
+| alpha-forward (layer D measurement, forward alpha-isolation vs frozen M2/M2g replication; implements the 2026-07-14 program's production action) | 2026-07-14 | 1 forward experiment: 7 books + 4 placebos, thresholds frozen pre-start | **yes — adaptive loop: implements the factor-attribution program's recommendation** | 12m NW t ≥ 2.4 (m=3 clusters) + both-halves positive + placebo bands + financing stress = promising-but-unproven → independent replication; t < 2.0 or negative = factor-harvesting confirmed → factor-adjusted kill rules (memos/alpha-forward-setup-2026-07-14.md) — **ACCUMULATING** from 2026-07-15, first finalized days on FF publication |
