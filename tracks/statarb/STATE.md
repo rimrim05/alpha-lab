@@ -166,3 +166,14 @@ estimate against the position, so residual-space scoring booked ~6 bps/day of ac
 per position regardless of what the stock did. New house audit, applied to every future track:
 decompose the P&L identity (raw = residual + alpha_lag + beta_lag·f) and score only what a real
 book earns. Full post-mortem: `memos/diagnostics-2026-07-10.md`.
+
+## Reopened — HYP-005b (2026-07-14, Kristen's Stage-0)
+
+Kristen reopened the residual-reversion hypothesis on a materially new mechanism claim —
+not a parameter variant: the hedge factor itself. The 2026-07-10 verdict hedged with
+sector ETFs; HYP-005b asks whether a statistical factor-1 hedge (PCA), and specifically a
+JSE-corrected factor-1 (the dispersion-bias correction applied where its target is valid,
+per F-027), produces purer residuals → better predictions → a larger implementable gross
+edge. The 2026-07-10 DEAD verdict above stands as the sector-ETF record; revival to any
+book requires the pre-registered bars in
+research/hunt2026/preregistrations/jse-hedge-pair-2026-07-14.md and Kristen's Stage gates.
