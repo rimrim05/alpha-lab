@@ -15,18 +15,23 @@ tournament, the James-Stein program, and every kill — lives in **[HISTORY.md](
 
 ---
 
-## What's live now — the forward alpha-isolation test
+## Active research
+
+Two forward-looking lines are live. Both are pre-registered and measurement-only — no alpha is
+claimed until the gates below are met.
+
+### 1. Forward factor-adjusted performance monitoring
 
 Seven paper books trade on Alpaca paper. The open question, set by the [factor-risk
 program](HISTORY.md#james-stein--factor-risk-program-2026-07-14): these books are **factor-premium
 harvesters** — so the test is whether *any* return survives beyond a frozen factor-replication
 benchmark, after costs and financing. Each book's daily residual is logged write-once; no allocation,
-weight, or strategy-logic change is made from it before the gates below.
+weight, or strategy-logic change is made from it before the gates.
 
 **Started 2026-07-15 · next gate 6m (2027-01-14, descriptive) · verdict gate 12m (2027-07-14).**
 JSE is not deployed anywhere in this layer.
 
-### The three clusters under monitoring
+#### The three clusters under monitoring
 
 **QQQ vol / trend**
 | book | what it is |
@@ -47,7 +52,7 @@ JSE is not deployed anywhere in this layer.
 | ---- | ---------- |
 | `defensive_ensemble` | trend + vol-managed equity + cross-asset TSMOM — the round-2 risk-adjusted winner (flat through 2022) |
 
-### How each book is judged forward
+#### How each book is judged forward
 
 - **Benchmark:** `residual_t = book net return_t − replication_t − financing_t`, where replication is
   `RF + Σ βⱼ·Fⱼ` on **M2** (FF5 + Momentum + TSMOM proxy + QQQ-residual), plus a GLD factor for the two
@@ -61,6 +66,27 @@ JSE is not deployed anywhere in this layer.
   bands. A band miss is a pipeline stop, not a result.
 
 Setup record (frozen thresholds): [`memos/alpha-forward-setup-2026-07-14.md`](memos/alpha-forward-setup-2026-07-14.md).
+
+### 2. Point-in-time earnings event study
+
+A nightly collector ([`scripts/earnings_collect.py`](scripts/earnings_collect.py), job
+`com.rimrim.earnings-collect`) is building a **forward-only point-in-time** earnings-surprise panel —
+standardized EPS surprise (SUE) and its 5/20/60-day abnormal-return reaction, stored write-once in
+`data/earnings_fwd/`. The pre-registered PEAD test ([`EXP-IC-EARNINGS-FWD`, frozen
+2026-07-10](research/hunt2026/preregistrations/exp-ic-earnings-fwd-2026-07-10.md)) begins **only once
+the panel reaches 300 valid events** (kill threshold 600); until then the reporter prints an honest
+`ACCUMULATING` state and nothing is backtested.
+
+Why forward-only: free point-in-time earnings history doesn't exist — every free API returns the
+*restated* estimate (look-ahead-contaminated), so the only honest consensus-as-known-then data is what
+the collector watches happen going forward. The signal is orthogonal by construction to the `momentum`
+book. Data-readiness verdict: [`memos/earnings-event-alpha-data-readiness-2026-07-14.md`](memos/earnings-event-alpha-data-readiness-2026-07-14.md).
+
+## Completed research
+
+Archived experiments and post-mortems — factor attribution, the James-Stein / estimator tests, the
+volatility-timing program, the hunt2026 tournament, the retired Sharpe-3.8 stat-arb strategy, and every
+kill — live in **[HISTORY.md](HISTORY.md)** and [`memos/`](memos/).
 
 **Live status** &nbsp;·&nbsp; [operational status](STATUS.md) &nbsp;·&nbsp;
 [dashboard](https://kristenharim.github.io/alpha-lab/dashboard.html) &nbsp;·&nbsp;
