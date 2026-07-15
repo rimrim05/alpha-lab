@@ -122,3 +122,51 @@ from pass/fail (the correction claims validity for p/n ≥ 4 only).
 - **FAIL:** neither. Stop-iterating: one run; no new c, margin, or functional forms after
   seeing results. Whatever the outcome, the closed-form derivation of the slack law is lab
   theory (Kristen's), not a further sim-fitting exercise.
+
+---
+
+# Phase 4 addendum — leakage detection under misspecified residualization (frozen before run)
+
+## Question
+When known-factor exposures are estimated imperfectly, can residual PCA factors be low-floor
+and apparently reliable because they contain LEAKED known-factor structure — and can leakage
+be detected from observables?
+
+## Why the obvious check is vacuous (pre-stated)
+The residual panel is EXACTLY orthogonal to col(B̃_F) by construction, so cross-sectional
+orthogonality against the estimated subspace detects nothing. The observable handle is the
+TIME SERIES: a leaked factor's return series x_j = h_jᵀY_res inherits the removed factors'
+returns; a genuine residual factor's is independent of them.
+
+## Frozen detector
+D_j = R² of x_j regressed on the k_F ESTIMATED known-factor return series f̂_F = B̃_FᵀY
+(observable). Flag "leaked" iff the F-test of that regression (q=k_F, n obs) has p < 0.01.
+No other detectors or thresholds after seeing results.
+
+## Ground truth (sim-only)
+L_j = ‖Π_col(B_F) h_j‖² (alignment to the TRUE known subspace). Label leaked if L_j > 0.5,
+genuine if L_j < 0.2; in-between reported, excluded from error rates. (a)_j evaluated
+against the top-k′ directions of the actual residual signal covariance (leaked structure IS
+residual signal); never against total eigenvector angle.
+
+## Pipeline under test (order fixed)
+C4 trust screen (Phase 3, frozen) → among trusted factors: floor + leakage flag →
+{trusted-genuine, trusted-leaked, untrusted}.
+
+## Arms (k′=5 extracted throughout; mis = loading misalignment; SNR ladder as Phases 1–3)
+A1 oracle (mis=0, genuine het) · NEG (mis=0, B_R=0) · LEAK (mis=0.5, B_R=0) ·
+MIXED (mis=0.5, genuine het) — the decisive arm.
+
+## Cells and seeds
+Main (500,63); HELD-OUT (350,90) and (750,50). Seed=2 (fresh). N_MC=200.
+
+## Decision rule (pre-committed; decisive = MIXED arm, trusted factors, held-out cells)
+- SUCCESS: AUC(D_j → leaked) ≥ 0.9 AND at the frozen F-test flag FPR ≤ 0.10 and FNR ≤ 0.10.
+- FAIL: AUC < 0.7 OR either error rate > 0.25.
+- AMBIGUOUS: between. Also reported: the TRAP RATE (fraction of truly-leaked factors that
+  pass the trust screen with floor < 0.3 — the practitioner hazard motivating all this);
+  sanity on pure arms (LEAK median D high, A1 median D near the k_F/n null).
+- Known limit (pre-stated): the sim plants f_R ⊥ f_F; in real markets genuine residual
+  factors may correlate with fundamentals, which this detector would mis-flag. Correlated-f
+  arm deferred; not a rescue path for this run.
+Stop-iterating: one run; diagnose mechanism on failure, no threshold tuning.
