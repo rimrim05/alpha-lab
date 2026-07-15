@@ -54,8 +54,8 @@ link to FAILURES.md entry or CONFIDENCE_LADDER.md placement.
 | exp | layer | tag | one-liner |
 |---|---|---|---|
 | ~~JSE k=3-5 unconstrained min-var, walk-forward~~ | B | estimator | **ANSWERED — do not re-run** (queue row predated the answers landing later on 2026-07-10): F-021 (n=252, k=1/3/5 unconstrained: JSE worse, t≈8-12) + its n=63 resolution (unconstrained still worse, t>6) + est-crossover (worse at every n=42..252, no crossover, F-021 CLOSED). Final rule: JSE always-on long-only / never unconstrained (estimator_lab/CROSSOVER.md) |
-| open+close execution in harness | D | execution | reopens the overnight premium by design (F-006) |
+| ~~open+close execution in harness~~ | D | execution | **RUN 2026-07-14 — closed**: premium real (75% share both ETFs) but NOT exploitable — loses to buy-hold even gross, break-even cost negative; F-006 CLOSED FINALLY (F-025; preregistrations/open-close-2026-07-14.md) |
 | ~~turnover-penalty (no-trade band) sweep, vol-managed family~~ | C | portfolio | **RUN 2026-07-14 — closed**: MIXED per rule, mechanism NOT supported (deltas were timing noise, 5-10x the cost saved; no adoptable band; preregistrations/turnover-band-2026-07-14.md) |
-| EWMA vs realized-window vol inside vol_managed_qqq | B | estimator | matched pair, one layer |
+| ~~EWMA vs realized-window vol inside vol_managed_qqq~~ | B | estimator | **RUN 2026-07-14 — closed**: REALIZED BETTER decisively (matched pair −63.6 bps / 35% win share; ghost-vol cliff is a feature; F-024; preregistrations/ewma-vol-2026-07-14.md) |
 
 Each remaining open row still needs its own filled template block before running.

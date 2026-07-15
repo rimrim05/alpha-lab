@@ -68,4 +68,12 @@ commit.
 this panel) is the reason this exists and supplies the premium estimate. Flagged.
 
 ---
-**Result** (filled after the run, never edited above this line):
+**Result** (filled after the run, never edited above this line): PREMIUM REAL, NOT
+EXPLOITABLE — and stronger than the expected world: overnight carries 75% of gross CAGR on
+both ETFs (≥60% bar met; F-006's stock estimate ~69% confirmed), but overnight-only loses
+to buy-and-hold even GROSS (SPY 8.2% vs 10.9%; QQQ 11.6% vs 15.4%) at equal drawdown, so
+the measured break-even per-side cost is NEGATIVE (−0.6/−0.8 bps) — no cost model rescues
+it. Net Sharpe: overnight −0.14/0.13 vs buy-hold 0.64/0.77. Intraday-only annihilated net
+(−7.3/−6.5%/yr). Both engine gates passed (< 1e-12). F-006 CLOSED FINALLY → FAILURES.md
+F-025; harness.py unchanged; the open+close engine remains a research tool. Full tables +
+story: robustness/open_close.md.

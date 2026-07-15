@@ -405,3 +405,34 @@ releverages sooner after vol spikes, paying in sharp recoveries (covid −323 bp
 loss. Both gates passed (byte-exact frozen-spec reproduction; holdout Sharpe == published).
 Status: ANSWERED — keep realized-21; do not retest estimator shape (EWMA/GARCH-family smooth
 decay) on this book without a new mechanism claim. Full tables: robustness/ewma_vol.md.
+
+**F-025 — The overnight premium is exploitable under real open+close execution (F-006 final)**
+Result: FALSE, and more decisively than the cost arithmetic suggested (EXP-2026-07-14-open-close,
+prereg preregistrations/open-close-2026-07-14.md; both engine gates < 1e-12). The premium is
+REAL — overnight carries 75% of SPY's and QQQ's gross CAGR over 2005–2026, consistent with
+F-006's ~69% stock estimate — but overnight-only loses to buy-and-hold even GROSS (8.2% vs
+10.9% CAGR SPY; 11.6% vs 15.4% QQQ) with the same drawdown. Measured break-even per-side cost
+is NEGATIVE (−0.6/−0.8 bps): no cost model rescues it, because dropping the intraday leg
+forgoes +2.6–3.4%/yr that compounding needs. "Most of the return is overnight" ≠ "all of it."
+Status: F-006 CLOSED FINALLY. Dead under the daily convention (F-006) and under open+close
+execution built for it (this entry). Reopen requires an instrument avoiding the daily
+round-trip (e.g. futures basis carry), not a cheaper cost assumption. The open+close engine
+stays a research tool (robustness/open_close.py); harness.py keeps close-to-close. Full
+tables: robustness/open_close.md.
+
+**F-026 — Per-factor quality gating improves the JSE correction at k=5 (Kristen Stage-0)**
+Result: REDUNDANT by pre-committed rule (EXP-2026-07-14-jse-factor-gate, prereg
+preregistrations/jse-factor-gate-2026-07-14.md; 0/6 gate configs; both engine equivalence
+gates < 1e-12). The hypothesis's premise half-fails empirically: the ψ̂/detection-threshold
+gate NEVER binds — minimum ψ̂ over 138 months × 5 factors is 0.826, so the S&P top-5
+factors are always detectable with margin at n=63, p≈470 (the pre-registered alternative
+world). The binding quality dimension is Assumption-3 SEPARATION: f4/f5 are near-degenerate
+in 28–40% of months, and where the gate binds the direction favors gating (mean −0.36 bps
+vol, 65% hit rate, pooled t=−2.81) but ~10x below the −0.2 bps median bar — the same
+"real but tiny" family as F-021 FINAL. Transferable lessons: (1) on this panel, factor
+QUALITY questions are separation questions, not detection questions — eigengap, not ψ̂, is
+the scarce resource; (2) a median-based decisive stat cannot fire when treatment == control
+in most months — pre-commit a bound-months or mean statistic for minority-binding overlays.
+Status: Goldberg program returns to F-021 FINAL closed state; the stale "JSE k=3–5
+unconstrained walk-forward" queue item is retired (already answered by F-021). Full tables:
+research/estimator_lab/FACTOR_GATE.md.
