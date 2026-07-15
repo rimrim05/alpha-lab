@@ -436,3 +436,20 @@ in most months — pre-commit a bound-months or mean statistic for minority-bind
 Status: Goldberg program returns to F-021 FINAL closed state; the stale "JSE k=3–5
 unconstrained walk-forward" queue item is retired (already answered by F-021). Full tables:
 research/estimator_lab/FACTOR_GATE.md.
+
+**F-027 — eq.-13-calibrated shrinkage intensity improves multifactor JSE (Kristen Stage-0, F-026-override)**
+Result: FALSE — WRONG TARGET, the prereg's stated alternative mechanism
+(EXP-2026-07-14-jse-theorem-complete, prereg preregistrations/jse-theorem-complete-2026-07-14.md;
+both gates < 1e-12 / tol 0.01). Calibrating JSE shrinkage to the FULL eq.-13 misalignment
+(floor + psi^2 x MC-bounded rotation, Phi ~ t6, Kristen's Davis-Kahan lane ported to the S&P
+panel) made realized min-var vol WORSE in every cell: decisive +1.85 bps median (p=0.0092),
+unconstrained +30-50 bps. The rotation DIAGNOSIS validates (f1 ~0.02, f2-f5 0.13-0.55; t6 >
+normal; n=63 > n=252 — exactly the theorem's comparative statics); the RESPONSE fails because
+q (equal-weight) is the market factor's shrinkage target — pushing rotated non-market factors
+harder toward q collapses the factor block toward multiple market copies, with clean
+dose-response. Transferable lesson: multifactor JSE is not target-free — intensity calibration
+without per-factor targets is anti-productive; this is real-panel motivation for the lab arc's
+step 4 (multifactor JSE targets, the open next-paper problem). Worth bringing to Alex/Lisa.
+Status: estimator-overlay program closed again (8 cumulative registered chances since F-021
+FINAL; best outcome across all 8 = tiny long-only help, never deployable). Any per-factor-target
+design = new prereg + Kristen Stage-0. Full tables: research/estimator_lab/THEOREM_COMPLETE.md.

@@ -97,4 +97,15 @@ research/estimator_lab/. This experiment is NOT Kristen's lab deliverable to Ale
 Davis–Kahan bound notebook) and must not be represented as it.
 
 ---
-**Result** (filled after the run, never edited above this line):
+**Result** (filled after the run, never edited above this line): **WRONG TARGET
+(informative failure)** by the pre-committed rule: decisive cell (long-only n=63, t6)
+median +1.85 bps vs blanket, t=+2.64, p=0.0092 — worse, and worse in EVERY cell (both
+distributions, both books, both windows; unconstrained +30–50 bps). Both gates passed
+(rot=0 path == jse5 exactly; holdout Sharpe == published). The rotation diagnosis itself
+validates (f1 ~0.02, f2–f5 0.13–0.55, t6 > normal, n=63 > n=252); the failure is the
+response — extra shrinkage toward q collapses non-market factors toward the market
+direction, with clean dose-response (more rotation estimate → more harm; direction-
+sensitive book harmed 10–30x more). Empirical evidence that multifactor JSE requires
+per-factor TARGETS (the lab arc's open step 4), not just intensity calibration.
+FAILURES.md F-027; program returns to closed; cumulative overlay-line chances 8.
+Full tables + story: research/estimator_lab/THEOREM_COMPLETE.md.
