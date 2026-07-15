@@ -86,4 +86,17 @@ F-030 (drift ⇒ need bias-aware down-weighting), EXP-2026-07-14-subspace-invari
 F-027 (reuses its rotation_mc). factor_lab read-only; code in research/estimator_lab/.
 
 ---
-**Result** (filled after the run, never edited above this line):
+**Result** (filled after the run, never edited above this line): **HARMFUL** — decisive
+cell (large-cap n=63 k=5, κ=1): rob_perfactor vs full +10.36% vol (p=0.003); harmful in 5/6
+cells (up to +48% small-cap n=63), monotone in κ (κ=0.5 +4.4% → κ=2 +15.9%, best is LEAST
+robustness ⇒ κ→0=full optimal). Per-factor beats uniform everywhere (−12% to −23%, p<0.001 —
+distrusting the well-estimated market factor is worst), so the bound's per-factor structure is
+informative about WHERE distrust belongs, but ANY distrust on the within-subspace rotation
+costs vol. Closes the loop with subspace-invariance from the opposite side: that showed the
+rotation is HARMLESS to ignore, this shows it's HARMFUL to act on ⇒ the rotation bound
+(Kristen's Davis-Kahan/t₆ object) has no positive min-var value. All three constructive avenues
+now ruled out; distilled open problem = a DRIFT-aware subspace estimator (F-030's drift). One
+exception (reported, not decisive): large-cap n=252 per-factor helps −10% (gentle bounds act as
+mild shrinkage; not the HDLSS regime). Baseline gate passed (sin²θ=0 == raw PCA). Reduction =
+no-cross-term PSD proxy; full SOCP not escalated (signal negative). FAILURES.md F-031;
+synthesis research/estimator_lab/STEP4_SYNTHESIS.md; tables research/estimator_lab/ROBUST_ROTATION.md.

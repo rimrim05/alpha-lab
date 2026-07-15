@@ -511,3 +511,25 @@ is the BIAS-AWARE Avenue 3 (distributionally-robust SOCP using the Davis-Kahan/t
 per-factor trust weight to down-weight the drifting/low-gap factors). Kept for reuse: the
 subspace-stability metric flags factor-subspace drift vs noise. Full tables:
 research/estimator_lab/SUBSPACE_AVERAGING.md.
+
+**F-031 — Rotation-bound robust min-var (per-factor trust from Davis-Kahan/t6) lowers realized vol (Avenue 3)**
+Result: FALSE — HARMFUL (EXP-2026-07-14-robust-rotation-socp, prereg
+preregistrations/robust-rotation-socp-2026-07-14.md; no-cross-term PSD reduction, reuses F-027
+rotation_mc; baseline gate sin2=0==raw PCA exact). Wrapping each PCA eigenvector in an angular
+ball sized by the MC rotation bound and building worst-case min-var RAISES realized vol:
+decisive cell (large-cap n=63 k=5, kappa=1) rob_perfactor +10.36% vs raw PCA (p=0.003), harmful
+in 5/6 cells (up to +48% small-cap n=63), monotone in kappa (0.5:+4.4%, 1:+10.4%, 2:+15.9% -->
+least robustness is best, kappa->0=full optimal). Per-factor beats uniform everywhere (-12% to
+-23%, p<0.001: distrusting the well-estimated market factor is worst), so the bound's per-factor
+STRUCTURE is informative about where distrust belongs -- but ANY distrust on the within-subspace
+rotation costs vol. Closes the loop with EXP-2026-07-14-subspace-invariance from the opposite
+side: that showed the within-subspace rotation is HARMLESS to ignore; this shows it is HARMFUL
+to act on. Unified conclusion: the rotation bound (Theorem 1's hard term / Kristen's
+Davis-Kahan/t6 assignment) has NO positive minimum-variance value -- min-var needs the subspace
++ eigenvalues, not the individual within-subspace directions. One reported exception (not
+decisive): large-cap n=252 per-factor helps -10% (gentle long-window bounds act as mild
+shrinkage; Ledoit-Wolf also helps there; not the HDLSS regime). Consequence: all three tractable
+step-4 constructive avenues ruled out on real data (Avenue 1 eigenvalues dead; Avenue 2 averaging
+F-030; Avenue 3 this). Distilled open problem = a DRIFT-aware subspace estimator (F-030's drift
+is what actually limits multifactor min-var, unaddressed by any tool tested). Synthesis:
+research/estimator_lab/STEP4_SYNTHESIS.md; full tables: research/estimator_lab/ROBUST_ROTATION.md.
