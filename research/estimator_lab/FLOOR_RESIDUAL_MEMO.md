@@ -170,3 +170,24 @@ Main (500,63); HELD-OUT (350,90) and (750,50). Seed=2 (fresh). N_MC=200.
   factors may correlate with fundamentals, which this detector would mis-flag. Correlated-f
   arm deferred; not a rescue path for this run.
 Stop-iterating: one run; diagnose mechanism on failure, no threshold tuning.
+
+---
+
+# Phase 5 addendum — split-sample leakage detector (frozen before run)
+
+## Change (single, frozen)
+Split the window: half 1 (n₁=⌊n/2⌋) → residual PCA (h_j, floor, C4 screen); half 2 →
+x_j = h_jᵀY_res over half 2 regressed on f̂_F = B̃_FᵀY over half 2; F-test (q=k_F, n₂ obs,
+α=0.01 unchanged). Nothing else changes. Fresh seed=3. Same arms/cells as Phase 4.
+
+## Mechanism adjudication (pre-committed)
+- FPR drops to ≤0.10 at all held-out cells → Phase-4's shared-noise/overfit story confirmed.
+- FPR persists ≈0.12 → the true mechanism is PARTIAL MIXING: factors labeled "genuine"
+  (L < 0.2 permits real leakage up to 20%) carry leaked content the F-test CORRECTLY
+  detects — fix is interpretive (leakage is a continuum), not a better detector.
+
+## Decision rule
+SUCCESS: held-out MIXED FPR ≤ 0.10 AND FNR ≤ 0.10 (power cost of n/2 obs accepted) AND AUC
+≥ 0.9. → pipeline complete, next step = real FF-residualized S&P. FAIL: FNR > 0.25 (split
+cost too high) or FPR unimproved AND unexplained. AMBIGUOUS otherwise. Stop-iterating: one
+run, no re-splits or α changes.
