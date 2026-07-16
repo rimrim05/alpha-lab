@@ -30,6 +30,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -313,49 +314,61 @@ def _broker_snapshot(target_symbols: set[str], since: str) -> dict:
     """Read-only broker snapshot: get_account + get_all_positions + get_orders(OPEN/ALL).
     Reuses orders_from_client from hunt_paper_reconcile (read-only). Returns ok=False on any
     failure so the caller degrades section 2 instead of crashing."""
-    try:
-        import os
+    import os
 
-        from core.env import load_dotenv
-        load_dotenv()
-        key, secret = os.environ.get("ALPACA_API_KEY_ID"), os.environ.get("ALPACA_API_SECRET_KEY")
-        if not (key and secret):
-            return {"ok": False, "error": "paper keys not in env/.env"}
-        from alpaca.trading.client import TradingClient
-        from scripts.hunt_paper_reconcile import orders_from_client
-        tc = TradingClient(key, secret, paper=True)  # read-only usage only
-
-        acct = tc.get_account()
-        positions = tc.get_all_positions()
-        gross = sum(abs(float(p.market_value)) for p in positions)
-        net = sum(float(p.market_value) for p in positions)
-        equity = float(acct.equity)
-        foreign_syms = [p.symbol for p in positions
-                        if p.symbol not in target_symbols and abs(float(p.qty)) > 1e-9]
-        open_orders = orders_from_client(tc, since=since, statuses="open")
-        # g3: a foreign position whose latest OPPOSING order failed terminally (rejected/expired)
-        # while the position is still held. canceled = our own re-run cancel, not a failure.
-        failed_flatten = None
+    from core.env import load_dotenv
+    load_dotenv()
+    key, secret = os.environ.get("ALPACA_API_KEY_ID"), os.environ.get("ALPACA_API_SECRET_KEY")
+    if not (key and secret):
+        return {"ok": False, "error": "paper keys not in env/.env"}
+    # ponytail: retry the live snapshot — a single transient APIError (Alpaca blip/rate-limit)
+    # otherwise fires a false BROKER-UNREACHABLE alarm. 3 tries, 2s/4s backoff.
+    last_err = None
+    for attempt in range(3):
+        if attempt:
+            time.sleep(2 * attempt)
         try:
-            all_orders = orders_from_client(tc, since=since, statuses="all")
-            held = {p.symbol: float(p.qty) for p in positions}
-            failed_flatten = False
-            for sym in foreign_syms:
-                want = "sell" if held.get(sym, 0) > 0 else "buy"
-                opp = [o for o in all_orders if o["ticker"] == sym and o["side"] == want]
-                if opp and opp[-1]["status"] in ("rejected", "expired"):
-                    failed_flatten = True
-                    break
-        except Exception:
-            failed_flatten = None  # leave g3 INCONCLUSIVE
-        return {"ok": True, "equity": equity, "cash": float(acct.cash),
-                "buying_power": float(acct.buying_power),
-                "gross_x": gross / equity if equity else 0.0,
-                "net_x": net / equity if equity else 0.0,
-                "n_positions": len(positions), "foreign_n": len(foreign_syms),
-                "open_orders_n": len(open_orders), "failed_flatten": failed_flatten}
-    except Exception as e:  # broker down / SDK / network — degrade, never crash
-        return {"ok": False, "error": type(e).__name__}
+            return _broker_snapshot_once(key, secret, target_symbols, since)
+        except Exception as e:  # broker down / SDK / network — retry, then degrade
+            last_err = e
+    return {"ok": False, "error": type(last_err).__name__}
+
+
+def _broker_snapshot_once(key: str, secret: str, target_symbols: set[str], since: str) -> dict:
+    """One live read-only broker read. Raises on any failure so _broker_snapshot can retry."""
+    from alpaca.trading.client import TradingClient
+    from scripts.hunt_paper_reconcile import orders_from_client
+    tc = TradingClient(key, secret, paper=True)  # read-only usage only
+
+    acct = tc.get_account()
+    positions = tc.get_all_positions()
+    gross = sum(abs(float(p.market_value)) for p in positions)
+    net = sum(float(p.market_value) for p in positions)
+    equity = float(acct.equity)
+    foreign_syms = [p.symbol for p in positions
+                    if p.symbol not in target_symbols and abs(float(p.qty)) > 1e-9]
+    open_orders = orders_from_client(tc, since=since, statuses="open")
+    # g3: a foreign position whose latest OPPOSING order failed terminally (rejected/expired)
+    # while the position is still held. canceled = our own re-run cancel, not a failure.
+    failed_flatten = None
+    try:
+        all_orders = orders_from_client(tc, since=since, statuses="all")
+        held = {p.symbol: float(p.qty) for p in positions}
+        failed_flatten = False
+        for sym in foreign_syms:
+            want = "sell" if held.get(sym, 0) > 0 else "buy"
+            opp = [o for o in all_orders if o["ticker"] == sym and o["side"] == want]
+            if opp and opp[-1]["status"] in ("rejected", "expired"):
+                failed_flatten = True
+                break
+    except Exception:
+        failed_flatten = None  # leave g3 INCONCLUSIVE
+    return {"ok": True, "equity": equity, "cash": float(acct.cash),
+            "buying_power": float(acct.buying_power),
+            "gross_x": gross / equity if equity else 0.0,
+            "net_x": net / equity if equity else 0.0,
+            "n_positions": len(positions), "foreign_n": len(foreign_syms),
+            "open_orders_n": len(open_orders), "failed_flatten": failed_flatten}
 
 
 def _launchctl_exit() -> int | None:
