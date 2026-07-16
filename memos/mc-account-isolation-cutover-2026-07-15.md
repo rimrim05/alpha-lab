@@ -46,6 +46,8 @@ not the sizing driver. Divisor stays **7**, never 6 — dividing by 6 would sile
 - Cutover = the first `--live` nightly run after (a) `.env` has `ALPACA_MC_*`, (b) reviewers pass, and
   (c) one offline dry-run is inspected. Target: next weekday evening after review, ~2026-07-16 20:30 local
   (the nightly job window; must run after 16:00 ET). Exact timestamp stamped into this memo at cutover.
+  **FIRED `2026-07-15T20:31:21-07:00`** — one window earlier than the target, because the keys were in
+  `.env` by that evening's run. See §Final status for the stamp and its evidence.
 - Before the first dedicated-account submit, any pre-existing MC positions in the SHARED account are
   flattened by the normal reconcile/flatten path (MC leaving the shared target set makes its old shares
   "foreign" → flattened), so MC is not double-held across accounts.
@@ -97,7 +99,7 @@ untouched by rollback (they were never modified). No historical data is lost.
   regression — the same `round(target/price)` ran when MC was inside the aggregate. Flagged for Kristen
   (Stage 0 sizing call); shorts cannot be fractional, so it is not a free fix.
 
-## Final status (2026-07-15, pre-cutover)
+## Final status (written 2026-07-15 pre-cutover; cutover timestamp stamped in 2026-07-16)
 
 - **Implemented + pushed** (commit on `main`): `route_targets` split + no-cross-leak invariant;
   two-account `live_run` with fail-closed guards (missing `ALPACA_MC_*`, shared==MC key id, symbol
@@ -118,10 +120,21 @@ untouched by rollback (they were never modified). No historical data is lost.
 - **Shared account excludes MC:** confirmed — the six ETF books aggregate to the shared account;
   MC's old shares there flatten as foreign; the shared reconcile no longer judges MC.
 - **Dedicated account receives only MC:** confirmed — `momentum_concentrated` alone, tag `h26mc`.
-- **Exact cutover timestamp:** NOT YET — the nightly `com.rimrim.hunt2026-paper` job (`--live`,
-  weekdays 20:30 local) now fails closed until `ALPACA_MC_API_KEY_ID` / `ALPACA_MC_API_SECRET_KEY`
-  are in `.env`. The FIRST successful `--live` run after the keys are present IS the cutover; stamp its
-  timestamp here then. Until then the whole book pauses trading (safe; nothing submitted).
+- **Exact cutover timestamp:** **`2026-07-15T20:31:21-07:00`** (= `2026-07-16T03:31:21Z`) — stamped
+  2026-07-16. This is the moment the first `h26mc` order was created in the dedicated account
+  (`h26mc-AMD-cedf4062`, AMD buy 1), i.e. the first successful `--live` run after the keys landed in
+  `.env`, one nightly window EARLIER than the ~2026-07-16 target in §Cutover timing.
+  Evidence, four independent sources agreeing:
+  - broker: the dedicated account's 16 orders are all `h26mc`, all created 20:31:21–20:31:22 local
+    on 2026-07-15; `h26mc-AMD-cedf4062` is the earliest order the account has ever held.
+  - runner ledger: `_account_mc.jsonl` has exactly one live row, `date 2026-07-15`, `submit_ok: true`,
+    22 targets, `gross 0.0714`, `mc_buying_power $400,000`.
+  - shared reconcile: `_reconcile.jsonl` `run_at 2026-07-15T20:31:27` — 6s after the MC submit, same run.
+  - scheduler: `artifacts/hunt2026/paper/nightly.log` mtime `2026-07-15 20:31`, containing
+    `[2026-07-15] momentum_concentrated (dedicated account)`.
+  Orders were created after the 16:00 ET close, so they queued and **filled at the 2026-07-16 open**;
+  the same run's shared-account leg flattened MC's old shares there. Both accounts confirmed
+  `foreign: 0` on 2026-07-16. The MC broker-marked series therefore starts 2026-07-16.
 - **Rollback:** `git revert` this commit; next nightly run reverts to the seven-book single-account
   aggregate. Flatten the dedicated MC account from the Alpaca paper UI. Model + forward-alpha ledgers
   are untouched by rollback.
