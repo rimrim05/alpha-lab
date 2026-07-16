@@ -286,10 +286,13 @@ def _load_ledgers() -> dict:
             if row.get("mode") != "live":
                 continue
             d = row["date"]
-            if row.get("book") == "_account":
+            book = str(row.get("book") or "")
+            if book == "_account":
                 account_live_dates.add(d)
-            else:
-                book_dates[d].add(row["book"])
+            elif not book.startswith("_"):
+                # `_`-prefixed rows are account/meta ledgers (_account_mc, _reconcile_mc), never
+                # strategy books — counting them inflates books_computed past 7 (mc cutover 2026-07-15).
+                book_dates[d].add(book)
     book_counts = {d: len(s) for d, s in book_dates.items()}
     recon_rows = ([json.loads(x) for x in RECONCILE.read_text().splitlines()]
                   if RECONCILE.exists() else [])

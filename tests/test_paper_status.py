@@ -27,6 +27,33 @@ def test_missing_reconcile_row_is_none():
     assert ps._recon_foreign(None) == (None, None)
 
 
+# ---------- ledger loading: account/meta rows are not strategy books ----------
+
+def test_account_mc_ledger_is_not_counted_as_a_book(tmp_path, monkeypatch):
+    """Post-cutover there are two account ledgers. Only the seven strategy books may count."""
+    import json as _json
+
+    books = ["vol_managed_qqq", "vol_core_svxy", "trend_vol_qqq", "dual_momentum_gem",
+             "dual_momentum_gold", "defensive_ensemble", "momentum_concentrated"]
+    for b in books:
+        (tmp_path / f"{b}.jsonl").write_text(
+            _json.dumps({"date": "2026-07-15", "book": b, "mode": "live"}) + "\n")
+    (tmp_path / "_account.jsonl").write_text(
+        _json.dumps({"date": "2026-07-15", "book": "_account", "mode": "live",
+                     "target_dollars": {"QQQ": 1.0}}) + "\n")
+    (tmp_path / "_account_mc.jsonl").write_text(
+        _json.dumps({"date": "2026-07-15", "book": "_account_mc", "mode": "live"}) + "\n")
+    (tmp_path / "_reconcile.jsonl").write_text(_json.dumps({"date": "2026-07-15"}) + "\n")
+
+    monkeypatch.setattr(ps, "LEDGER_DIR", tmp_path)
+    monkeypatch.setattr(ps, "RECONCILE", tmp_path / "_reconcile.jsonl")
+    monkeypatch.setattr(ps, "ACCOUNT", tmp_path / "_account.jsonl")
+    led = ps._load_ledgers()
+
+    assert led["book_counts"]["2026-07-15"] == 7      # was 8: _account_mc counted as a book
+    assert led["account_live_dates"] == {"2026-07-15"}
+
+
 # ---------- completed vs partial cycle detection ----------
 
 def test_completed_cycle_detected():
