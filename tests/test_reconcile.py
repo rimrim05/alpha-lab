@@ -49,6 +49,27 @@ def test_self_cancels_are_not_rejects():
     assert row["n_rejects"] == 0 and row["n_canceled"] == 1 and row["n_orders"] == 0
 
 
+def test_zero_fill_session_raises_the_reject_rate_alarm():
+    """2026-07-15 replay: Alpaca expired the whole queued batch, 19/19 orders closed unfilled.
+    The 2% band was pre-registered and printed but never alarmed, so the session's total loss of
+    orders was silent — the only alarm that day came from unrelated FOREIGN-POSITIONS."""
+    orders = [_order("QQQ", qty=0.0, status="expired", coid="h26-x-1"),
+              _order("AMD", qty=0.0, status="expired", coid="h26-x-2")]
+    row = reconcile_date(D, _books(), orders, {}, {"QQQ": 500.0, "AMD": 100.0})
+    assert row["n_fills"] == 0 and row["n_rejects"] == 2 and row["reject_rate"] == 1.0
+    hits = [a for a in row["alarms"] if a.startswith("REJECT-RATE")]
+    assert hits, "a 100% zero-fill session must alarm"
+    assert "expired" in hits[0]      # wording must not claim these were broker rejections
+
+
+def test_in_band_session_stays_quiet():
+    orders = [_order("QQQ"), _order("AMD", "sell", 3, 99.8, coid="h26-x-2")]
+    row = reconcile_date(D, _books(), orders, {"QQQ": 100.0, "AMD": 3.0},
+                         {"QQQ": 500.0, "AMD": 100.0})
+    assert row["reject_rate"] == 0.0
+    assert [a for a in row["alarms"] if a.startswith("REJECT-RATE")] == []
+
+
 def test_book_drag_prorated_by_target_share():
     closes = {"QQQ": 500.0}
     row = reconcile_date(D, _books(), [_order()], {"QQQ": 100.0}, closes)

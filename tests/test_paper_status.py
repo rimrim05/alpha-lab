@@ -27,6 +27,37 @@ def test_missing_reconcile_row_is_none():
     assert ps._recon_foreign(None) == (None, None)
 
 
+# ---------- ledger registry: a new ledger file cannot appear unnoticed ----------
+
+# Every file allowed in ledgers/hunt2026/. Adding a ledger (a new book, a new account, a new
+# reconcile series) MUST be registered here — that is the point. The mc-isolation cutover added
+# _account_mc.jsonl and _reconcile_mc.jsonl silently, and paper_status counted _account_mc as an
+# 8th strategy book for a full day. This test is the tripwire that would have caught it offline.
+KNOWN_META_LEDGERS = {"_account.jsonl", "_reconcile.jsonl",
+                      "_account_mc.jsonl", "_reconcile_mc.jsonl"}
+
+
+def test_every_ledger_file_is_registered():
+    from scripts.hunt_paper_run import BOOKS
+
+    if not ps.LEDGER_DIR.exists():
+        return                                    # fresh clone / no live ledgers yet
+    allowed = {f"{b}.jsonl" for b in BOOKS} | KNOWN_META_LEDGERS
+    found = {p.name for p in ps.LEDGER_DIR.glob("*.jsonl")}
+    unregistered = found - allowed
+    assert unregistered == set(), (
+        f"unregistered ledger file(s): {sorted(unregistered)}. A new ledger changes what "
+        f"paper_status counts and monitors — register it in KNOWN_META_LEDGERS (and decide how "
+        f"it is monitored) or add its book to hunt_paper_run.BOOKS.")
+
+
+def test_expected_books_matches_the_runner():
+    """paper_status duplicates the book count (it may not import the runner) — keep them equal."""
+    from scripts.hunt_paper_run import N_BOOKS_TOTAL
+
+    assert ps.EXPECTED_BOOKS == N_BOOKS_TOTAL
+
+
 # ---------- ledger loading: account/meta rows are not strategy books ----------
 
 def test_account_mc_ledger_is_not_counted_as_a_book(tmp_path, monkeypatch):
@@ -103,6 +134,16 @@ def test_mc_inactive_pre_cutover_cannot_alarm(tmp_path, monkeypatch):
     assert [a for a in status["alarms"] if a.startswith("MC-")] == []
     assert code == 0
     assert "dedicated momentum_concentrated account" not in ps.render(status)
+
+
+def test_wrong_book_count_alarms_instead_of_printing_cosmetically(tmp_path, monkeypatch):
+    """8/7 printed but never alarmed, because the check was `>= 7` rather than exact."""
+    led = _clean_ledgers(set(), None)
+    led["book_counts"] = {"2026-07-15": 8}          # the _account_mc phantom-book shape
+    _stub_env(tmp_path, monkeypatch, led)
+    status, code = ps.build_status(dt.datetime(2026, 7, 16, 13, 0))
+    assert any(a.startswith("BOOK-COUNT") for a in status["alarms"])
+    assert code == 1                                 # was 0: 8 >= 7 passed silently
 
 
 def test_mc_broker_unreachable_alarms(tmp_path, monkeypatch):

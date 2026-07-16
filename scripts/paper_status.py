@@ -56,6 +56,11 @@ ACCOUNT_MC = LEDGER_DIR / "_account_mc.jsonl"
 # the runner (that would pull strategy recomputation into this script).
 MC_CRED_NAMES = ("ALPACA_MC_API_KEY_ID", "ALPACA_MC_API_SECRET_KEY")
 SHARED_CRED_NAMES = ("ALPACA_API_KEY_ID", "ALPACA_API_SECRET_KEY")
+# Mirrors hunt_paper_run.N_BOOKS_TOTAL (= len(BOOKS)), duplicated because the read-only guarantee
+# forbids importing the runner. tests/test_paper_status.py asserts the two stay equal.
+# EXACT, not a floor: `>= 7` is why the _account_mc ledger showed as a cosmetic "8 / 7" instead of
+# alarming (fixed 2026-07-16).
+EXPECTED_BOOKS = 7
 MANIFEST = ROOT / "DEPLOYMENT_MANIFEST.md"
 PLIST = Path.home() / "Library" / "LaunchAgents" / "com.rimrim.hunt2026-paper.plist"
 NIGHTLY_LOG = ROOT / "artifacts" / "hunt2026" / "paper" / "nightly.log"
@@ -204,9 +209,14 @@ def next_action(broker_ok: bool, run_status: str, books_ok: bool, rejects: int,
     if run_status in ("MISSING", "PARTIAL") and first_fire_passed:
         return f"Investigate nightly job — last cycle {run_status.lower()}."
     if not books_ok:
-        return "One or more books failed to compute; check the nightly cycle."
+        return (f"Book count is not {EXPECTED_BOOKS}: a book failed to compute, or a non-book "
+                f"ledger is being counted as one. Check the nightly cycle.")
     if rejects:
-        return f"Investigate {rejects} rejected order(s) from the last cycle."
+        # "rejected" alone is misleading: this metric counts any order that closed with no fill,
+        # and on 2026-07-15 all 19 were broker EXPIRIES, which self-heal on the next run's delta
+        # recompute. Naming both outcomes points the investigation at the right question.
+        return (f"Investigate {rejects} zero-fill order(s) (rejected or expired) from the last "
+                f"cycle — check order status at the broker before assuming a rejection.")
     if not gate_complete:
         return "Wait for market open, re-run reconcile after fills, clear stat-arb/AMAT residue."
     if clock_state == "INCONSISTENT":
@@ -495,8 +505,11 @@ def build_status(now: dt.datetime | None = None) -> tuple[dict, int]:
             alarms.append(f"MC-BROKER-UNREACHABLE: {mc.get('error', 'unknown')}")
 
     na = next_action(broker["ok"] and (mc["ok"] if mc["active"] else True),
-                     rh["status"], rh["books_computed"] >= 7, rejects,
+                     rh["status"], rh["books_computed"] == EXPECTED_BOOKS, rejects,
                      gate["complete"], clock["state"], ffp)
+    if rh["books_computed"] != EXPECTED_BOOKS and rh["status"] != "MISSING":
+        alarms.append(f"BOOK-COUNT: {rh['books_computed']} book(s) computed for {session}, "
+                      f"expected {EXPECTED_BOOKS}")
 
     status = {
         "generated": now.strftime("%Y-%m-%d %H:%M %Z").rstrip(),

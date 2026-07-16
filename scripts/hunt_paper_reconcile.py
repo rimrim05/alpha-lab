@@ -280,14 +280,22 @@ def reconcile_date(date: str, books: dict[str, dict], orders: list[dict],
                            "flat_nights": flat_nights}
 
     n = len(fills) + len(rejects)   # canceled excluded: self-cancels are not execution events
+    reject_rate = round(len(rejects) / n, 4) if n else None
     if not flatten_complete:
         alarms.append(f"FOREIGN-POSITIONS: {len(foreign)} held symbol(s) in no book target "
                       f"(${foreign_dollars:,.0f}), {flatten_remaining_total:g} flatten share(s) "
                       f"remaining — stat-arb flatten / AMAT not yet complete")
+    # The reject_rate band was pre-registered and printed but never alarmed, so 2026-07-15 lost
+    # 19/19 orders to broker expiry in silence (exit 1 that day came from FOREIGN-POSITIONS alone).
+    # "rejects" here is the pre-registered zero-fill metric (rejected OR expired OR closed unfilled);
+    # the wording says so, because "N rejected" sent the 2026-07-16 investigation the wrong way.
+    if reject_rate is not None and reject_rate > BANDS["reject_rate"]:
+        alarms.append(f"REJECT-RATE: {len(rejects)}/{n} order(s) ({reject_rate:.0%}) closed with no "
+                      f"fill — rejected/expired, band < {BANDS['reject_rate']:.0%}")
     return {"date": date, "run_at": dt.datetime.now().isoformat(timespec="seconds"),
             "n_orders": n, "n_fills": len(fills), "n_rejects": len(rejects),
             "n_canceled": canceled, "n_partial": partials, "n_replaced": replaced,
-            "reject_rate": round(len(rejects) / n, 4) if n else None,
+            "reject_rate": reject_rate,
             "slippage": {"stock": _stats("stock"), "etf": _stats("etf")},
             "position_gap_frac": round(gap / notional, 4),
             "foreign_positions": {"n": len(foreign), "dollars": foreign_dollars,
