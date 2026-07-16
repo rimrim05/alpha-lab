@@ -49,6 +49,58 @@ def test_self_cancels_are_not_rejects():
     assert row["n_rejects"] == 0 and row["n_canceled"] == 1 and row["n_orders"] == 0
 
 
+def _trail(stock=None, etf=None):
+    return {"stock": {"n": 20, "mean_bps": stock}, "etf": {"n": 20, "mean_bps": etf}}
+
+
+def test_single_night_slippage_breach_is_logged_not_alarmed():
+    """Pre-reg §Failure/kill: a per-night breach is logged, not acted on — fills embed overnight
+    drift (per-fill stdev ~250 bps vs a 15 bps band), so one night carries no signal."""
+    from scripts.hunt_paper_reconcile import slippage_alarms, slippage_breach_nights
+
+    breach = slippage_breach_nights(_trail(stock=128.6), None)   # the real 2026-07-14 median
+    assert breach["stock"] == 1
+    assert slippage_alarms(breach, _trail(stock=128.6)) == []
+
+
+def test_slippage_alarms_only_at_the_pre_registered_streak():
+    from scripts.hunt_paper_reconcile import (SLIPPAGE_BREACH_NIGHTS, slippage_alarms,
+                                              slippage_breach_nights)
+
+    trail, breach = _trail(stock=60.0), None
+    for night in range(1, SLIPPAGE_BREACH_NIGHTS + 1):
+        breach = slippage_breach_nights(trail, breach)
+        assert breach["stock"] == night
+        fired = bool(slippage_alarms(breach, trail))
+        assert fired == (night >= SLIPPAGE_BREACH_NIGHTS), f"night {night} fired={fired}"
+    assert "10 consecutive nights" in slippage_alarms(breach, trail)[0]
+
+
+def test_slippage_streak_resets_on_one_night_back_in_band():
+    from scripts.hunt_paper_reconcile import slippage_alarms, slippage_breach_nights
+
+    breach = {"stock": 9, "etf": 0}
+    breach = slippage_breach_nights(_trail(stock=5.8), breach)    # the real trailing mean, in band
+    assert breach["stock"] == 0
+    assert slippage_alarms(breach, _trail(stock=5.8)) == []
+
+
+def test_too_few_fills_is_not_a_breach():
+    from scripts.hunt_paper_reconcile import slippage_breach_nights
+
+    breach = slippage_breach_nights({"stock": {"n": 3, "mean_bps": None}}, {"stock": 4})
+    assert breach["stock"] == 0          # no statistic yet != out of band
+
+
+def test_negative_slippage_streak_implicates_the_reference_convention():
+    """Pre-reg §Alternative result: negative beyond the band means the reference-close convention
+    is biased — the alarm must say 'suspect the measurement', not celebrate free money."""
+    from scripts.hunt_paper_reconcile import SLIPPAGE_BREACH_NIGHTS, slippage_alarms
+
+    hits = slippage_alarms({"etf": SLIPPAGE_BREACH_NIGHTS}, _trail(etf=-40.0))
+    assert hits and "measurement bug" in hits[0]
+
+
 def test_zero_fill_session_raises_the_reject_rate_alarm():
     """2026-07-15 replay: Alpaca expired the whole queued batch, 19/19 orders closed unfilled.
     The 2% band was pre-registered and printed but never alarmed, so the session's total loss of

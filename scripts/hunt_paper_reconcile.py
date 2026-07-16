@@ -46,11 +46,21 @@ MC_BOOK = "momentum_concentrated"
 MC_CRED_NAMES = ("ALPACA_MC_API_KEY_ID", "ALPACA_MC_API_SECRET_KEY")
 RECONCILE_MC = LEDGER_DIR / "_reconcile_mc.jsonl"
 
-# Pre-registered agreement bands (ops-reality-2026-07-10.md) — echoed in the report only;
-# breaches are logged, never acted on here.
+# Pre-registered agreement bands (research/hunt2026/preregistrations/ops-reality-2026-07-10.md).
+# Enforced exactly as pre-registered, never re-tuned here (§Stop-iterating: this harness gets no
+# parameters to sweep):
+#   - slippage: the statistic is the TRAILING MEAN over the last >=TRAIL_MIN_FILLS fills per class,
+#     never a single night. A per-night breach is LOGGED ONLY — single fills embed overnight drift
+#     (measured per-fill stdev ~250 bps against a 15 bps band), so one night carries no signal.
+#     The decision trigger is the same band breached on the trailing statistic for
+#     SLIPPAGE_BREACH_NIGHTS consecutive nights (§Failure/kill).
+#   - reject rate: a per-night band, "< 2% of h26-tagged orders per night"; >= 2% is a listed
+#     Alternative Result (sizing/tradability bugs). Operational, not noisy like slippage, so it
+#     alarms the same night — 2026-07-15 lost 19/19 orders in silence before this was wired.
 BANDS = {"stock_bps": (0.0, 15.0), "etf_bps": (0.0, 5.0),
          "reject_rate": 0.02, "book_drag_bps_month": 30.0}
 TRAIL_MIN_FILLS = 20
+SLIPPAGE_BREACH_NIGHTS = 10   # pre-registered decision trigger; consecutive nights out of band
 
 
 # ---------- ledger ----------
@@ -289,7 +299,7 @@ def reconcile_date(date: str, books: dict[str, dict], orders: list[dict],
     # 19/19 orders to broker expiry in silence (exit 1 that day came from FOREIGN-POSITIONS alone).
     # "rejects" here is the pre-registered zero-fill metric (rejected OR expired OR closed unfilled);
     # the wording says so, because "N rejected" sent the 2026-07-16 investigation the wrong way.
-    if reject_rate is not None and reject_rate > BANDS["reject_rate"]:
+    if reject_rate is not None and reject_rate >= BANDS["reject_rate"]:   # pre-reg: band is "< 2%"
         alarms.append(f"REJECT-RATE: {len(rejects)}/{n} order(s) ({reject_rate:.0%}) closed with no "
                       f"fill — rejected/expired, band < {BANDS['reject_rate']:.0%}")
     return {"date": date, "run_at": dt.datetime.now().isoformat(timespec="seconds"),
@@ -315,6 +325,42 @@ def trailing_means(rows: list[dict]) -> dict:
               if f["class"] == cls and f.get("slippage_bps") is not None][-TRAIL_MIN_FILLS:]
         out[cls] = {"n": len(xs),
                     "mean_bps": round(sum(xs) / len(xs), 2) if len(xs) >= TRAIL_MIN_FILLS else None}
+    return out
+
+
+def slippage_breach_nights(trail: dict, prior: dict | None = None) -> dict:
+    """Consecutive nights the trailing-mean statistic has sat outside its band, per class.
+
+    Mirrors the flat_nights counter. Resets to 0 the first night back in band, and stays 0 while
+    there are fewer than TRAIL_MIN_FILLS fills (mean_bps is None => no statistic yet, not a breach).
+    """
+    prior = prior or {}
+    out = {}
+    for cls, (lo, hi) in (("stock", BANDS["stock_bps"]), ("etf", BANDS["etf_bps"])):
+        m = (trail.get(cls) or {}).get("mean_bps")
+        breached = m is not None and not (lo <= m <= hi)
+        out[cls] = prior.get(cls, 0) + 1 if breached else 0
+    return out
+
+
+def slippage_alarms(breach: dict, trail: dict) -> list[str]:
+    """Fire ONLY at the pre-registered trigger: SLIPPAGE_BREACH_NIGHTS consecutive nights out of
+    band on the trailing statistic. A shorter streak is overnight noise and is logged, not alarmed."""
+    out = []
+    for cls, (lo, hi) in (("stock", BANDS["stock_bps"]), ("etf", BANDS["etf_bps"])):
+        nights = breach.get(cls, 0)
+        if nights < SLIPPAGE_BREACH_NIGHTS:
+            continue
+        m = (trail.get(cls) or {}).get("mean_bps")
+        below = m is not None and m < lo
+        # Pre-reg §Alternative result: a negative trailing mean means the reference-close convention
+        # itself is biased — i.e. suspect the measurement before believing the free money.
+        why = (" — negative beyond the band implicates the reference-close convention, so suspect a "
+               "measurement bug before an execution win") if below else ""
+        out.append(f"SLIPPAGE-{cls.upper()}: trailing mean {m:+.1f} bps outside the "
+                   f"[{lo:g}, {hi:g}] bps band for {nights} consecutive nights — pre-registered "
+                   f"decision trigger: flag to the Research Director. Do NOT tune specs or the "
+                   f"frozen cost model from inside this experiment{why}")
     return out
 
 
@@ -522,6 +568,8 @@ def main() -> None:
     prior_rows = drop_reprocessed_dates(prior_rows, dates)
     prior_flat = {n: b.get("flat_nights", 0)
                   for n, b in (prior_rows[-1]["books"].items() if prior_rows else [])}
+    # carried across runs the same way flat_nights is: read the last row, re-stamp on each new one
+    prior_breach = prior_rows[-1].get("slippage_breach_nights", {}) if prior_rows else {}
     for d in dates:
         closes = {}
         avail = px.loc[px.index <= d]
@@ -534,7 +582,11 @@ def main() -> None:
                              symbol_orders=symbol_orders, equity=equity)
         prior_flat = {n: b["flat_nights"] for n, b in row["books"].items()}
         prior_rows.append(row)
-        print_report(row, trailing_means(prior_rows))
+        trail = trailing_means(prior_rows)          # needs THIS row, so it runs after the append
+        prior_breach = slippage_breach_nights(trail, prior_breach)
+        row["slippage_breach_nights"] = prior_breach
+        row["alarms"] += slippage_alarms(prior_breach, trail)
+        print_report(row, trail)
     RECONCILE.write_text("\n".join(json.dumps(r) for r in prior_rows) + "\n")
     print(f"\nwrote {len(dates)} row(s) -> {RECONCILE}")
 
