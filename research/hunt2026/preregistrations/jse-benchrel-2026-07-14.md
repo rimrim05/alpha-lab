@@ -10,7 +10,7 @@ error as a primary outcome; execution rule 6 permits exactly this smallest adjud
 ## Question
 
 Does the JSE eigenvector correction reduce realized tracking error in a benchmark-relative
-(index-tracking) construction, where TE, unlike total min-var vol, depends on active
+(index-tracking) construction, where TE — unlike total min-var vol — depends on active
 positions and might be sensitive to the eigenvector directions?
 
 ## Design (mirrors run_minvar.py conventions exactly; only the objective is new)
@@ -19,7 +19,7 @@ positions and might be sensitive to the eigenvector directions?
   research/estimator_lab/run_minvar.py with EL_WINDOW=63 (the decisive weak-factor cell).
 - Benchmark w_b: equal weight over ALL eligible names that month (PIT, no caps).
 - Tracking basket B: every 5th eligible name in sorted-ticker order (deterministic,
-  estimator-independent, ≈90–97 names), the basket cannot replicate the benchmark, so
+  estimator-independent, ≈90–97 names) — the basket cannot replicate the benchmark, so
   the problem is non-degenerate.
 - Optimization per estimator: minimize (w − w_b)ᵀ Σ̂ (w − w_b) over w supported on B,
   1ᵀw = 1 (closed form via Σ̂_BB solve with Lagrange sum constraint), then the house

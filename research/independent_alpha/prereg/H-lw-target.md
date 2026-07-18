@@ -18,16 +18,16 @@ min-var portfolio volatility.
 
 **Layer touched** (exactly one): **B — estimator** (shrinkage target only; the min-var
 optimizer, universe, windows, and holds are unchanged). Registered baseline: the **`lw` row**
-in `estimator_lab/RESULTS.md`: unconstrained mean vol **11.64%**, net Sharpe 0.35, turnover
+in `estimator_lab/RESULTS.md` — unconstrained mean vol **11.64%**, net Sharpe 0.35, turnover
 3.23; long-only **13.70%**, Sharpe 0.73. Reigning champion to beat: **`mp`** (11.27%
 unconstrained).
 
-**Alpha type tag:** estimator. A win is a **better covariance estimate, not a market forecast**:
+**Alpha type tag:** estimator. A win is a **better covariance estimate, not a market forecast** —
 it improves the risk model, not the return signal.
 
-**Control:** `lw_cov` as shipped: `ledoit_wolf(R − R.mean())`, identity target.
+**Control:** `lw_cov` as shipped — `ledoit_wolf(R − R.mean())`, identity target.
 
-**Treatment:** `lw_cc`, Ledoit-Wolf shrinkage with the **constant-correlation target** F
+**Treatment:** `lw_cc` — Ledoit-Wolf shrinkage with the **constant-correlation target** F
 (F_ii = s_ii; F_ij = r̄·√(s_ii·s_jj), r̄ = mean sample pairwise correlation), shrinkage
 intensity δ* from the LW-2004 closed form (π, ρ, γ). Un-tuned: δ* is the analytic optimum, not
 a swept parameter. ONE layer changed: the target of an existing shrinkage estimator.
@@ -39,16 +39,16 @@ holds, `|w| ≤ 5%` cap, both books (unconstrained sum-w=1 and long-only).
 **Sample / train / eval (non-overlapping, holdout fixed BEFORE running):**
 - Full grid: **137 months, 2015-02 → 2026-06** (the estimator_lab span).
 - Parameter-free (analytic δ*, no fit), so the primary paired-t runs on all 137 months. **Blind
-  sign-stability holdout:** last **24 months (2024-07 → 2026-06)**: the CC−identity vol delta
+  sign-stability holdout:** last **24 months (2024-07 → 2026-06)** — the CC−identity vol delta
   must not flip sign there. Inspect only on 2015-02 → 2024-06 before running the holdout months.
 
 **Forecast + execution timestamps:** weights set at **close d** from the trailing 252d window;
 returns earned **d+1 … next month-end** (the harness convention: day d excluded from the OOS
-hold, per RESULTS.md "Holding-window alignment"). No live order: offline estimator grid.
+hold, per RESULTS.md "Holding-window alignment"). No live order — offline estimator grid.
 
 **Expected effect size:** CC target lowers **unconstrained** mean realized vol vs identity LW by
 **~10–40 bps** (its live regime, where LW already sits mid-pack at 11.64%). Prior it still
-**loses to MP** (11.27%): MP clipping is the incumbent champion. Long-only expected ≈ inert
+**loses to MP** (11.27%) — MP clipping is the incumbent champion. Long-only expected ≈ inert
 (all estimators compress to 11.7–14.2% there). Honest prior P(beats identity) ≈ 0.55;
 P(beats MP) ≈ 0.2.
 
@@ -68,7 +68,7 @@ dispersion these corrections target is nearly absent at n=252). Do **not** try f
 variants on this window; the reopen regime is small-n (n≈63), already docketed separately.
 
 **Cost model:** turnover is emitted per estimator (RESULTS.md column); net Sharpe already nets a
-per-unit-turnover cost in the existing harness. LW-identity turnover is 3.23 (high): if lw_cc
+per-unit-turnover cost in the existing harness. LW-identity turnover is 3.23 (high) — if lw_cc
 lowers vol **and** turnover, that is a double win; if it lowers vol but raises turnover, the net
 Sharpe column adjudicates. No new cost assumptions introduced.
 
@@ -84,14 +84,14 @@ month. Delisted names retained where `panel_2005` has their history.
 **Complexity score:** 1/5 (~15-line `lw_cc` function in `estimators.py` + one `ESTIMATORS` entry
 + re-run `run_minvar.py`).
 
-**Information-gain estimate:** MODERATE: a clean docket-closer either way; retires the exact open
+**Information-gain estimate:** MODERATE — a clean docket-closer either way; retires the exact open
 item RESULTS.md flagged. Low novelty, high tidiness.
 
 **Trial count:** adds **TRIAL_LEDGER.md #21** (estimator; tag = estimator research) in the same
 commit. Adaptive-loop flag: derived from the estimator_lab OOS record (F-021, RESULTS.md) ⇒
-**yes, adaptive**, note in the hunt-level ledger.
+**yes, adaptive** — note in the hunt-level ledger.
 
-**Derived from prior holdout results?** Yes: RESULTS.md's LW/MP grid and its "blunt target" note.
+**Derived from prior holdout results?** Yes — RESULTS.md's LW/MP grid and its "blunt target" note.
 Sanctioned docket item, not fishing.
 
 ---
@@ -100,11 +100,11 @@ Sanctioned docket item, not fishing.
 **Run:** 2026-07-11, `research/independent_alpha/experiments/run_lw_cc.py` (standalone; imports
 the shipped `estimator_lab` harness read-only, adds `lw_cc`, runs {lw, mp, lw_cc} on the exact
 grid). Outputs: `experiments/lw_cc_results.csv`, `experiments/lw_cc_diag.csv`. Runtime ~8 s.
-Grid actually produced **138 months** (2015-01 → 2026-06): the shipped `results.csv` yields the
+Grid actually produced **138 months** (2015-01 → 2026-06) — the shipped `results.csv` yields the
 same 138; the "137 / 2015-02" in RESULTS.md is a prose rounding, not a spec mismatch.
 
 **VERDICT: KILL.** The pre-registered success condition (unconstrained vol *reduction* vs
-identity, paired t < −2, holdout sign-stable) is failed on every clause, and failed in the
+identity, paired t < −2, holdout sign-stable) is failed on every clause — and failed in the
 *adverse* direction. Docket item "does the LW target matter here" is answered: **for the primary
 (unconstrained) book, shrinking to the constant-correlation target makes realized vol
 significantly WORSE, not better.** No more LW-target variants on this n=252 window.
@@ -115,9 +115,9 @@ significantly WORSE, not better.** No more LW-target variants on this n=252 wind
 - **Holdout 2024-07 → 2026-06 (n=24): lw_cc − lw = −0.111 vol%pts → sign FLIPPED** vs the full-sample
   +0.873. So even the direction is unstable; the pre-registered holdout stability requirement also fails.
 
-Success requires a reduction with t < −2 AND holdout-stable sign: none of the three hold. The
+Success requires a reduction with t < −2 AND holdout-stable sign — none of the three hold. The
 literal kill trigger as written (|paired t| < 2, "inert") does *not* fit either: |t| = 3.69 > 2. The
-effect is significant but adverse, which is a *stronger* fail than inertness: the stop-iterating
+effect is significant but adverse, which is a *stronger* fail than inertness — the stop-iterating
 rationale (LW's target choice does not lower unconstrained vol on this n=252 / strong-factor design,
 consistent with F-021) applies a fortiori. Verdict is KILL / close the docket, reached via
 "significant adverse primary + holdout flip," not via the |t|<2 clause. Stated so it is not misread.
@@ -133,11 +133,11 @@ consistent with F-021) applies a fortiori. Verdict is KILL / close the docket, r
 | long_only | net Sharpe | 0.733 | 0.735 | 0.758 |
 | long_only | turnover | 0.397 | 0.447 | 0.279 |
 
-- **lw_cc − mp (unconstrained):** +1.242 vol%pts, t = +4.633, p = 8.3e-6: lw_cc does NOT dethrone MP; it is
+- **lw_cc − mp (unconstrained):** +1.242 vol%pts, t = +4.633, p = 8.3e-6 — lw_cc does NOT dethrone MP; it is
   worse than both incumbents unconstrained.
 - **Long-only, lw_cc − lw_identity:** −1.031 vol%pts (−103 bps), **t = −12.5, p = 1.6e-24, holdout sign
   STABLE** (−0.884 vol%pts in 2024-07→2026-06). **lw_cc − mp (long-only):** −0.466 vol%pts, t = −6.64,
-  p = 6.9e-10. So the constant-correlation target IS a real, large, stable improvement, but only in the
+  p = 6.9e-10. So the constant-correlation target IS a real, large, stable improvement — but only in the
   *long-only* book, which was not the pre-registered primary and where lw_cc (12.645%) still trails the
   PCA/JSE leaders (~11.7% in RESULTS.md). It lowers vol AND turnover vs lw there (a double win), yet net
   Sharpe is flat (0.735 → 0.733). This is a genuine but off-primary finding; it does not rescue the frozen
@@ -147,15 +147,15 @@ consistent with F-021) applies a fortiori. Verdict is KILL / close the docket, r
 long-only book (weights pinned ≥0, cap-bound) that shared-correlation shrinkage stabilizes the tiny
 active set and helps. In the unconstrained book, min-var exploits fine cross-sectional correlation
 differences to build offsetting long/short pairs; flattening every pair-correlation to r̄ destroys exactly
-that structure, so realized vol rises. Same estimator, opposite sign by book, and the pre-registered
+that structure, so realized vol rises. Same estimator, opposite sign by book — and the pre-registered
 primary is the book where it loses.
 
-**Sanity / bug-checks (unusually clean result treated as suspect until ruled out, here the result is a
+**Sanity / bug-checks (unusually clean result treated as suspect until ruled out — here the result is a
 LOSS, but checked anyway):**
 1. **Harness faithful:** my `lw` and `mp` per-month vols reproduce the shipped `results.csv` to
    **max|diff| = 0.0** across all 138 months, both books → the walk-forward replication is exact,
    name-for-name matched.
-2. **δ\* ∈ [0,1]:** analytic LW-2004 shrinkage δ\* ranged **[0.128, 0.786]**, mean 0.243: strictly interior,
+2. **δ\* ∈ [0,1]:** analytic LW-2004 shrinkage δ\* ranged **[0.128, 0.786]**, mean 0.243 — strictly interior,
    never clipped on real windows (`lw_cc_diag.csv`). Not swept.
 3. **Target PSD:** min eigenvalue of F was **≥ 2.8e-5 > 0 every month** → constant-correlation target PSD
    throughout. r̄ ∈ [0.129, 0.567], mean 0.312 (economically sane average S&P pairwise correlation).
@@ -166,7 +166,7 @@ LOSS, but checked anyway):**
    disjoint next month (day d excluded). No estimator posts implausibly low vol; the primary result is a
    significant *increase*, so no over-optimistic cell to explain.
 
-**Trial-ledger line (for the coordinator to append centrally, not edited here):** TRIAL_LEDGER.md #21 ·
+**Trial-ledger line (for the coordinator to append centrally — not edited here):** TRIAL_LEDGER.md #21 ·
 EXP-2026-07-10-lw-cc-target · estimator · KILL · unconstrained lw_cc−lw_identity = +87.3 bps, t=+3.69,
 holdout sign flipped → CC target significantly worse unconstrained; close LW-target docket (adaptive, from
 estimator_lab OOS record). Off-primary: large stable long-only win (−103 bps vs identity, t=−12.5) noted,

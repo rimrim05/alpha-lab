@@ -10,7 +10,7 @@ because post-earnings-announcement drift (underreaction to fundamental news) has
 fully arbitraged at the large-cap horizon.
 
 **Layer touched** (exactly one) + registered baseline:
-Layer A, economic / market: a NEW information source (verified point-in-time earnings
+Layer A — economic / market: a NEW information source (verified point-in-time earnings
 surprises from Finnhub, collected forward from 2026-07-10). Baseline = zero-IC null on the
 same event panel. No estimator, portfolio, or execution layer is touched; the output is a
 rank IC, not a strategy.
@@ -35,11 +35,11 @@ pooled across events, with a Newey-West-free simple t-stat on per-event contribu
 (t = IC · sqrt(n−2) / sqrt(1−IC²)). Decision horizon = 20d.
 
 **Secondary hypothesis (pre-committed now)**:
-Day+1 confirmation, close ≥ open in the first session after a positive surprise,
+Day+1 confirmation — close ≥ open in the first session after a positive surprise —
 strengthens the signal: the confirmed-positive-SUE subset has higher 20d rank IC than the
 unconfirmed subset.
 
-**Conditioning rules (pre-registered NOW, not discovered later, the only slices that may
+**Conditioning rules (pre-registered NOW, not discovered later — the only slices that may
 ever be reported)**:
 1. Sector-relative SUE: demean SUE within GICS sector (sectors.parquet) before ranking.
 2. High-dispersion regime: events split by whether the cross-sectional std of trailing
@@ -61,14 +61,14 @@ rule: no new scaling definitions, horizons, or conditioning slices may be added 
 the result; if killed, the dataset keeps accruing as infrastructure but the hypothesis
 goes to FAILURES.md and no earnings-surprise spec is proposed from this data.
 
-**Trial-ledger row**: TRIAL_LEDGER.md, robustness/experiment table row added in the same
+**Trial-ledger row**: TRIAL_LEDGER.md — robustness/experiment table row added in the same
 commit (1 hypothesis + 1 pre-registered secondary + 2 pre-registered conditioners).
 
-**Derived from prior holdout results?** No, the PEAD hypothesis predates this hunt (it is
+**Derived from prior holdout results?** No — the PEAD hypothesis predates this hunt (it is
 a literature prior; the repo's separate pead track is WRDS-blocked and shares no data with
 this forward panel). Not an adaptive loop on hunt2026 holdout results.
 
 ---
-**Result** (filled after the run, never edited above this line): ACCUMULATING: collection
+**Result** (filled after the run, never edited above this line): ACCUMULATING — collection
 started 2026-07-10; 0 point-in-time events scoreable tonight by construction. --report
 prints the honest accumulating state until n ≥ 300.

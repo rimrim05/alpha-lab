@@ -12,16 +12,16 @@ after the first scoring run.*
 **Hypothesis** (one falsifiable sentence, mechanism included): Short-term (21d) reversal
 is compensation for supplying liquidity to liquidity-*demanders*, so its cross-sectional
 rank IC is positive and materially larger among names undergoing a contemporaneous
-liquidity-demand shock (high abnormal volume) and ≈0 among quiet names: the unconditional
+liquidity-demand shock (high abnormal volume) and ≈0 among quiet names — the unconditional
 IC is dead (F-016) precisely because the two subsets net out.
 
 **Layer touched** (exactly one): **A — economic hypothesis** (add a liquidity-shock
 conditioner to the reversal signal). Registered baseline: the **unconditional
-`st_reversal_21d` rank IC** measured in `robustness/ic_screen.py`: ic21 = 0.0052,
+`st_reversal_21d` rank IC** measured in `robustness/ic_screen.py` — ic21 = 0.0052,
 t = 0.34, hit 51.9%, n = 135 months (`ic_screen_stats.csv`, row 1). Nothing else in the
 measurement pipeline changes.
 
-**Alpha type tag:** market, but **signal-space only ⇒ evidence-ladder ceiling = level 1**.
+**Alpha type tag:** market — but **signal-space only ⇒ evidence-ladder ceiling = level 1**.
 A confirmed conditional IC is a predictive relationship, NOT a tradable book; tradability
 stays gated behind NR-1's cost wall (≤2–3 bps/side or intraday execution). Do NOT promote a
 rank IC to a paper book on the strength of this experiment.
@@ -34,7 +34,7 @@ cross-section into terciles of `volume_shock` (signal #6: `vol.rolling(21).mean(
 vol.rolling(252).mean()`, the abnormal-volume proxy for liquidity demand, known at close t).
 Compute reversal rank IC **within** the top tercile (high demand) and within the bottom
 tercile (quiet), per month. ONE layer changed: the economic conditioner. The conditioner is
-a fixed, un-tuned tercile split: no parameter is fit.
+a fixed, un-tuned tercile split — no parameter is fit.
 
 **Universe:** PIT S&P 500 members via `panel_2005.parquet` field `member` (ETFs / `^VIX`
 excluded via `sandbox_meta.json`); ≥50 valid names per date per tercile or the date is
@@ -49,11 +49,11 @@ dropped (mirrors `rank_ic`'s existing n≥50 guard, applied per tercile).
 
 **Forecast + execution timestamps:** signal and conditioner both known at **close of month-end
 day t**; forward return is close-to-close **t+1 … t+21** (21d) and **t+1 … t+63** (63d).
-Measurement only: no order is placed, so no execution timestamp.
+Measurement only — no order is placed, so no execution timestamp.
 
 **Expected effect size:** unconditional IC ≈ 0.005 (dead). Mechanism-true prediction:
 high-tercile 21d IC ≈ +0.02 to +0.04 (t > 2 over 135 months); bottom-tercile ≈ 0; interaction
-(high − low) mean IC > 0 with t > 2. Honest prior P(belief change) ≈ 0.6: plausible but the
+(high − low) mean IC > 0 with t > 2. Honest prior P(belief change) ≈ 0.6 — plausible but the
 large-cap regime is where reversal has most decayed.
 
 **Primary statistic:** mean monthly high-tercile 21d rank IC and its t-stat
@@ -71,7 +71,7 @@ high-tercile IC not distinguishable from zero **or** interaction t < 2 (either h
 resolution: **stop running conditional daily-bar reversal probes** (do not test a second
 liquidity conditioner on the same panel; the reopen then requires intraday data per NR-1).
 
-**Cost model:** none, signal-space measurement, no turnover, no fills. (This is exactly why
+**Cost model:** none — signal-space measurement, no turnover, no fills. (This is exactly why
 the ceiling is level 1: costs are deferred to a separate NR-1 cost-wall test.)
 
 **Leakage checks:** reversal (21d trailing) and volume_shock (21d/252d trailing) are both
@@ -87,14 +87,14 @@ available; the ≥50/tercile floor prevents thin-cross-section artifacts.
 per-date tercile split). **Complexity score:** 2/5 (~30-line extension to `ic_screen.py`;
 one new signal + tercile grouping, no new data).
 
-**Information-gain estimate:** HIGH: decisive kill/revive of NR-1's single named untested
+**Information-gain estimate:** HIGH — decisive kill/revive of NR-1's single named untested
 angle; near-zero overhead. Either branch retires a live docket item.
 
 **Trial count:** adds **TRIAL_LEDGER.md #19** (signal-space measurement; tag = measurement /
 watch, NOT a book) in the same commit. Adaptive-loop flag: derived from the F-016/NR-1
-out-of-sample record ⇒ **yes, adaptive**, record in the hunt-level ledger.
+out-of-sample record ⇒ **yes, adaptive** — record in the hunt-level ledger.
 
-**Derived from prior holdout results?** Yes: F-016 (dead unconditional IC) and NR-1 (named
+**Derived from prior holdout results?** Yes — F-016 (dead unconditional IC) and NR-1 (named
 reopen). This is a sanctioned reopen, not a fresh fishing expedition.
 
 ---
@@ -108,8 +108,8 @@ two edge terciles ≥50). n = 135 months, 2015-01 → 2026-06, identical to the 
 baseline. Terciles via `pd.qcut(volume_shock, 3)` on the per-date ok cross-section
 (reversal, volume_shock, and forward return all valid).
 
-*Primary statistic, high-demand (top volume_shock tercile) 21d reversal IC:*
-mean = **+0.00687, t = +0.41**, hit 54.1%, n = 135. Indistinguishable from zero, and
+*Primary statistic — high-demand (top volume_shock tercile) 21d reversal IC:*
+mean = **+0.00687, t = +0.41**, hit 54.1%, n = 135. Indistinguishable from zero — and
 from the dead unconditional baseline (+0.00515, t = 0.34).
 
 *Interaction (high − low tercile), paired t:* 21d mean = **−0.00247, t = −0.18**;
@@ -120,7 +120,7 @@ there falls short of the t > 2 bar. At the pre-registered 21d horizon the sign i
 
 *By-era stability (high tercile, 21d):* 2015-19 +0.036 → 2020-24 −0.012 → 2025-26
 −0.034. The only positive era is the oldest; the effect decays to negative and does
-not persist, the opposite of a robust conditional signal.
+not persist — the opposite of a robust conditional signal.
 
 *Blind holdout (2024-07 → 2026-06, 21 months):* **sign flips.** High-tercile 21d IC:
 dev +0.016 → holdout −0.045. Interaction 21d: dev −0.006 → holdout +0.015 (also flips).
@@ -133,7 +133,7 @@ dev +0.016 → holdout −0.045. Interaction 21d: dev −0.006 → holdout +0.01
   fire: high-tercile IC ≈ 0 (t = 0.41); interaction t = −0.18 (21d) and +1.94 (63d),
   both < 2 → **KILL fires on every clause.**
 
-*Bug check (unusually-strong-result guard, inverted, here for an unusually-*weak*
+*Bug check (unusually-strong-result guard, inverted — here for an unusually-*weak*
 result, confirm the pipeline isn't silently killing a real effect):* recomputed the
 unconditional reversal ic21 independently from raw panel (own shift/member/rank-corr)
 → **0.00515, t = 0.339, n = 135, exact match** to the frozen `ic_screen_stats.csv`
@@ -149,7 +149,7 @@ out-of-sample. This is a genuine negative, consistent with F-016 (dead unconditi
 
 *Docket action (per the frozen stop-iterating rule):* closes **NR-1**'s last named
 untested angle at the daily-bar / monthly-rebalance resolution. **Stop running conditional
-daily-bar reversal probes on this panel**: do not test a second liquidity conditioner
+daily-bar reversal probes on this panel** — do not test a second liquidity conditioner
 here. Any reopen of NR-1 now requires intraday data, as NR-1 already stipulated. Ceiling
 was level 1 (signal-space); nothing is booked. Adds TRIAL_LEDGER #19 as a measurement /
 watch entry (coordinator appends centrally; not edited here).
