@@ -1,8 +1,8 @@
-"""Experiment 5 — the PERMANENT Orthogonality Benchmark for the Additional Discovery Program.
+"""Experiment 5: the PERMANENT Orthogonality Benchmark for the Additional Discovery Program.
 
 v2 (2026-07-10): pre-registered dimensions frozen BEFORE EXP-A/EXP-B are evaluated. Thresholds
 below are frozen; do NOT retune after seeing any experiment. A candidate must not pass merely
-because full-period correlation is low — it must stay independent WHEN THE BOOKS ARE LOSING
+because full-period correlation is low; it must stay independent WHEN THE BOOKS ARE LOSING
 (downside corr, tail dependence, drawdown overlap all gate independence).
 
 Control set X = [1, SPY, QQQ, the 7 live books]. Reuses the frozen independence harness so the
@@ -15,17 +15,17 @@ FROZEN GATES (pre-registered):
     max_resid_corr_mkt    < 0.35   |corr| after removing SPY+QQQ from both
     downside_corr_ens     < 0.50   corr to the ensemble on negative-SPY days
     tail_dep_ens          < 0.40   co-exceedance in the worst 10% SPY days
-    dd_overlap_lift       < 1.30   P(cand in DD | ensemble in DD) / P(cand in DD) — co-drawdown beyond base rate
+    dd_overlap_lift       < 1.30   P(cand in DD | ensemble in DD) / P(cand in DD): co-drawdown beyond base rate
     roll_corr_max_ens     < 0.65   worst 63d rolling |corr| to the ensemble (never spikes)
   edge:            resid_alpha_t > 2.0
   portfolio value: P(incr ensemble ΔSharpe > 0) > 0.90  OR  (incr ΔmaxDD < -0.02 AND incr ΔSharpe >= -0.02)
                    (the DD path requires not harming Sharpe, so pure dilution cannot pass)
 
 FOUR OUTCOMES:
-  NOT INDEPENDENT           — fails any independence gate (it's the cluster, esp. when books lose)
-  INDEPENDENT BUT NO EDGE   — independent, no residual alpha, no portfolio value
-  EDGE BUT NO PORTFOLIO VALUE— independent + residual alpha, but adds no ensemble Sharpe/DD benefit
-  PORTFOLIO CANDIDATE       — independent + portfolio value (alpha OR pure diversification)
+  NOT INDEPENDENT           : fails any independence gate (it's the cluster, esp. when books lose)
+  INDEPENDENT BUT NO EDGE   : independent, no residual alpha, no portfolio value
+  EDGE BUT NO PORTFOLIO VALUE: independent + residual alpha, but adds no ensemble Sharpe/DD benefit
+  PORTFOLIO CANDIDATE       : independent + portfolio value (alpha OR pure diversification)
 
 Run: .venv/bin/python research/discovery/orthogonality_benchmark.py   (frozen self-check)
 Import: from orthogonality_benchmark import score_candidate
@@ -134,7 +134,7 @@ def score_candidate(candidate: pd.Series, label: str = "candidate") -> dict:
     tail_dep = float(cand_low.reindex(worst.index).mean())  # P(cand in its low decile | worst SPY day)
 
     # (6) drawdown overlap as LIFT: co-drawdown beyond the candidate's own base rate
-    #     (raw overlap is contaminated — a zero-drift series is in DD ~always; lift ~1 = independent)
+    #     (raw overlap is contaminated: a zero-drift series is in DD ~always; lift ~1 = independent)
     def _in_dd(r):
         nav = (1 + r).cumprod(); return nav < nav.cummax()
     ens_dd = _in_dd(ens); cand_dd = _in_dd(cand)

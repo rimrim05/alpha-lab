@@ -1,4 +1,4 @@
-"""H-D1 — MOC (close d+1) vs next-open (open d+1) fill point for the 3 live vol books.
+"""H-D1: MOC (close d+1) vs next-open (open d+1) fill point for the 3 live vol books.
 
 Prereg: research/independent_alpha/prereg/H-D1.md (EXP-2026-07-10-moc-vs-moo-fill).
 

@@ -1,12 +1,12 @@
-"""Agent 2 independent engine — NO imports from alpha-lab code.
+"""Agent 2 independent engine: NO imports from alpha-lab code.
 
 Two engines, both written from the P&L convention in the harness docstring +
 SPEC_CONVENTIONS.md (weights set at close t, earn close-to-close t+1, costs per
 side on |dw|, gross capped at 2.0):
 
-  weight_engine  — replicates the stated weight-space convention with an explicit
+  weight_engine  : replicates the stated weight-space convention with an explicit
                    python loop (independent arithmetic check of harness.run).
-  share_engine   — a real account: integer-free share-based sim. Holds shares,
+  share_engine   : a real account, integer-free share-based sim. Holds shares,
                    trades at close t to reach target weights, pays costs on traded
                    notional, cash earns `cash_rate_daily`, levered financing charged
                    at `borrow_rate_daily` on borrowed cash. Marks to market daily.
@@ -71,7 +71,7 @@ def share_engine(W: pd.DataFrame, close: pd.DataFrame, bps: dict,
     Trades at close t to reach W.loc[t] of current NAV; pays bps on traded notional.
     NaN close = stale mark at last known price (no trading in that name that day).
     A name whose price never returns is carried at its stale mark (broker-statement
-    view; a bankruptcy would really be ~0 — that difference is reported by tests).
+    view; a bankruptcy would really be ~0, that difference is reported by tests).
     """
     W = W.astype(float).fillna(0.0)
     close = close[W.columns]

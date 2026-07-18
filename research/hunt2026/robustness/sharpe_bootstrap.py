@@ -1,7 +1,7 @@
 """Path-luck robustness: block-bootstrap Sharpe intervals for the 7 live books.
 
 Diagnostic on FROZEN specs over each book's own blind-evidence window (agent6 redteam
-convention) — round-1 books on the holdout year (start=META["cut"]), round-2 books on the
+convention): round-1 books on the holdout year (start=META["cut"]), round-2 books on the
 blind 5y window (start=2021-07-10). No spec, param, or panel change; all 7 books reported,
 none selected. Baseline gate: the recomputed Sharpe must reproduce the published
 results/results5y number (tol 0.01) before the bootstrap counts.

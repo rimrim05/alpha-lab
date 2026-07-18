@@ -4,13 +4,13 @@
 
 **Hypothesis** (one falsifiable sentence, mechanism included):
 The JSE dispersion-bias correction's benefit to long-only min-var is a monotone
-function of estimation-window length n — it helps where ψ̂ is meaningfully below 1
-(small n), fades as ψ̂ → 1 (large n) — and the OBSERVABLE median ψ̂, computed from the
+function of estimation-window length n, it helps where ψ̂ is meaningfully below 1
+(small n), fades as ψ̂ → 1 (large n), and the OBSERVABLE median ψ̂, computed from the
 estimation window alone (available before any portfolio is built), predicts the sign
 of the month's paired jse−pca realized-vol delta.
 
 **Layer touched** (exactly one) + registered baseline:
-Layer B — estimator only. Design held exactly as the Estimator Lab walk-forward
+Layer B: estimator only. Design held exactly as the Estimator Lab walk-forward
 (research/estimator_lab/run_minvar.py conventions: PIT S&P 500 members, monthly
 rebalance 2015-02 → 2026-06, 137 shared months, k=3, 5% cap, hold d+1…next_d,
 delisted→0). Baseline = pca3 (raw PCA, k=3); test = jse3, matched pair per month.
@@ -28,7 +28,7 @@ month set (clean pooling).
 - Unconstrained paired Δ: ≥ 0 at ALL n (correction noise amplified by unconstrained
   weights), largest at the smallest n.
 - Predictor (the real prize): per month log median ψ̂ across the k=3 factors,
-  eigengap (λ₁−λ₂)/λ₁, p/n — all computed from the estimation window only. Pooled
+  eigengap (λ₁−λ₂)/λ₁, p/n, all computed from the estimation window only. Pooled
   across all n × months, long-only monthly Δ correlates POSITIVELY with median ψ̂
   (higher ψ̂ → less JSE help), Spearman p < 0.05. Pre-committed thresholds: months
   with median ψ̂ < 0.90 show mean Δ < 0 (JSE helps); months with median ψ̂ ≥ 0.95
@@ -37,7 +37,7 @@ month set (clean pooling).
 **Alternative result** (what the world looks like if the hypothesis is false):
 No n shows a significant long-only improvement (the n=63 result was a fluke of that
 one window length), or the Δ-vs-n profile is non-monotone noise, or ψ̂ is
-uncorrelated with the paired delta (pooled Spearman |ρ| ≈ 0, p ≥ 0.05) — the
+uncorrelated with the paired delta (pooled Spearman |ρ| ≈ 0, p ≥ 0.05), the
 theory's observable has no predictive content and "ψ̂-gated JSE" is not a rule,
 just a description of two runs.
 
@@ -49,19 +49,19 @@ one run of the six registered windows; no post-hoc window additions, no k retuni
 no threshold search beyond reporting the pre-committed 0.90 / 0.95 cuts (any scanned
 "best" threshold is reported as in-sample color only, never as the finding).
 
-**Trial-ledger row**: TRIAL_LEDGER.md — robustness-experiment row added in the same
+**Trial-ledger row**: TRIAL_LEDGER.md, robustness-experiment row added in the same
 commit (1 experiment, 6 registered window lengths, adaptive loop YES).
 
-**Derived from prior holdout results?** YES — adaptive loop: the design reacts to
+**Derived from prior holdout results?** YES, adaptive loop: the design reacts to
 F-021 (JSE dead at n=252) and its n=63 reopen (JSE helps long-only, t up to 6.5).
 The two endpoint results are already known; the pre-registered NEW content is the
 four unseen windows (42, 90, 126, 189), the monotonicity claim, and the ψ̂ predictor
 test (no prior run logged ψ̂ per month). Flagged in the ledger.
 
 ---
-**Result** (filled after the run, never edited above this line): NOT KILLED — both kill
+**Result** (filled after the run, never edited above this line): NOT KILLED, both kill
 clauses pass (long-only significant at all six n; pooled Spearman ρ=+0.177, p=3e-07). But
-the hypothesis is only half right: monotone decay CONFIRMED, crossover REJECTED — long-only
+the hypothesis is only half right: monotone decay CONFIRMED, crossover REJECTED, long-only
 JSE helps at EVERY n (−2.6 bps at n=42 → −0.5 bps at n=252, all p<0.0001, never harmful);
 unconstrained hurts at every n as predicted. The ψ̂ predictor is a regime label, not a
 month-level signal: within fixed n, ρ ≈ 0 (6/6, p>0.3); both pre-committed cuts (0.90,

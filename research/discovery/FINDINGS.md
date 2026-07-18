@@ -1,7 +1,7 @@
 # Discovery Program — findings (Phase: EXP-A + EXP-B, 2026-07-10)
 
 *Both measurement experiments ran against frozen preregs and the frozen Orthogonality Benchmark v2.
-Both are negative — decisive, bug-checked negatives that close lanes. No portfolio, no book, no
+Both are negative: decisive, bug-checked negatives that close lanes. No portfolio, no book, no
 parameter search. Success condition for this phase (charter): determine whether bond carry is a
 genuinely independent measurable effect and whether vol-management's success is explained by
 observable asset characteristics. Both questions are now answered: no, and not transportably.*

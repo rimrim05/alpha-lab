@@ -21,7 +21,7 @@ returns are close-to-close `pct_change` (no fill). "Monthly rebalance" = the **f
 day of each calendar month** (`month != month.shift(1)`); between rebalances the affected
 weights are forward-filled.
 
-**Sleeve A — trend + vol-managed QQQ (adjusts daily):**
+**Sleeve A: trend + vol-managed QQQ (adjusts daily):**
 - Trend gate on QQQ vs its 200-day simple moving average, 1% hysteresis: gate = 1 when
   `close > SMA200 * 1.01`, 0 when `close < SMA200 * 0.99`, else hold the prior gate
   (forward-fill; initial/warmup = 0).
@@ -29,19 +29,19 @@ weights are forward-filled.
   where `rv21` = 21-day rolling std of QQQ close-to-close returns, annualized ×√252.
 - `A[QQQ] = gate * lev_q`; `A[BIL] = 1 - gate` (the risk-off leg sits in BIL).
 
-**Sleeve B — 252-day-sign TSMOM, inverse-63d-vol weights (rebalances monthly):**
+**Sleeve B: 252-day-sign TSMOM, inverse-63d-vol weights (rebalances monthly):**
 - `mom = close/close.shift(252) - 1` on the 15-asset TSMOM menu; sign taken.
 - Inverse-vol weights: `iv = 1/vol63` (`vol63` = 63-day annualized realized vol), normalized
   across the menu each day, times `sign(mom)` → long-or-short each asset.
 - Sampled on the monthly rebalance day and forward-filled; NaN → 0.
 
-**Sleeve C — dual momentum, single asset (rebalances monthly):**
+**Sleeve C: dual momentum, single asset (rebalances monthly):**
 - `r252 = close/close.shift(252) - 1`. Pick `argmax` of RISK 252-day returns if that max
   exceeds BIL's 252-day return; otherwise pick `argmax` of SAFE. One-hot weight 1.0 on the
   pick. Rows where any of RISK+SAFE has a NaN 252-day return are set flat (NaN → ffilled).
 - Sampled on the monthly rebalance day and forward-filled; NaN → 0.
 
-**Sleeve combination — inverse-vol sleeve weights (rebalances monthly):**
+**Sleeve combination: inverse-vol sleeve weights (rebalances monthly):**
 - Each sleeve's own daily return stream = `(sleeve.shift(1) * rets).sum` (harness lag
   convention). `svol` = 63-day (`sleeve_vol_lookback`) rolling std of each stream.
 - Sleeve weights `sw = (1/svol) / Σ(1/svol)`, sampled monthly and forward-filled; warmup
@@ -61,18 +61,18 @@ weights are forward-filled.
 against all-NaN rows with a −9e9 sentinel then nulls those rows; `lev`/`sw` inverse-vol
 divisions replace ±inf with NaN then fill (lev→1.0, sw→1/3).
 
-**Execution convention:** shared harness — weights set at close *t* earn close-to-close
+**Execution convention:** shared harness, weights set at close *t* earn close-to-close
 *t→t+1* (`held = W.shift(1)`), costs 10 bps/side stocks / 2 bps/side ETFs on |Δw|, gross ≤2×
 enforced. Rebalance cadence is **mixed**: Sleeves B/C and the sleeve-combination weights
 change monthly; Sleeve A's exposure and the book-level vol target adjust **daily** (so real
-turnover is higher than "monthly" implies — measured ~5%/day one-way, cost drag ~1.3%/yr).
+turnover is higher than "monthly" implies, measured ~5%/day one-way, cost drag ~1.3%/yr).
 
 > **Reproducibility note (2026-07-11):** an earlier version of this file said Sleeve A scales
 > by "inverse realized *variance*" and did not name the gate asset or rv window; a clean-room
 > reimplementation from that text diverged by 277 bps/day (red-team F-RT-07). This section
-> now matches the frozen code exactly. The code and historical results are UNCHANGED — this
+> now matches the frozen code exactly. The code and historical results are UNCHANGED; this
 > was a documentation correction only.
 
 **Falsifier:** realized pairwise sleeve correlations > 0.7 in a stress quarter
-(diversification failure — the sleeves have become one levered beta), or 12 months of paper
+(diversification failure: the sleeves have become one levered beta), or 12 months of paper
 trading below BIL.

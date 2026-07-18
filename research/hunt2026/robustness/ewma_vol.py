@@ -26,7 +26,7 @@ from core.eval.run_manifest import stamp_run
 
 P = json.loads((HERE / "specs" / "vol_managed_qqq" / "params.json").read_text())
 LEVERAGE_CAP = 2.0
-MATCHED_COM = 10.0                                   # (21-1)/2 — flat window's center of mass
+MATCHED_COM = 10.0                                   # (21-1)/2, flat window's center of mass
 CONTEXT_COMS = [5.0, 15.666666666666666]             # fast / lambda=0.94 RiskMetrics
 HELP_BPS, WIN_SHARE = 10.0, 0.55                     # pre-committed verdict thresholds
 

@@ -1,6 +1,6 @@
-"""Bracket monitor — reads the ledgers, prints the resolver.
+"""Bracket monitor: reads the ledgers, prints the resolver.
 
-Primary readout (fast, event-driven): the dead-name drag — realized PnL on deep-dip
+Primary readout (fast, event-driven): the dead-name drag, realized PnL on deep-dip
 longs closed via halt/delisted/corporate_action/gap_stop. Even a handful is DIRECT
 evidence of the survivorship channel the backtest couldn't see.
 Secondary (slow, aggregate): the full/floored/premium Sharpe. `premium = full −

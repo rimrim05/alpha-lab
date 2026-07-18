@@ -164,7 +164,7 @@ def main():
     lines += ["", f"## Verdict (pre-committed rule, decisive cell): **{verdict}** "
               f"({n_help}/6 configs meet all three conditions)", ""]
 
-    # story diagnostics (labeled color — the verdict above is decided by the rule alone)
+    # story diagnostics (labeled color; the verdict above is decided by the rule alone)
     psi_min_all = [float(g63[f"psi{j+1}"].min()) for j in range(K)]
     d01 = g63["vol_g1_long_only"] - g63["vol_jse5_long_only"]      # config (0.3, 0.10)
     bound = d01[d01.abs() >= 1e-12]

@@ -19,15 +19,15 @@ existing books (factor-premium strategies under separate monitoring).
 
 Honest-scope statement (required): with free data only, the testable object is
 **index-level option-implied information** (VIX family are model-free implied-vol
-indices — genuinely option-implied) — NOT strike-level surfaces, variance-swap P&L, or
+indices, genuinely option-implied): NOT strike-level surfaces, variance-swap P&L, or
 futures-roll P&L. The instrument is the SVXY ETF, whose product menu is itself
 survivorship-conditioned (XIV, the −1x predecessor that died in Feb-2018, is absent
-from the panel — on record from the Stage-2 audit).
+from the panel, on record from the Stage-2 audit).
 
 Look-ahead risks identified: (1) VIX-family 4:15pm publication vs 4:00pm equity close
 → any same-close trade is look-ahead; resolved by the harness convention (signal at
 close t → weights at close t+1 → earn t+2 relative to signal date… net effective delay
-one full trading day). (2) yfinance index history is a current pull — index values are
+one full trading day). (2) yfinance index history is a current pull: index values are
 not revised, so backfill risk is negligible; SVXY splits are auto-adjusted (verified
 adjustment on the panel in Stage-2's split check). (3) The phantom-row-corrected panel
 is used throughout.
@@ -46,7 +46,7 @@ the improvement concentrated in tail outcomes.**
 
 - Why the predictor should matter: the sign of vol-carry ≈ the slope of the vol term
   structure. In contango the short-vol position collects roll-down plus the variance
-  risk premium; inversion means the market prices near-term risk above medium-term —
+  risk premium; inversion means the market prices near-term risk above medium-term:
   expected carry flips negative and crash-conditional losses concentrate there. The
   spot ratio VIX/VIX3M is the standard PIT proxy for the futures slope.
 - Instrument/exposure changed: SVXY ↔ BIL, binary, gross always 1.0 (no financing).
@@ -58,20 +58,20 @@ the improvement concentrated in tail outcomes.**
   mechanism predicts.
 - Realistic delay: one trading day (above).
 - Exact benchmarks: (frozen in the prereg) B1 constant 1.0 SVXY; B2 exposure-matched
-  constant mix w̄·SVXY + (1−w̄)·BIL with w̄ = training-period ON-fraction — B2 exists
+  constant mix w̄·SVXY + (1−w̄)·BIL with w̄ = training-period ON-fraction: B2 exists
   to separate timing skill from mere average-exposure reduction.
 - Why this is NOT the failed price-only rules repackaged: F-007 gated on VIX LEVEL vs
-  realized vol; the vol_core_svxy sleeve gates on VIX vs its own rolling median — both
+  realized vol; the vol_core_svxy sleeve gates on VIX vs its own rolling median: both
   are level/price functions of in-panel series. This signal is the implied term-
   structure SLOPE, information from a different option maturity (3M), absent from the
   panel and from every prior spec. It is, however, still a daily-close gate, so
   NR-3's finding (daily gates gave ZERO protection in the Aug-2024/Apr-2025 gap
-  events, F-007) is carried as the PRE-STATED expected failure mode for fast crashes —
+  events, F-007) is carried as the PRE-STATED expected failure mode for fast crashes:
   the mechanism's realistic best case is slow-stress protection (2022-style), which is
   exactly what the decision rules' "risk-management improvement, not alpha" label is
-  for. 2008 cannot be included (no SVXY; no futures data) — fast-crash exposure is
+  for. 2008 cannot be included (no SVXY; no futures data): fast-crash exposure is
   stated, not simulated, per the F-013 rule's spirit.
 - Hindsight honesty (pre-stated): contango-gating short-vol is PUBLIC folk knowledge;
   this experiment is a disciplined REPLICATION-plus-audit of a known mechanism on our
-  data, costs, and product mechanics — not discovery. The claim-bearing holdout and
+  data, costs, and product mechanics, not discovery. The claim-bearing holdout and
   placebos are what make a positive result meaningful despite that.

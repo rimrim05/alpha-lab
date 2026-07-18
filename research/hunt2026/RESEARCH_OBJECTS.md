@@ -31,9 +31,9 @@ Layers: **A** economic hypothesis · **B** estimator · **C** portfolio construc
 
 ## Matched pairs on file (change exactly one layer)
 
-- pca_minvar_raw vs pca_minvar_jse — layer B (estimator). Result: JSE ≥ raw in all three
+- pca_minvar_raw vs pca_minvar_jse: layer B (estimator). Result: JSE ≥ raw in all three
   eval modes (1y blind, 5y, 44-window walk-forward), delta tiny at k=1 long-only.
-- bench_qqq_sma200_2x vs vol_managed_qqq vs trend_vol_qqq — layers B/C decomposition of
+- bench_qqq_sma200_2x vs vol_managed_qqq vs trend_vol_qqq: layers B/C decomposition of
   trend+vol. Walk-forward verdict: each component alone ≈ +13pp median excess; the combo
   HALVES median excess (+8pp) but cuts worst-12m from ~−31% to −22%. Combining is a
   tail-hedge purchase priced in median return, not free alpha.
@@ -45,5 +45,5 @@ Layers: **A** economic hypothesis · **B** estimator · **C** portfolio construc
 2. Layer D: open+close execution in the harness → overnight/intraday split becomes
    tradable (reopens F-006).
 3. Layer C: turnover-penalty (no-trade band) sweep as a *portfolio* experiment on the
-   existing vol-managed family — one knob, pre-registered range.
+   existing vol-managed family, one knob, pre-registered range.
 4. Layer B: EWMA vs realized-window vol estimator inside vol_managed_qqq (matched pair).

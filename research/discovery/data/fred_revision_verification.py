@@ -5,7 +5,7 @@ one row [realtime_start..realtime_end]; so per sampled observation we read:
   release lag); first_published_value = value at that vintage; latest_value; diff;
   n_distinct_values (1 == never revised); backfilled (first published as '.'/missing).
 Revision-safety (diff==0) is SEPARATE from release-timing (earliest_vintage vs obs date) and
-from market-calendar alignment — see FRED_REVISION_VERIFICATION.md.
+from market-calendar alignment. See FRED_REVISION_VERIFICATION.md.
 Read-only. Key: ~/.config/rimrimos/fred.env (chmod 600, not in repo)."""
 import json, urllib.request, datetime as dt
 from pathlib import Path

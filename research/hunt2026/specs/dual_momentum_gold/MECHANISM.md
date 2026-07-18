@@ -1,7 +1,7 @@
 # dual_momentum_gold
 
 Antonacci dual momentum, generalized on both legs. Relative momentum picks the
-strongest 12-month trend among SPY/QQQ/GLD — gold is the non-equity absolute-momentum
+strongest 12-month trend among SPY/QQQ/GLD: gold is the non-equity absolute-momentum
 leg (Antonacci's own extensions), so the book can earn in regimes where equities and
 bonds both stall. Absolute momentum (winner must beat BIL's 12-month return) steps the
 book aside in bears. The defensive leg is itself momentum-picked between TLT and BIL:
@@ -14,5 +14,5 @@ that dies in a bear. All parameters are literature defaults (252d lookback, mont
 rebalance); nothing was fit.
 
 **Falsifier:** two consecutive switch months that each cost >5% versus buy-and-hold
-of the abandoned asset — a whipsaw regime where 12-month trend reverses faster than
+of the abandoned asset: a whipsaw regime where 12-month trend reverses faster than
 monthly rebalancing can follow. That kills the signal, not just the sizing.

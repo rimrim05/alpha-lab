@@ -54,7 +54,7 @@ def _trail(stock=None, etf=None):
 
 
 def test_single_night_slippage_breach_is_logged_not_alarmed():
-    """Pre-reg §Failure/kill: a per-night breach is logged, not acted on — fills embed overnight
+    """Pre-reg §Failure/kill: a per-night breach is logged, not acted on. Fills embed overnight
     drift (per-fill stdev ~250 bps vs a 15 bps band), so one night carries no signal."""
     from scripts.hunt_paper_reconcile import slippage_alarms, slippage_breach_nights
 
@@ -94,7 +94,7 @@ def test_too_few_fills_is_not_a_breach():
 
 def test_negative_slippage_streak_implicates_the_reference_convention():
     """Pre-reg §Alternative result: negative beyond the band means the reference-close convention
-    is biased — the alarm must say 'suspect the measurement', not celebrate free money."""
+    is biased: the alarm must say 'suspect the measurement', not celebrate free money."""
     from scripts.hunt_paper_reconcile import SLIPPAGE_BREACH_NIGHTS, slippage_alarms
 
     hits = slippage_alarms({"etf": SLIPPAGE_BREACH_NIGHTS}, _trail(etf=-40.0))
@@ -104,7 +104,7 @@ def test_negative_slippage_streak_implicates_the_reference_convention():
 def test_zero_fill_session_raises_the_reject_rate_alarm():
     """2026-07-15 replay: Alpaca expired the whole queued batch, 19/19 orders closed unfilled.
     The 2% band was pre-registered and printed but never alarmed, so the session's total loss of
-    orders was silent — the only alarm that day came from unrelated FOREIGN-POSITIONS."""
+    orders was silent; the only alarm that day came from unrelated FOREIGN-POSITIONS."""
     orders = [_order("QQQ", qty=0.0, status="expired", coid="h26-x-1"),
               _order("AMD", qty=0.0, status="expired", coid="h26-x-2")]
     row = reconcile_date(D, _books(), orders, {}, {"QQQ": 500.0, "AMD": 100.0})

@@ -1,10 +1,10 @@
 """Shared equity universe: current S&P Composite 1500 (large + mid + small cap).
 
-Fetches current index membership from Wikipedia — real breadth across the cap
+Fetches current index membership from Wikipedia, real breadth across the cap
 spectrum, including genuine small caps (S&P 600). IMPORTANT LIMITATION: this is
 *current* membership, so it is still survivorship-biased (names dropped after
 declining are excluded). It fixes the "too narrow / mega-cap only" problem but NOT
-survivorship — only point-in-time membership (WRDS/CRSP) does that.
+survivorship: only point-in-time membership (WRDS/CRSP) does that.
 """
 import io
 from pathlib import Path
@@ -64,7 +64,7 @@ def fetch_sp_composite(which=("500", "400", "600"), cache: Path | None = None) -
 
 
 # Point-in-time S&P 500 membership (fja05680, maintained). Full constituent snapshot
-# at each change date — forward-filled it reconstructs membership on any past day.
+# at each change date. Forward-filled, it reconstructs membership on any past day.
 # This is the free-data fix for INCLUSION look-ahead (trading a name before it joined).
 # It does NOT fix delisting survivorship: names acquired/failed have no price data in
 # yfinance at all, so they can't be re-added. Point-in-time PRICES need CRSP/WRDS.
@@ -73,7 +73,7 @@ PIT_SP500_URL = ("https://raw.githubusercontent.com/fja05680/sp500/master/"
 
 
 def fetch_sp500_pit_changes(cache: Path | None = None) -> pd.DataFrame:
-    """S&P 500 membership change-log as [date, members] — members is a sorted list of
+    """S&P 500 membership change-log as [date, members]: members is a sorted list of
     cleaned tickers effective on that date (a full snapshot, not a delta). Network."""
     if cache and Path(cache).exists():
         return pd.read_parquet(cache)

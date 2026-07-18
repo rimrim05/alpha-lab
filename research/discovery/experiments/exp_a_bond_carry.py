@@ -1,4 +1,4 @@
-"""EXP-A — Bond-carry predictability (Stage-1 MEASUREMENT, no portfolio).
+"""EXP-A: Bond-carry predictability (Stage-1 MEASUREMENT, no portfolio).
 
 Frozen prereg: research/discovery/prereg/EXP-A-bond-carry-predictability.md
 Runs the frozen carry formula, tests predictability of forward duration-relative
@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT / "research" / "discovery"))
 from orthogonality_benchmark import score_candidate  # noqa: E402
 
 BUCKETS = ["SHY", "IEF", "TLT"]
-# approx modified duration of each ETF (yrs) — static, for the mechanical-duration control only
+# approx modified duration of each ETF (yrs), static, for the mechanical-duration control only
 MOD_DUR = {"SHY": 1.8, "IEF": 7.5, "TLT": 17.0}
 COST_BPS_SIDE = 2.0  # ETF round-trip ~2 bps/side
 

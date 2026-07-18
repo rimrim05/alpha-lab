@@ -11,7 +11,7 @@
 - Roadmap directionally accepted; **analyst EPS estimate revisions** is the preferred next
   distinct alpha lane.
 - Entitlement/schema probe authorized and run (read-only, 10 symbols). Result below.
-- Verdict: **DATA-BLOCKED** — no entitled dedicated forward-EPS-estimate feed on current plans.
+- Verdict: **DATA-BLOCKED**: no entitled dedicated forward-EPS-estimate feed on current plans.
 - Do **not** freeze or implement. Recommendation-revision is **not** a fallback here (it would
   need its own preregistration and trial).
 
@@ -21,7 +21,7 @@ subscribes to. That is **genuinely promising for this lane**, but it is **not** 
 unblock. Keep `DATA-BLOCKED` until a live sample shows both:
 
 1. **"Historical" = true PIT** (frozen as-of-day snapshot), not a restated past view. The
-   in-app CIQ probe already found Recent Changes entitlement-gated pending broker validation —
+   in-app CIQ probe already found Recent Changes entitlement-gated pending broker validation;
    the email may describe that surface post-validation, or a different one. Verify, don't assume.
 2. **Analyst coverage ≥ 3** at both ends of the frozen 60-day revision window under Berkeley's
    actual subscription. "The analysts your university subscribes to" fails the prereg if that
@@ -29,7 +29,7 @@ unblock. Keep `DATA-BLOCKED` until a live sample shows both:
 
 Separately: Reva's "current index members only, not PIT" caveat is a **non-issue for
 stock-universe-repair** (membership history already lives in the frozen panel; CIQ was only
-needed to price the 382 missing names — identity pilot 6/6 PASS). That caveat must not be
+needed to price the 382 missing names, identity pilot 6/6 PASS). That caveat must not be
 imported into this lane's decision, and this lane's open questions must not block universe repair.
 
 ---
@@ -37,30 +37,30 @@ imported into this lane's decision, and this lane's open questions must not bloc
 ## 1. Entitlement / schema probe findings
 
 **Method:** read-only GET, ~10 S&P symbols (AAPL, MSFT, NVDA, JPM, XOM, WMT, TSLA, CVNA, MRNA,
-ATVI — chosen to span positive / near-zero / negative / sign-change / split (NVDA 10:1, WMT 3:1
+ATVI: chosen to span positive / near-zero / negative / sign-change / split (NVDA 10:1, WMT 3:1
 2024) / inactive (ATVI delisted 2023)). Existing keys only. Nothing written to any collection store.
 
 | Field requested | Finnhub `/stock/eps-estimate` | EODHD fundamentals `Earnings::Trend` |
 |---|---|---|
-| Endpoint & HTTP status | `finnhub.io/api/v1/stock/eps-estimate` — **403** (all 10) | `eodhd.com/api/fundamentals/{t}.US?filter=Earnings::Trend` — **403** (all 10) |
+| Endpoint & HTTP status | `finnhub.io/api/v1/stock/eps-estimate`: **403** (all 10) | `eodhd.com/api/fundamentals/{t}.US?filter=Earnings::Trend`: **403** (all 10) |
 | Entitlement result | **NOT ENTITLED.** Body: `{"error":"You don't have access to this resource."}`. Key VALID (control: `/quote`→200, `/calendar/earnings`→200). | **NOT ENTITLED.** Body: `Only EOD data allowed for free users.` `/user`→`subscriptionType:"free"`. Key VALID (control: `/eod`→200). |
 | Exact returned fields | Not observable (403) | Not observable (403) |
-| Current-consensus-only vs dated history | Not observable | Not observable (docs suggest `epsTrend` current/7/30/60/90d-ago, but **unverified — not entitled**) |
+| Current-consensus-only vs dated history | Not observable | Not observable (docs suggest `epsTrend` current/7/30/60/90d-ago, but **unverified, not entitled**) |
 | Vendor observation/as-of timestamp | Not observable | Not observable |
 | Fiscal-period id & period-end | Not observable | Not observable |
 | mean / median / high / low / analyst count | Not observable | Not observable |
 | Currency & adjustment basis | Not observable | Not observable |
 | Inactive securities supported | Not observable (ATVI 403 like the rest) | Not observable (ATVI 403) |
 | Two-snapshot same-period comparison | Not observable | Not observable |
-| Missingness across symbols | N/A — 100% 403 (entitlement, not coverage) | N/A — 100% 403 (entitlement, not coverage) |
-| Rate limits / pagination | Free tier 60 calls/min (from working endpoints); no pagination seen on entitled calls | Free tier daily API-request cap (`/user` shows request counter); fundamentals cost multiple credits; not reached — blocked before that |
+| Missingness across symbols | N/A: 100% 403 (entitlement, not coverage) | N/A: 100% 403 (entitlement, not coverage) |
+| Rate limits / pagination | Free tier 60 calls/min (from working endpoints); no pagination seen on entitled calls | Free tier daily API-request cap (`/user` shows request counter); fundamentals cost multiple credits; not reached, blocked before that |
 
 **One accessible-but-insufficient datapoint (reported, not adopted):** the already-entitled
 Finnhub `/calendar/earnings` endpoint (used by the surprise collector) returns an `epsEstimate`
 field = **current consensus per upcoming earnings event**. It is (a) event-clustered, not a
 continuous daily cross-section of all members; (b) a single latest value, **not** dated revision
 history. A revision series could only be *built by us* by forward-snapshotting that consensus over
-≥60 days — a different design (event-clustered coverage, self-constructed history), not a
+≥60 days: a different design (event-clustered coverage, self-constructed history), not a
 vendor-provided estimate feed. **EXCLUDED from this experiment:** adopting calendar-consensus
 snapshots would be a *separate event-clustered consensus-drift hypothesis* requiring its own
 preregistration and trial. It is not a substitute inside EXP-IC-REVISIONS-FWD and is not folded in.
@@ -91,14 +91,14 @@ source exists AND Kristen approves. **Do not implement.**
 **ID:** EXP-2026-07-11-ic-revisions-fwd · **State:** DATA-BLOCKED (no entitled estimate feed) ·
 **Alpha-type tag:** market (cross-sectional single-name) · **Layer:** A (new information source).
 
-**Hypothesis:** Positive analyst EPS-estimate *revision momentum* — the change in consensus mean
-forward-fiscal-period EPS over a trailing window, price-scaled — predicts positive 20-trading-day
+**Hypothesis:** Positive analyst EPS-estimate *revision momentum* (the change in consensus mean
+forward-fiscal-period EPS over a trailing window, price-scaled) predicts positive 20-trading-day
 forward excess return cross-sectionally among USD-reporting S&P 500 members, because the market
 underreacts to the gradual diffusion of analyst information (Chan-Jegadeesh-Lakonishok 1996;
 Gleason-Lee 2003). Distinct from the discrete post-earnings-surprise drift under separate test.
 
 **(Req 8) Relationship to EXP-IC-EARNINGS-FWD:** the earnings-surprise experiment is **unchanged
-and fully separate** — different signal, store, and checkpoint. This experiment neither edits nor
+and fully separate**: different signal, store, and checkpoint. This experiment neither edits nor
 depends on it; the only shared asset is the read-only membership/price panel.
 
 **(Req 1) Prospective warm-up:** no revision signal exists until **≥60 calendar days of forward
@@ -106,7 +106,7 @@ consensus snapshots** have accrued (the first ΔÊ over the frozen 60-day window
 and no signal is defined to exist, before the warm-up completes. History from any vendor is
 `point_in_time:false` and excluded.
 
-**Data source (frozen at a future Stage-1 gate — one source, chosen by availability not result):**
+**Data source (frozen at a future Stage-1 gate, one source, chosen by availability not result):**
 an entitled forward EPS-estimate feed returning, per (symbol, fiscal-period, snapshot-date): mean
 estimate, analyst count, currency, adjustment basis. **None currently entitled → DATA-BLOCKED.**
 Prices from `panel_2005.parquet` + forward yfinance.
@@ -117,12 +117,12 @@ No historical backfill is ever scored.
 
 **(Req 2) Fiscal-period matching:** a revision is `ΔÊ = Ê_{t}(fp) − Ê_{t−60}(fp)` for the
 **identical fiscal-period identifier fp** (same fiscal-period-end). **No fiscal-year rollover
-comparisons** — when the tracked period rolls (e.g., FY1→FY2), the 60-day window resets; the
+comparisons**: when the tracked period rolls (e.g., FY1→FY2), the 60-day window resets; the
 pre/post periods must carry the same period-end or the observation is dropped.
 
 **(Req 3) Value handling (all pre-committed):**
 - **Scaling:** primary signal is **price-scaled** revision `s_raw = ΔÊ(fp) / P_{t}` (revision in
-  forward-earnings-yield units) — sidesteps near-zero and negative denominators entirely. Then
+  forward-earnings-yield units); sidesteps near-zero and negative denominators entirely. Then
   cross-sectionally z-scored per formation date.
 - **Near-zero estimate:** no division by the estimate level; price-scaling removes the blow-up.
   Names with `P_t` missing are dropped (never zero-filled).
@@ -166,17 +166,17 @@ IC is a secondary diagnostic with the same block-bootstrap correction.
 - **Report at arming:** median universe coverage per qualifying date and sector concentration
   (GICS shares + issuer/sector HHI), so a thin or sector-skewed panel cannot pass unexamined.
 
-**(Req 7) Factor controls — PIT-supported only:** neutralize/attribute the IC using **only controls
+**(Req 7) Factor controls, PIT-supported only:** neutralize/attribute the IC using **only controls
 backed by genuinely point-in-time data**. **Required where reliably PIT:** GICS sector, market beta,
 size (log market cap, where the PIT cap is reliable), prior price momentum (12-1), realized
-volatility, liquidity (ADV / Amihud) — all derivable from the existing PIT price/membership panel.
+volatility, liquidity (ADV / Amihud): all derivable from the existing PIT price/membership panel.
 **Conditional (only if PIT fundamentals are actually available):** value, quality, profitability,
-earnings-yield — these are **not** required unless a PIT fundamentals source exists; without one they
+earnings-yield: these are **not** required unless a PIT fundamentals source exists; without one they
 are omitted and that omission is stated, not proxied with non-PIT data. **The seven live-book return
 series are NOT used as raw cross-sectional regressors** (they are portfolio returns, not stock-level
-exposures — a category error). Independence from the live books is tested **separately at the
+exposures, a category error). Independence from the live books is tested **separately at the
 eventual portfolio stage**, by running the strategy's own return series through the frozen
-Orthogonality Benchmark v2 — never by regressing a stock cross-section on book returns.
+Orthogonality Benchmark v2, never by regressing a stock cross-section on book returns.
 
 **Success threshold:** mean 20d `IC_d ≥ 0.03` with block-bootstrap `t ≥ 2`, at ≥300 matured obs and
 ≥24 qualifying formation dates (≥100 stocks each), **AND** the sector/factor-neutralized IC (PIT
@@ -191,7 +191,7 @@ conditioners (sector-relative; high/low dispersion regime), logged in the trial 
 
 **No-retuning / reopening:** 60d window, 20d horizon, monthly formation, thresholds all frozen here.
 Reopening after a kill requires a materially different data source or a preregistered new
-conditioner — not a nearby parameter variant.
+conditioner, not a nearby parameter variant.
 
 **(Req 9) Timeline:** **UNDETERMINED.** No completion date is stated until an entitled estimate
 source, its symbol coverage, and the achievable snapshot frequency are observed. All prior
@@ -207,10 +207,10 @@ ledger row. No scheduler, no book, no capital path until IC passes AND a separat
 ## 3. Roadmap (unchanged from accepted version — summary)
 
 - **Now:** this probe (done → DATA-BLOCKED); keep the surprise collector accruing; Monday =
-  operational transition only. **H-xmkt-etf-staleness stays QUEUED — do NOT run before the first
+  operational transition only. **H-xmkt-etf-staleness stays QUEUED: do NOT run before the first
   clean operational cycle** completes.
 - **After panel_stocks_v2:** rerun momentum_concentrated as a new prereg; open FINRA short-interest
-  on small/mid-caps. **Price source = Capital IQ (provisional)** — approval requires, first, a
+  on small/mid-caps. **Price source = Capital IQ (provisional)**: approval requires, first, a
   **physical single-security export** and then a **multi-security scale test** before the panel is
   built. No panel change until both pass.
 - **After 300 matured earnings events:** fire the surprise checkpoint.
@@ -224,4 +224,4 @@ ledger row. No scheduler, no book, no capital path until IC passes AND a separat
    lane. (Calendar-consensus snapshotting is a *separate* hypothesis, not an unblock for this one.)
 3. Price source for panel_stocks_v2: **Capital IQ provisional**, pending single-security export +
    multi-security scale test (independent of this lane).
-4. H-xmkt-etf-staleness: **held** until the first clean operational cycle — not run now.
+4. H-xmkt-etf-staleness: **held** until the first clean operational cycle, not run now.

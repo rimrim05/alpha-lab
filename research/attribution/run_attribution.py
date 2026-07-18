@@ -1,4 +1,4 @@
-"""EXP-2026-07-14-factor-attribution — implements the frozen prereg
+"""EXP-2026-07-14-factor-attribution: implements the frozen prereg
 research/hunt2026/preregistrations/factor-attribution-2026-07-14.md exactly.
 
 Run from repo root: .venv/bin/python research/attribution/run_attribution.py

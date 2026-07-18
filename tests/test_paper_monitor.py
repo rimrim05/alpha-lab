@@ -1,4 +1,4 @@
-"""Offline tests for scripts/paper_monitor.py — no network, no real SMTP, no disk writes to
+"""Offline tests for scripts/paper_monitor.py: no network, no real SMTP, no disk writes to
 control-plane paths. Covers signature stability, dedup, summary-always, recovery, credential
 degradation, and the read-only guarantee (no order/ledger/manifest writes)."""
 import re

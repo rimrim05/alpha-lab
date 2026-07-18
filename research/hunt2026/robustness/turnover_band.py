@@ -1,6 +1,6 @@
 """EXP-2026-07-14-turnover-band: portfolio-level no-trade band on the vol-managed family.
 
-Specs untouched — the band is an overlay on the frozen spec's raw target rows (before
+Specs untouched: the band is an overlay on the frozen spec's raw target rows (before
 harness.run's gross-cap): adopt the new row only when L1 drift > band, else re-emit the
 last-adopted row. 12 registered variants (6 bands x 2 books), all reported.
 
@@ -25,7 +25,7 @@ from walk_forward import rolling_windows
 from core.eval.run_manifest import stamp_run
 
 BOOKS = ["vol_managed_qqq", "vol_core_svxy"]
-BANDS = [0.01, 0.02, 0.05, 0.10, 0.20, 0.40]        # registered grid — no additions
+BANDS = [0.01, 0.02, 0.05, 0.10, 0.20, 0.40]        # registered grid, no additions
 HELP_BPS, FLAT_BPS = 5.0, 5.0                        # pre-committed verdict thresholds
 
 

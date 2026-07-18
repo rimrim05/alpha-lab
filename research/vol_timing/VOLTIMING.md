@@ -35,7 +35,7 @@ The ladder returned AMBIGUOUS via rule 4, and the pre-committed default applies:
 the printed digit and found no computation error. Rule 2 failed on exactly one leg:
 crash-window improvements beat their per-window P4 (random-episode) 95th percentiles
 in only 1/5 windows (COVID +34.5pp vs bar +12.9pp passed; Volmageddon +43.6pp missed
-its +76.1pp bar — random OFF-blocks covering the window also dodge the −32% day the
+its +76.1pp bar: random OFF-blocks covering the window also dodge the −32% day the
 real signal ate; 2022 and yen-carry were negative). The maxDD leg and both P5 legs
 passed. (Erratum: p4_dd_95 = +23.13pp and the per-window P4 bars were omitted from the
 tables above; adversarial recompute supplies them.)
@@ -45,16 +45,16 @@ against a full-sample total of +1.056. Excluding that single day: ΔF = −3.12%
 Excluding the Volmageddon window: −2.34%/yr. Post-2018 (the tradeable product):
 −3.60%/yr. Holdout: −7.63%/yr, with OFF days averaging +0.66%/day of foregone carry.
 The pre-2018 +32.7% split is the same day sitting just left of the 2018-02-28 split
-date — the genuinely pre-event years 2014–2017 sum to ≈ 0. The −66% vs −92% maxDD
+date: the genuinely pre-event years 2014–2017 sum to ≈ 0. The −66% vs −92% maxDD
 headline is the same day again: forcing the gate ON through 2018-02-02→09 gives
 strategy maxDD −93.9%, worse than B2.
 
 **The latency reading is retracted.** Ex-2018/2020, the episode-length decomposition
-is negative in aggregate (−0.64 cumulative log) — the prereg's own "negative
-everywhere = no signal (retire)" branch — and the event-time profile ex-crashes keeps
+is negative in aggregate (−0.64 cumulative log), the prereg's own "negative
+everywhere = no signal (retire)" branch, and the event-time profile ex-crashes keeps
 only k=1 negative (−0.58%), with k≥2 positive. Faster execution would buy roughly the
 k=1 day (~+2.8%/yr gross), about cancelling the −3.1%/yr ex-windfall drag to
-breakeven before extra costs — and same-close execution is look-ahead under the
+breakeven before extra costs, and same-close execution is look-ahead under the
 4:15pm print, so "reopenable with faster execution" is an empty phrase for this spec
 as frozen.
 
@@ -68,7 +68,7 @@ because it ate the −32% day and pays ~0.5%/yr whipsaw.
 **What the experiment established:** with two catastrophe payouts in the sample and a
 realized MDE of 35%/yr (double the review pre-estimate), this panel cannot price crash
 insurance whose entire value is rare single days. The only earned follow-up is a
-longer-history replication — extend the short-vol instrument to ~2006 via free CBOE
+longer-history replication: extend the short-vol instrument to ~2006 via free CBOE
 futures/index data (2008, May-2010, Aug-2011 as fresh out-of-original-sample
 catastrophes) and rerun the IDENTICAL frozen spec with a pre-committed dodge test.
 Verdict logged: NO EVIDENCE; the 1-day-lag spec is retired.

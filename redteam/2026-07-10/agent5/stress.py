@@ -1,4 +1,4 @@
-"""Agent 5 — execution-realism stress grid for the 7 frozen hunt2026 books.
+"""Agent 5: execution-realism stress grid for the 7 frozen hunt2026 books.
 
 Re-implements the harness P&L convention locally (verified to parity vs harness.run
 on the base case), then applies PREDECLARED execution perturbations:
@@ -14,7 +14,7 @@ on the base case), then applies PREDECLARED execution perturbations:
   missed10       : each day's rebalance independently missed w.p. 10% (5 seeds, mean/worst)
 
 Windows: HOLDOUT (cut 2025-07-10 -> end) and FULL (2015-01-01 -> end) on panel_2005.
-Benchmarks (naive, per DEPLOYMENT_MANIFEST) are scored at BASE costs — the bench is
+Benchmarks (naive, per DEPLOYMENT_MANIFEST) are scored at BASE costs. The bench is
 never stressed, so book-minus-bench deltas are conservative against the book.
 
 Run: cd ~/projects/alpha-lab && .venv/bin/python redteam/2026-07-10/agent5/stress.py

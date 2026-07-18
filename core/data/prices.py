@@ -19,8 +19,8 @@ def daily_returns(prices: pd.DataFrame) -> pd.DataFrame:
 # yfinance defaults to threads=True: one worker PER TICKER (~200 per chunk), each holding a
 # socket + the cert file + the shared sqlite tz-cache. launchd gives its jobs a 256-FD soft
 # limit (an interactive shell gets 1048576), so the nightly runner exhausted FDs and failed as
-# "getaddrinfo() thread failed to start" / "unable to open database file" / cert-verify errors
-# — while every by-hand run passed. Bound the workers; correctness must not depend on ulimit.
+# "getaddrinfo() thread failed to start" / "unable to open database file" / cert-verify errors,
+# while every by-hand run passed. Bound the workers; correctness must not depend on ulimit.
 YF_THREADS = 8
 
 
@@ -51,14 +51,14 @@ def fetch_prices_yf(tickers: list[str], start: str, end: str | None,
 
 def rolling_dollar_adv(prices: pd.DataFrame, volume: pd.DataFrame,
                        window: int = 20) -> pd.DataFrame:
-    """Trailing median dollar volume (price x shares) per name — the liquidity gauge."""
+    """Trailing median dollar volume (price x shares) per name: the liquidity gauge."""
     px, vol = prices.align(volume, join="inner")
     return (px * vol).rolling(window).median()
 
 
 def fetch_volume_yf(tickers: list[str], start: str, end: str | None,
                     chunk_size: int = 200, threads: int = YF_THREADS) -> pd.DataFrame:
-    """Share volume from yfinance, same chunking as fetch_prices_yf. Network — script-only."""
+    """Share volume from yfinance, same chunking as fetch_prices_yf. Network, script-only."""
     import yfinance as yf
     frames = []
     for i in range(0, len(tickers), chunk_size):

@@ -52,6 +52,30 @@ partner, not a cheerleader.
 - Starting a new experiment run or parameter sweep → use the **`quant-experiment`** skill; it stamps
   params + code version so every scorecard is reproducible.
 
+## Cross-model review policy
+
+Before merging, run the cross-model review gate on the diff. It is a three-round Claude+Codex
+exchange that writes a verdict to the vault:
+
+```
+"$VAULT/scripts/cross_review.sh" ~/projects/alpha-lab [base_branch]
+```
+
+Not every change needs it. Split by blast radius:
+
+- **Foundation** (full gate + Kristen reads the diff herself before merge): anything other code
+  depends on. Here that means the scorecard / deflated-Sharpe math, the look-ahead guards
+  (`pair_zscore_oos`, lagging, point-in-time universe), `data/manifest.jsonl` lineage, shared
+  loaders in `scripts/`, and the stage-gate machinery. A bug in these silently corrupts every
+  downstream result.
+- **Leaf** (single-model pass, or none): a one-off hypothesis notebook under `hypotheses/` or a
+  single track's exploratory analysis, a `STATE.md`/`STATUS.md` note, a README edit. If it can
+  only fool itself and nothing imports it, skip the full gate.
+
+Examples: editing the deflated-Sharpe formula → foundation. Adding a new pairs param sweep in one
+track's notebook → leaf. Changing the shared OOS z-score function → foundation. Fixing a typo in a
+track memo → leaf.
+
 ## Git: pull before push, always
 
 - Before pushing, always `git pull --rebase origin main` first, then push. Don't stop to ask —

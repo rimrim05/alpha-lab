@@ -1,7 +1,7 @@
 """Walk-forward training of the signal-quality meta-model.
 
 Expanding window by calendar month: train on every trade in months < m, predict month m. Out-of-fold
-(OOF) predictions are therefore never in-sample. Three models — logistic regression + random forest
+(OOF) predictions are therefore never in-sample. Three models: logistic regression + random forest
 (baselines) and XGBoost (primary). Reports OOF AUC per model; XGBoost's OOF probabilities feed
 evaluate.py and the fitted full-data XGBoost feeds explain.py.
 """

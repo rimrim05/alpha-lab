@@ -7,7 +7,7 @@ realized portfolio risk**, not an independent forecast of returns. Highest evide
 reachable here is **Level 2 (residual/estimator improvement)**; it is not and cannot be a
 market-forecast claim. Paper-only, min-var risk metric, never a return headline.
 
-This file **synthesizes** the already-run experiments — it does not re-run anything. Sources:
+This file **synthesizes** the already-run experiments; it does not re-run anything. Sources:
 `RESULTS.md`, `CROSSOVER.md`, `PLAN.md`, `estimators.py`, `run_minvar.py`, `run_crossover.py`,
 `{summary,summary_w63,crossover}.csv`, and hunt2026 `FAILURES.md` F-010 / F-020 / F-021 (+ its
 three follow-up entries). Where a doc and the CSV/code disagreed, the CSV/code won (noted inline).
@@ -24,7 +24,7 @@ onto q grows by 1/ψ̂ᵢ (`estimators.py:35-40`). Consequences that pin the who
   (large σᵢ², small p·δ²/σᵢ²), ψ̂ ≈ 1 and the rotation is a no-op. The correction only exists
   when ψ̂ is meaningfully below 1.
 - **ψ̂ is a deterministic function of (p, n, spectrum),** available from the estimation window
-  *before* portfolio construction — so it is a legitimate candidate state variable (tested in §4).
+  *before* portfolio construction, so it is a legitimate candidate state variable (tested in §4).
 - **A significant JSE−PCA delta is by construction proof that ψ̂ < 1 that month.** No separate
   mechanism check is needed; the delta *is* the mechanism.
 
@@ -67,7 +67,7 @@ eigenvector:
 
 At **k=1, n=252, long-only** the delta is +0.0 bps at t=0.2 (RESULTS.md line 49): the single top
 S&P factor is so strong (ψ̂≈0.98–0.997) the rotation does essentially nothing. This is the same
-"delta ≈ noise" cell F-010 flagged from the hunt2026 side — now confirmed as a **regime artifact
+"delta ≈ noise" cell F-010 flagged from the hunt2026 side, now confirmed as a **regime artifact
 (ψ̂≈1), not a null of the theory.** Shorten the window (raise p·δ²/σ² → lower ψ̂) and the same
 long-only book shows a significant help.
 
@@ -91,7 +91,7 @@ months) is insignificant at −0.4 bps and *smaller* than the rest; "ψ̂≥0.95
 −1.0 bps at t=−11.
 
 **Interpretation:** ψ̂'s per-n distributions barely overlap (n=42: 0.876–0.970; n=252: 0.968–0.992),
-so pooled ψ̂ is just a re-parameterization of p/n — an *across-regime* dial, not a *within-regime*
+so pooled ψ̂ is just a re-parameterization of p/n, an *across-regime* dial, not a *within-regime*
 timer. The correct predictor is the design constant **p/n**, known before any month runs; there is
 no month-level state variable (of the ones tested) that fires "JSE will help *this* month."
 Eigengap and the condition-number direction add nothing over p/n.
@@ -100,10 +100,10 @@ Eigengap and the condition-number direction add nothing over p/n.
 
 ## 5. Axes the task names but that were NOT experimentally varied (honesty)
 
-Do not over-read the boundary — three of the requested axes have **no evidence** yet:
+Do not over-read the boundary: three of the requested axes have **no evidence** yet:
 
 - **Benchmark-relative book:** `run_minvar.py` implements only `unconstrained` and `long_only`.
-  A tracking-error / benchmark-relative min-var was never run. **Untested — no claim.** Prior would
+  A tracking-error / benchmark-relative min-var was never run. **Untested, no claim.** Prior would
   be "between the two" (partial sign constraint), but that is a hypothesis, not a result.
 - **Universe dimension p in isolation:** p is fixed at the PIT S&P 500 (~369–487 names). Dimension
   enters *only* through p/n by shrinking n. A same-p/n, different-p test (e.g. n=126 on a 100-name
@@ -111,9 +111,9 @@ Do not over-read the boundary — three of the requested axes have **no evidence
 - **Turnover penalties:** cost (10 bps/side) is applied *post-hoc* to net Sharpe only
   (`run_minvar.py:113`); it is never in the min-var objective. JSE and PCA have near-identical
   turnover long-only (0.11 vs 0.11 at n=252, summary.csv), so a turnover-penalized objective would
-  not change the long-only sign — but this is inference from the turnover columns, not a run.
+  not change the long-only sign, but this is inference from the turnover columns, not a run.
 
-**Factor strength / eigengap** were observed (logged per month) but never *manipulated* — the panel
+**Factor strength / eigengap** were observed (logged per month) but never *manipulated*, the panel
 supplies whatever spectrum the market had. So "weak-factor regime" is reached only via short n, and
 is confounded with estimation noise. A synthetic-factor study (control σᵢ²/δ² directly) is the clean
 way to isolate factor strength from n; not done.
@@ -134,14 +134,14 @@ way to isolate factor strength from n; not done.
 ```
 
 - **Prefer JSE:** long-only min-var, k≥3, and it *pays* only when p/n is high (n short relative to
-  universe). Max realized benefit seen: 2.6 bps ann. vol at n=42 — real (t≥5), robust (monotone,
+  universe). Max realized benefit seen: 2.6 bps ann. vol at n=42, real (t≥5), robust (monotone,
   6/6), but small.
 - **Never JSE:** unconstrained / short-enabled min-var, at any n. Strictly worse.
 - **Indifferent:** k=1 at n=252 long-only (ψ̂≈1, rotation is a no-op).
 - **No timing gate:** a month-level ψ̂ or eigengap switch adds nothing over "always-on in long-only."
 - **Deploy call (F-021 CLOSED):** mechanism confirmed and bounded on all sides; not worth deploying
   on a ~470-name S&P book (ceiling ~2.6 bps), but it is the correct scientific home for the Goldberg
-  program — the publishable object is *the boundary*, not a return.
+  program, the publishable object is *the boundary*, not a return.
 
 ---
 
@@ -149,5 +149,5 @@ way to isolate factor strength from n; not done.
 
 **Prefer JSE over PCA only in a sign-constrained (long-only) min-var book, where the benefit scales
 as ≈ −0.24 bps realized vol per unit p/n and is thus meaningful only when p/n ≳ 5 (n ≤ ~90 on a
-~470-name universe); never use JSE unconstrained, and use no month-level ψ̂ gate — p/n (a design
+~470-name universe); never use JSE unconstrained, and use no month-level ψ̂ gate, p/n (a design
 constant), not any per-month state variable, is the only predictor that carries.**

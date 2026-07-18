@@ -1,9 +1,9 @@
-"""EVALUATOR ONLY — one-shot blind scoring of frozen specs on the holdout year.
+"""EVALUATOR ONLY: one-shot blind scoring of frozen specs on the holdout year.
 
 Usage: .venv/bin/python research/hunt2026/evaluate.py [spec_name ...]
 Runs every dir under specs/ (or the named ones) through the shared harness on the
 holdout window, writes results/<spec>.json and results/summary.md. No edits to any
-spec after this runs — the first result per spec is THE result (results are
+spec after this runs; the first result per spec is THE result (results are
 write-once: an existing results/<spec>.json is never overwritten).
 """
 import json

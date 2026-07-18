@@ -2,8 +2,8 @@
 
 Because every spec is FROZEN (weights don't depend on the scoring window), one full-panel
 run per spec yields the daily net series; rolling windows are then read off that stream.
-Convention note: windows share one continuous P&L path (no fresh cost ramp-in per window)
-— slightly flattering vs independent runs, identically so for every spec.
+Convention note: windows share one continuous P&L path (no fresh cost ramp-in per window),
+slightly flattering vs independent runs, identically so for every spec.
 
 Honesty flags per spec:
 - fit_end: windows ending before this date overlap the spec's fit window (in-sample-ish).
@@ -46,7 +46,7 @@ def rolling_windows(net: pd.Series):
     out = []
     for i in range(WIN, len(nav), STEP):
         w = net.iloc[i - WIN:i]
-        if (w == 0).mean() > 0.5:  # spec not active (warm-up / no data) — not a real window
+        if (w == 0).mean() > 0.5:  # spec not active (warm-up / no data), not a real window
             continue
         out.append((net.index[i - 1], float((1 + w).prod() - 1)))
     return out

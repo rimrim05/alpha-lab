@@ -1,4 +1,4 @@
-"""IC-first signal screen — rank IC of 10 fit-free signals on PIT S&P 500 members.
+"""IC-first signal screen: rank IC of 10 fit-free signals on PIT S&P 500 members.
 
 Methodology replicates robustness/ic.md (F-016): monthly (month-end trading days),
 PIT members via panel field 'member' (ETFs/^VIX excluded), Spearman rank IC vs 21d

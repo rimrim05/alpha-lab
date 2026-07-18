@@ -1,6 +1,6 @@
 """Offline tests for the two pre-go-live bricks: the signal-parity gate and the Alpaca adapter.
 
-The adapter is tested with a MOCK trading client (injected) — no network, no keys — matching the repo
+The adapter is tested with a MOCK trading client (injected), no network, no keys, matching the repo
 rule. The live data path itself is validated only by the first real --live run (smoke test with keys).
 """
 import numpy as np
@@ -101,7 +101,7 @@ def test_fills_drains_and_positions_map():
     assert b.positions()["AAPL"]["qty"] == 50.0
     first = b.fills()
     assert len(first) == 1 and first[0]["ticker"] == "AAPL" and first[0]["qty"] == 50.0
-    assert b.fills() == []       # drained — same order not reported twice
+    assert b.fills() == []       # drained, same order not reported twice
 
 
 def test_factory_requires_env_keys(monkeypatch):

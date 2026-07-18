@@ -28,7 +28,7 @@ class Broker(ABC):
 
     @abstractmethod
     def asset_status(self, ticker: str) -> str:
-        """'tradable' | 'halted' | 'delisted' — the input reconcile's terminal-event
+        """'tradable' | 'halted' | 'delisted': the input reconcile's terminal-event
         logic keys on."""
 
 
@@ -46,7 +46,7 @@ class FakeBroker(Broker):
 
     # ---- the fill policy ----------------------------------------------------
     def submit_targets(self, targets: dict[str, float], *, tag: str | None = None) -> None:
-        """Fill toward `targets` (`tag` ignored — in-memory book has no blotter). Union held + target names so a held name absent
+        """Fill toward `targets` (`tag` ignored, in-memory book has no blotter). Union held + target names so a held name absent
         from the book is an exit (target 0). Turn target dollars into a share count,
         diff against current qty, and book the delta ONLY if it's nonzero AND the
         name is tradable — a delisted/halted name can't be traded out, so its stale

@@ -2,7 +2,7 @@
 
 One book from everything that survived in-house EDA, with static sleeve weights (the
 GKX anti-timing lesson: diversify, never rotate). The 1.2x banded equal-weight PIT
-S&P 500 core is the chassis — nobody is on the other side, it just harvests levered
+S&P 500 core is the chassis: nobody is on the other side, it just harvests levered
 equity beta plus the EW size/rebalance premium at index-fund turnover (20% relative
 no-trade band per name). The 0.5x gap-drift sleeve is the alpha kicker: names with a
 one-day move >= 2.5 sigma on 3x median volume keep drifting for ~60 trading days
@@ -14,7 +14,7 @@ allocation). A whole-book gate halves gross when VIX closes >= 40 and re-enters 
 exceeds 2.0. The alpha sleeve is additive, not load-bearing: the market only needs
 ~10-11% for the book to clear 18%.
 
-**Falsifier (forward):** the book is long-only and levered — a flat-to-down market
+**Falsifier (forward):** the book is long-only and levered: a flat-to-down market
 year kills the return target by construction, but the design falsifier is the drift
 sleeve: if post-shock 60d drift on the gap+volume events runs <= 0 net of 10 bps
 costs out of sample (announcement effects now priced within days), the kicker is dead

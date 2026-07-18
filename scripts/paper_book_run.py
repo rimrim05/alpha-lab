@@ -6,7 +6,7 @@ a mini-backtest through the paper machinery.
 
 `--live` runs ONE nightly step against Alpaca **paper**: fetch today's bars, run the parity gate, submit
 the target book, log, report. The per-night step is shared with --dry-run (so it's exercised by the test
-suite); the live DATA path (Alpaca fetch + keyed broker calls) is validated by the first keyed run —
+suite); the live DATA path (Alpaca fetch + keyed broker calls) is validated by the first keyed run;
 that run IS the smoke test. Needs ALPACA_API_KEY_ID / ALPACA_API_SECRET_KEY in the env.
 
 Usage: .venv/bin/python scripts/paper_book_run.py --dry-run [--days 60] [--window 60]
@@ -120,7 +120,7 @@ def _prev_book_from_ledger(ledger: Ledger) -> dict:
 
 def _fetch_alpaca_panel(window: int, lookback_days: int = 90):
     """Live daily bars for the current S&P 500 + sector ETFs from Alpaca; build sector-matched factors.
-    UNTESTED until keys — the first --live run validates this path."""
+    UNTESTED until keys; the first --live run validates this path."""
     from alpaca.data.historical import StockHistoricalDataClient
     from alpaca.data.requests import StockBarsRequest
     from alpaca.data.timeframe import TimeFrame
@@ -141,7 +141,7 @@ def _fetch_alpaca_panel(window: int, lookback_days: int = 90):
     sectors = {t.replace("-", "."): s for t, s in zip(comp["ticker"], comp["sector"])}
     etfs = sorted(set(SECTOR_ETF.values()) | {"SPY"})
 
-    # request only symbols Alpaca lists as tradable — one unknown symbol fails the whole bars call
+    # request only symbols Alpaca lists as tradable; one unknown symbol fails the whole bars call
     tradable = {a.symbol for a in tc.get_all_assets(GetAssetsRequest(
         asset_class=AssetClass.US_EQUITY, status=AssetStatus.ACTIVE)) if a.tradable}
     universe = [s for s in sorted(sectors) if s in tradable]

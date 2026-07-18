@@ -2,7 +2,7 @@
 
 Schema unions with the paper book's positions.jsonl so backward (here) and forward (paper) logs
 concatenate into one training set. Per-trade P&L is the contemporaneous reversion captured over the
-hold (Sum sign*resid) — a LABEL for "did it revert", distinct from the engine's cost-and-lag net
+hold (Sum sign*resid), a LABEL for "did it revert", distinct from the engine's cost-and-lag net
 series (the performance number). success = pnl > 0.
 """
 import pandas as pd

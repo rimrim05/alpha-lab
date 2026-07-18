@@ -1,4 +1,4 @@
-"""EXP-IC-EARNINGS-FWD collector — forward-only point-in-time earnings-surprise panel.
+"""EXP-IC-EARNINGS-FWD collector: forward-only point-in-time earnings-surprise panel.
 
 Pre-registered: research/hunt2026/preregistrations/exp-ic-earnings-fwd-2026-07-10.md.
 Nightly (default): pull Finnhub earnings calendar [today-3d, today+7d], fetch surprise
@@ -30,7 +30,7 @@ PANEL_PATH = ROOT / "research" / "hunt2026" / "panel_2005.parquet"
 KEY_PATH = Path.home() / ".config" / "rimrimos" / "finnhub.env"
 BASE = "https://finnhub.io/api/v1"
 THROTTLE_S = 1.1  # 60/min limit
-# Pre-registered thresholds (do not edit — see preregistration)
+# Pre-registered thresholds (do not edit, see preregistration)
 HORIZONS = (5, 20, 60)
 N_PRIMARY, N_KILL = 300, 600
 
@@ -167,7 +167,7 @@ def snapshot_reactions(today: dt.date) -> int:
 def compute_sue(events: pd.DataFrame) -> pd.Series:
     """Pre-registered SUE: (actual-estimate)/scale; scale = std of the symbol's prior
     (earlier-period) surprises when >=2 exist, else |estimate|. History rows (non-PIT)
-    may feed the scale — they are past data at event time — but never the test set."""
+    may feed the scale (they are past data at event time) but never the test set."""
     ev = events.sort_values("period")
     out = pd.Series(index=ev.index, dtype=float)
     for i, row in ev.iterrows():

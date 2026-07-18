@@ -2,7 +2,7 @@
 
 Year-over-year total-asset growth is a CONTRARIAN cross-sectional signal: low-asset-
 growth firms outperform high-growth firms (~20%/yr spread in the paper). So the score
-is the NEGATIVE of asset growth — low growth ranks high (long), high growth ranks low
+is the NEGATIVE of asset growth: low growth ranks high (long), high growth ranks low
 (short). Low turnover (annual), so it survives costs (Novy-Marx & Velikov).
 
 Directly answers the "does highest YoY growth predict returns" question: it predicts

@@ -90,7 +90,7 @@ def main():
     train.to_parquet(HERE / "train.parquet")
     holdout.to_parquet(HERE / "holdout.parquet")
 
-    # static metadata both sides may see (current sector map — survivorship-lite, noted)
+    # static metadata both sides may see (current sector map, survivorship-lite, noted)
     comp_all = fetch_sp_composite(cache=HERE.parent.parent / "data/raw/sp_composite_all.parquet")
     comp_all[comp_all["ticker"].isin(close.columns)][["ticker", "sector"]] \
         .to_parquet(HERE / "sectors.parquet")

@@ -1,4 +1,4 @@
-"""Agent 9 — return-source decomposition of the 7 frozen books.
+"""Agent 9: return-source decomposition of the 7 frozen books.
 
 Read-only vs repo; writes CSVs into redteam/2026-07-10/agent9/.
 Uses the frozen harness P&L convention so numbers are comparable to results/.
@@ -220,7 +220,7 @@ def overlap(panel, start, end, label):
 
 
 def svxy_sleeve(panel, start, end):
-    """vol_core_svxy minus its own core (60/40 vol-scaled, no SVXY) — sleeve contribution."""
+    """vol_core_svxy minus its own core (60/40 vol-scaled, no SVXY): sleeve contribution."""
     class _Core:
         @staticmethod
         def target_weights(p):

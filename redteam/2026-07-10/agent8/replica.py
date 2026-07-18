@@ -1,8 +1,8 @@
-# Agent 8 clean-room replicas — built ONLY from params.json + MECHANISM.md +
+# Agent 8 clean-room replicas: built ONLY from params.json + MECHANISM.md +
 # SPEC_CONVENTIONS.md. Original spec.py files were NEVER read (they are executed
 # elsewhere, as black boxes, to produce reference weights).
 #
-# Predeclared conventions (chosen BEFORE any diff was inspected — see report.md):
+# Predeclared conventions (chosen BEFORE any diff was inspected, see report.md):
 #  C1. realized vol = rolling std (ddof=1) of simple close-to-close pct returns,
 #      window = lookback, min_periods = lookback, annualized sqrt(252).
 #  C2. no-trade band is sequential: keep previous weight unless |raw - prev| > band.

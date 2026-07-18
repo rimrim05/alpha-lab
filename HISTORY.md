@@ -25,13 +25,13 @@ strategy was retired. **Full write-up → [`CASE_STUDY.md`](CASE_STUDY.md).** Th
 
 ## The original five tracks — one scorecard, honest verdicts
 
-Every track judged by the same [`core/eval/scorecard.py`](core/eval/scorecard.py) — one yardstick, no
+Every track judged by the same [`core/eval/scorecard.py`](core/eval/scorecard.py), one yardstick, no
 per-strategy goalposts.
 
 | track | source of edge | verdict |
 | ----- | -------------- | ------- |
-| statarb residual reversion | structural (liquidity) | **dead** (Stage 4) — P&L was residual-space; implementable edge ~4× below costs |
-| GKX signal rotation | behavioral (factor momentum) | **dead** (Stage 4) — rotation & PC-timing both lose to equal-weight |
+| statarb residual reversion | structural (liquidity) | **dead** (Stage 4): P&L was residual-space; implementable edge ~4× below costs |
+| GKX signal rotation | behavioral (factor momentum) | **dead** (Stage 4): rotation & PC-timing both lose to equal-weight |
 | PEAD drift | behavioral (underreaction) | promising, +8.45% 60-day drift, caveated |
 | asset-growth contrarian | behavioral (glamour) | flat, no premium this era |
 | LLM headline sentiment | informational | specified, data-blocked |
@@ -41,7 +41,7 @@ per-strategy goalposts.
 Discovery under a frozen protocol: 18 total specs, kill criteria written before the data, post-cut
 files chmod-000 during building, specs frozen in git before unlock.
 
-- **Round 1 (1-year blind):** 14 specs; 11 beat +18% but SPY did +21% — beta-matched excess is the
+- **Round 1 (1-year blind):** 14 specs; 11 beat +18% but SPY did +21%; beta-matched excess is the
   real number. Survivors: momentum_concentrated, dual_momentum, gap_drift.
 - **Round 2 (5-year backdated, fully blind through the 2022 bear):** 4 ETF specs, literature-default
   params fit ≤ 2021. **3 of 4 passed, and the pass spanned a bear year.** Headline:
@@ -54,12 +54,12 @@ Verdicts: [`memos/hunt2026-verdict.md`](memos/hunt2026-verdict.md),
 
 An autonomous program with pre-frozen preregs answering two questions on the live book:
 
-- **Q1 — real residual alpha?** No. **Factor-premium harvesting** — no book clears blind-window t ≥ 2
+- **Q1, real residual alpha?** No. **Factor-premium harvesting**: no book clears blind-window t ≥ 2
   alpha; the four best-looking cells each decompose into gold beta, financing, one 2022 regime, or an
   empty cell. The books are competent implementations of published premia, not idiosyncratic alpha.
-- **Q2 — does James-Stein shrinkage help?** No deployment-material value anywhere. The one real effect
+- **Q2, does James-Stein shrinkage help?** No deployment-material value anywhere. The one real effect
   (long-only min-var vol reduction) is capped at ~2.6 bps/yr and shrinks with p/n; harmful with shorts;
-  10 preregistered experiments null or harmful. It's a **structural null** — ψ̂₁ ≈ 0.98–1.00 at S&P
+  10 preregistered experiments null or harmful. It's a **structural null**: ψ̂₁ ≈ 0.98–1.00 at S&P
   scale, so there's nothing for the correction to correct. MP eigenvalue clipping won wherever
   risk-model quality mattered.
 

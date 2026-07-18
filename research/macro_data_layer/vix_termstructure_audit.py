@@ -1,5 +1,5 @@
 """Data audit (DELIVERABLE FIRST, per item 6) for the VIX/VIX3M term-structure layer.
-No signal or strategy is built here — this only issues PASS/BLOCK. Read-only.
+No signal or strategy is built here; this only issues PASS/BLOCK. Read-only.
 Checks: availability/release lag, revisions, calendar alignment, staleness, truncation
 causality (future-poison test on a candidate contango-slope feature)."""
 import json, datetime as dt

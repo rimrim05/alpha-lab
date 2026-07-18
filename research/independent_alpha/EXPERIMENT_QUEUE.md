@@ -13,7 +13,7 @@ EXP-IC-EARNINGS-FWD track the audit already ranked above price-only probes.
 ## Scoring
 
 `Priority = P(material belief change) × decision value × generality × mechanism novelty / research cost`.
-Each component is a rough 1-5 (no false precision). **data_now=false is heavily discounted** — an
+Each component is a rough 1-5 (no false precision). **data_now=false is heavily discounted**: an
 uncollectable experiment cannot change belief this quarter, so every forward-collect / data-build item
 sinks below every testable-now item regardless of merit. Composite is directional, not a computed decimal.
 Buckets honor the 40% high / 40% medium / 20% moonshot budget over the actionable near-term set.
@@ -56,10 +56,10 @@ Legend: P=P(belief change) · D=decision value · G=generality · N=mechanism no
 
 ## Bucket composition (near-term actionable set = the 10 testable-now)
 
-- **High (4 ≈ 40%):** H-E1, H-D1, H-lw-target, H-idio-shrink — two sanctioned/flagged-open reopens
+- **High (4 ≈ 40%):** H-E1, H-D1, H-lw-target, H-idio-shrink, two sanctioned/flagged-open reopens
   (near-zero overhead), one live-book-actionable execution test, one orthogonal estimator lever. All ≤~40-line
   diffs on in-repo panels, each <1 min runtime, each decisive in every branch.
-- **Medium (4-5 ≈ 40%):** H-robust-cov, H-cov-temporal-smooth, H-D2, H-C-sbcorr, H-D3 — orthogonal
+- **Medium (4-5 ≈ 40%):** H-robust-cov, H-cov-temporal-smooth, H-D2, H-C-sbcorr, H-D3, orthogonal
   probes and open-door closers at coin-toss-to-moderate P; two carry NEEDS_DIFF caveats (report Δ vs the
   docketed lever).
 - **Moonshot (≈ 20%):** H-C-value (thin-window, testable-now but low-power) + the highest-value
@@ -68,26 +68,26 @@ Legend: P=P(belief change) · D=decision value · G=generality · N=mechanism no
 
 ## Sequencing
 
-1. **Run the 4 high-bucket testable-now experiments first** (H-E1, H-D1, H-lw-target, H-idio-shrink) —
+1. **Run the 4 high-bucket testable-now experiments first** (H-E1, H-D1, H-lw-target, H-idio-shrink):
    all cheap in-repo, each retires or advances a live docket entry (NR-1 reopen, live-book execution
    leakage, RESULTS.md blunt-target, the untested diagonal lever). H-D1 chains onto the live reconcile
    harness (ops-reality) which will *empirically* confirm/deny the same overnight-gap leakage forward.
 2. **Then the medium testable-now probes** (H-robust-cov, H-cov-temporal-smooth [Δ vs director #4/#5],
-   H-D2, H-C-sbcorr [Δ vs momentum-picked leg], H-D3) — independent, parallelizable.
-3. **Kick off forward-collection in parallel, now** (it gates everything below): the FREE feeds first —
+   H-D2, H-C-sbcorr [Δ vs momentum-picked leg], H-D3): independent, parallelizable.
+3. **Kick off forward-collection in parallel, now** (it gates everything below): the FREE feeds first,
    `stock/recommendation` count-sum for HYP-A4-03 (coverage) and HYP-A4-04 (disagreement proxy), the
    nightly forward-EPS snapshot for HYP-A4-01, and FRED ingest for H-E3 / H-C-carry / H-C-breakeven.
-   H-E4 and the coverage/revision earnings hypotheses ride the already-accruing EXP-IC-EARNINGS-FWD panel —
+   H-E4 and the coverage/revision earnings hypotheses ride the already-accruing EXP-IC-EARNINGS-FWD panel,
    deeper each quarter, testable when n crosses the pre-registered bars.
 4. **Data-build lane (B) and H-D4** wait for a survivorship-safe small-cap / EDGAR / Russell panel and an
-   intraday feed respectively — scope these as data-acquisition tasks, not experiments, until the data exists.
+   intraday feed respectively; scope these as data-acquisition tasks, not experiments, until the data exists.
 
 ## Standing caveats carried from the record
 
-- **H-E1 is signal-space only.** A confirmed conditional IC is evidence-ladder **level 1** — tradability
+- **H-E1 is signal-space only.** A confirmed conditional IC is evidence-ladder **level 1**: tradability
   stays gated behind NR-1's cost wall (measured ≤2-3 bps/side or intraday execution). Do not promote a rank
   IC to a book.
-- **H-C-sbcorr / H-E3 re-grade or hedge existing sources — not new market alpha.** Score H-C-sbcorr as a
+- **H-C-sbcorr / H-E3 re-grade or hedge existing sources, not new market alpha.** Score H-C-sbcorr as a
   Portfolio/Estimator hedge (NR-5: "better tail, worse median" is a hedge, never additive alpha); H-E3's
   win-case merely relabels the promoted family's excess as trend-alpha vs beta, it adds no new book.
 - **Forward-only means forward-only.** No Lane-A hypothesis may claim backfilled history as evidence

@@ -6,7 +6,7 @@ Usage: .venv/bin/python scripts/news_fetch_run.py [--start 2026-02-01] [--end YY
        [--universe mega|wide] [--out data/raw/news.parquet]
 
 Default start is the scoring model's training cutoff (unmasked evaluation is only valid
-after it — Decision A in the track spec); pass an earlier --start for masked-mode history.
+after it, Decision A in the track spec); pass an earlier --start for masked-mode history.
 """
 import argparse
 from pathlib import Path

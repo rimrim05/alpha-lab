@@ -20,21 +20,21 @@ Half-1 PCA/screen, half-2 F-test. Prereg: FLOOR_RESIDUAL_MEMO.md Phase 5.
 
 - **Shared noise is exonerated; partial mixing convicted.** If shared noise drove the
   Phase-4 false positives, splitting removes it → FPR should drop. Instead FPR ROSE
-  (0.12 → 0.22) while A1-oracle stays at 0.01 — genuine factors never fire when there is
+  (0.12 → 0.22) while A1-oracle stays at 0.01, genuine factors never fire when there is
   no misalignment, split or not. The fires exist only when misalignment exists, because
   the sample eigenvectors MIX leaked and genuine directions.
 - **The split made it worse for a theorem-consistent reason:** half-window PCA (n/2 obs)
-  has MORE in-subspace rotation — the mixing grows exactly as Theorem 1 predicts when n
-  shrinks — so "genuine-labeled" factors (L < 0.2 allows real leaked content) carry more
+  has MORE in-subspace rotation, the mixing grows exactly as Theorem 1 predicts when n
+  shrinks, so "genuine-labeled" factors (L < 0.2 allows real leaked content) carry more
   leakage, and the F-test CORRECTLY detects it. Median D for genuine-labeled factors rose
   from 0.06–0.09 (full window) to 0.18–0.27 (half window). FNR also rose (power + dilution).
-- **The detector was never broken — the binary labels were.** Leakage is a continuum
+- **The detector was never broken, the binary labels were.** Leakage is a continuum
   (L ∈ [0,1]) because sample eigenvectors are mixtures; any binary genuine/leaked
   classification manufactures "errors" out of correct continuous detection. The Phase-4
   full-window detector (AUC 0.98, FNR ≤ 0.07, FPR ≤ 0.12) is the better operating point,
   with D_j interpreted as a LEAKAGE SCORE, not a flag.
 - **Connection worth taking to the lab:** the applied pipeline's "false positives" are
-  Theorem 1's in-subspace rotation materializing as mixed factor provenance — the same
+  Theorem 1's in-subspace rotation materializing as mixed factor provenance, the same
   inestimable-rotation object, now visible as a continuous, observable leakage score.
 - **Pipeline verdict:** complete, with the continuum interpretation. Same-window detector,
   D as score; C4 screen; floor + n/(2p) for p/n ≥ 7. Ready for real FF-residualized S&P.

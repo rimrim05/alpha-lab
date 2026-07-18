@@ -1,4 +1,4 @@
-"""Discovery Program — point-in-time FRED rates/curve + VIX/VIX3M state data layer.
+"""Discovery Program: point-in-time FRED rates/curve + VIX/VIX3M state data layer.
 
 THE DATA LAYER IS THE DELIVERABLE (charter Gates 1-3). No strategy is built here. Downstream
 preregs may use the ALIGNED frame only after this file's audit prints VERDICT: PASS.
@@ -6,9 +6,9 @@ preregs may use the ALIGNED frame only after this file's audit prints VERDICT: P
 Design decisions (the honest PIT ones):
 - Source: FRED keyless CSV (fredgraph.csv?id=). No API key. Treasury constant-maturity yields
   (DGS*), T10Y2Y, VIX, VIX3M are market/Treasury-published and effectively NOT revised (revision
-  exposure LOW) — unlike GDP/CPI, which are deliberately EXCLUDED. DFF has negligible revision.
+  exposure LOW), unlike GDP/CPI, which are deliberately EXCLUDED. DFF has negligible revision.
 - observation_date != availability_date. Each series carries an `avail_lag_bdays`:
-    rates & DFF = 1 business day (FRED publishes T+1; conservative — no same-day peeking).
+    rates & DFF = 1 business day (FRED publishes T+1; conservative, no same-day peeking).
     VIX / VIX3M = 0 (CBOE close is known at that day's close; using close_t at a close_t decision
     is contemporaneous, not look-ahead). Preregs add their own forecast/execution timestamps.
 - Alignment: reindex to the repo trading calendar (panel_2005 index), shift each series by its

@@ -4,7 +4,7 @@ only in the factor-1 correction. Axis = universe {large S&P500, mid S&P400, smal
 windows {63, 252}. Primary metric = monthly L1 weight turnover (survivorship-robust);
 secondary = realized vol + mean psi_hat_1 (mechanism gauge).
 
-Data caveat: S&P 400/600 membership in the cache is CURRENT, not point-in-time — returns/
+Data caveat: S&P 400/600 membership in the cache is CURRENT, not point-in-time; returns/
 vol are survivorship-inflated; turnover is near-neutral, hence primary.
 Prereg: research/hunt2026/preregistrations/jse-regime-map-2026-07-14.md.
 """

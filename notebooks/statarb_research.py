@@ -10,24 +10,24 @@
 # ---
 
 # %% [markdown]
-# # StatArb residual reversion — research notebook
+# # StatArb residual reversion: research notebook
 #
 # A market-neutral statistical-arbitrage strategy (Avellaneda–Lee residual reversion) taken through a
 # full research workflow: reproduce, **attack** (survivorship audits), quantify which production layers
 # matter (ablation), and ask whether a meta-model can predict *which* signals revert.
 #
 # **This notebook never re-runs the backtest.** It reads the artifacts the audited engine wrote
-# (`artifacts/statarb/…`) — the compute/present seam that keeps the headline number honest.
+# (`artifacts/statarb/…`), the compute/present seam that keeps the headline number honest.
 #
 # *Paper trading only. Nothing here places real orders.*
 
 # %% [markdown]
-# ## ⚠ Superseded — Stage-4 kill (2026-07-10)
+# ## ⚠ Superseded: Stage-4 kill (2026-07-10)
 #
 # The results in this notebook were computed under the pre-fix engine, which scored P&L in
 # **residual space** (`held x residual`). The trailing-alpha term that scoring credits is
 # unhedgeable, and the implementable book (stock − lagged-beta x sector ETF) earns ~1.3%/yr gross
-# against ~5.3%/yr of costs — net Sharpe **−0.88**, and **−1.06** after the pre-registered
+# against ~5.3%/yr of costs, net Sharpe **−0.88**, and **−1.06** after the pre-registered
 # drift-corrected salvage. **Verdict: dead.** This notebook is kept as the historical record the
 # post-mortem dissects: see `memos/diagnostics-2026-07-10.md` and the README.
 
@@ -48,10 +48,10 @@ ABL = ROOT / "artifacts/statarb/ablation"
 CONFIG = "costs"   # the equal-weight S&P 500 book behind the headline result
 
 # %% [markdown]
-# ## The headline result — does signal *quality* prediction improve the book?
+# ## The headline result: does signal *quality* prediction improve the book?
 #
 # The single most important question in this notebook, up front: if instead of trading **every**
-# residual signal we trade only those a meta-model rates likely to revert, does the book improve —
+# residual signal we trade only those a meta-model rates likely to revert, does the book improve,
 # **out of sample**? The threshold is pre-registered on earlier trades and reported on held-out later
 # trades. Reported whichever way it comes out: a null result is itself a finding.
 
@@ -71,7 +71,7 @@ gated_table
 # rate and mean P&L are the complementary trade-level view.
 
 # %% [markdown]
-# ## Which production layers actually matter — the ablation
+# ## Which production layers actually matter: the ablation
 
 # %%
 def ablation_table():
@@ -97,7 +97,7 @@ by_year.rename("sharpe").to_frame()
 # %% [markdown]
 # ## QuantStats tearsheet
 #
-# The field-standard performance report — cumulative returns, drawdown, rolling Sharpe, monthly heatmap.
+# The field-standard performance report: cumulative returns, drawdown, rolling Sharpe, monthly heatmap.
 # Generated to `reports/` and linked here (kept out-of-line so the notebook stays light).
 
 # %%
@@ -111,11 +111,11 @@ print(f"Full tearsheet: reports/statarb_tearsheet_{CONFIG}.html")
 
 # %% [markdown]
 # **Honest note.** QuantStats' Sharpe assumes a risk-free rate and its own periodization; the house
-# scorecard uses rf=0, ddof=1. The two won't exactly match — a convention difference, not a bug. The
+# scorecard uses rf=0, ddof=1. The two won't exactly match: a convention difference, not a bug. The
 # custom deflated-Sharpe (Bailey–López de Prado) remains the multiple-testing guard QuantStats omits.
 
 # %% [markdown]
-# ## The meta-model — walk-forward, leakage-safe
+# ## The meta-model: walk-forward, leakage-safe
 #
 # Features are **entry-time only** (an exit-time feature like `holding_days` would leak the label).
 # Expanding-window monthly training; out-of-fold AUC below.
@@ -126,7 +126,7 @@ print(f"{len(X)} signals · {y.mean():.1%} reverted · {X.shape[1]} entry-time f
 oof_auc_table(X, y, dates)
 
 # %% [markdown]
-# ### SHAP — what drives the meta-model
+# ### SHAP: what drives the meta-model
 
 # %%
 png = ROOT / "reports" / f"shap_beeswarm_{CONFIG}.png"
@@ -144,6 +144,6 @@ display(Image(filename=str(png))) if png.exists() else print("run tracks.statarb
 #
 # ## Conclusion
 #
-# The strategy is real and its limits are named. The differentiator isn't the Sharpe — it's the
+# The strategy is real and its limits are named. The differentiator isn't the Sharpe, it's the
 # discipline: survivorship audits, an ablation that says which layers earn their keep, and a
 # leakage-safe meta-model reported whichever way it comes out.

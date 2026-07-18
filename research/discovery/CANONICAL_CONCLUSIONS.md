@@ -34,7 +34,7 @@ ensemble; threshold 0.65; n=5351 windows):
 | responsible book / factor | **long-duration Treasury (TLT) exposure** — co-moves 0.999 with dual_momentum_gem's TLT leg in risk-off; the promoted-ensemble breach is driven by defensive_ensemble's bond sleeve |
 
 The breach is temporary and rare, but **the verdict is unchanged even if the breach were
-ignored** — the primary prediction and holdout gates already fail. Bond carry (free-data
+ignored**: the primary prediction and holdout gates already fail. Bond carry (free-data
 Treasury ladder) → Failure DB.
 
 ## EXP-B — MECHANISM UNSUPPORTED ON THE CURRENT PANEL
@@ -42,13 +42,13 @@ Treasury ladder) → Failure DB.
 The four-property model (risk premium, vol clustering, return-vol asymmetry, drawdown
 convexity) **does not pass the pre-registered cluster-level joint test**: Rademacher wild
 cluster bootstrap, G=5, **joint p = 0.44**. (The naive iid-across-26-ETFs F, p=0.047, is
-forbidden by the prereg — correlated markets are not independent confirmations.)
+forbidden by the prereg: correlated markets are not independent confirmations.)
 
 Three expected signs hold and the benefit concentrates descriptively in US equities and gold
 (US-equity +4.0%, gold +5.7%, broad-intl/energy ~0-to-negative), which **narrows F-020**
 (vol-management is not universal). But this does **not establish a transportable mechanism**.
 **Volatility clustering is the strongest _descriptive_ predictor in this panel** (cluster-mean
-corr +0.85, within-cluster t=2.26) — recorded as a descriptive fact on this ETF panel, **not**
+corr +0.85, within-cluster t=2.26): recorded as a descriptive fact on this ETF panel, **not**
 as a generally proven robust predictor. No regime switch, strategy, or portfolio follows.
 
 ## FRED data-layer conclusion (scope preserved)
@@ -62,10 +62,10 @@ are revised and remain BLOCKED absent ALFRED point-in-time retrieval.
 1. Continue prospective earnings-event collection (com.rimrim.earnings-collect, read-only).
 2. Maintain the data layer and the Orthogonality Benchmark.
 3. **Close the free-data Treasury carry lane.**
-4. Reopening carry requires **materially better futures / term-structure data** — not more
+4. Reopening carry requires **materially better futures / term-structure data**: not more
    proxies on the same ladder (CARRY_FEASIBILITY.md).
 5. **Do not reopen conditional vol-management** with nearby variables, thresholds, or ETF
-   permutations on this panel — next reopen needs new markets/instruments.
+   permutations on this panel: next reopen needs new markets/instruments.
 6. All discovery work stays **outside the funded seven-book roster**.
 
 ## Canonical project state

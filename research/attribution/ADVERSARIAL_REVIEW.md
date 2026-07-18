@@ -5,7 +5,7 @@ file. New numbers below were computed with the repo's own machinery
 (`research/attribution/run_attribution.py` factor builder + NW-OLS, `harness.run` on the
 frozen specs, `.venv/bin/python`; scratch scripts outside the repo). Diagnostic
 regressions that add a regressor (GLD) are marked POST-HOC: the prereg's ambiguity rule
-forbids them for the *decision*, and the decision (no candidate) does not change — they
+forbids them for the *decision*, and the decision (no candidate) does not change: they
 attack only the *story wording* ("unexplained").
 
 Conventions: MDA = minimum detectable alpha at NW-t = 2 = 2 × SE_ann(alpha).
@@ -18,7 +18,7 @@ Financing stress = the prereg's own line: alpha − max(gross−1,0) × (RF_ann 
 ### Finding 1 — defensive_ensemble "+6.7%/yr, t=1.77 (best cell)" — KILLED as "unexplained"
 
 **Target claim.** The program's best residual cell: defensive_ensemble blind-5y M2 alpha
-+6.72%/yr, t=1.77 — the anchor of "some unexplained residual return".
++6.72%/yr, t=1.77: the anchor of "some unexplained residual return".
 
 **Attack.** Decompose it into (i) an asset exposure the factor menu omits (gold) and
 (ii) financing the harness does not charge.
@@ -26,7 +26,7 @@ Financing stress = the prereg's own line: alpha − max(gross−1,0) × (RF_ann 
 **Evidence (computed).**
 - M2 + GLD excess return (POST-HOC diagnostic): alpha +6.72% → **+3.66%, t=1.09**;
   beta_GLD = +0.22 with t=+9.48; R² 0.686 → 0.754. GLD excess did **+16.44%/yr** over
-  the blind-5y window — the book (sleeves B and C both hold GLD) rode it.
+  the blind-5y window: the book (sleeves B and C both hold GLD) rode it.
 - Financing: gross 1.92, blind-5y RF 3.64%/yr → prereg stress charge = 0.92 × 4.14% =
   **3.81%/yr**. Applied to the GLD-controlled alpha: 3.66 − 3.81 = **−0.15%/yr**.
 - The stress-adjusted t of the as-run cell is +2.91%/6.72% × 1.77 ≈ **t=0.77** (the
@@ -42,7 +42,7 @@ Financing stress = the prereg's own line: alpha − max(gross−1,0) × (RF_ann 
 fully accounted for by unmodeled static gold exposure (+~3.1%/yr) plus uncharged
 financing on 1.92x gross (+~3.8%/yr); the remainder is ≈ 0 (−0.2%/yr under the prereg
 stress line). No unexplained residual."* (Note: β_GLD×(GLD−RF) and the gross−1
-financing charge do not double-count — the first is the gold notional's excess-return
+financing charge do not double-count: the first is the gold notional's excess-return
 attribution, the second is the cash leg the harness gives away free.)
 
 **Smallest falsification test.** Rerun the frozen attribution with (a) GLD excess in
@@ -68,7 +68,7 @@ design hindsight.
   adaptive loop, and the registered defensive-asset robustness experiment already ruled
   the GLD menu a **REGIME ARTIFACT** (GLD wins 13% of pre-2024 windows).
 - TSMOM's own menu contains GLD, so M2 absorbs only sign-of-trend gold, not the level
-  loading — hence the leak.
+  loading: hence the leak.
 
 **Outcome: KILLED.** Replacement claim: *"dual_momentum_gold's residual is static gold
 beta in a gold bull, on a menu chosen with hindsight; controlled for GLD it is
@@ -90,22 +90,22 @@ of costs by ≥ 3pp.
   +0.12% (t=0.02), 2025→ +1.46% (t=0.12). Everything is one bear.
 - Not gold, not financing: beta_GLD −0.05 (t=−1.6); stress leaves +7.59%.
 - The prereg's naive-parent control cuts the other way: bench_qqq_sma200_2x blind-5y M2
-  alpha +12.42%, t=1.55 — the *naive* parent's residual is LARGER than the book's, and
+  alpha +12.42%, t=1.55: the *naive* parent's residual is LARGER than the book's, and
   the walk-forward memo already showed the combo's median excess is below its parents
   (F-014). Per the prereg's own logic ("if a vol/trend book's alpha ≈ its naive
   parent's, the alpha is the trend premium, not engineering"), this cell is trend
   premium that M2's 6-ETF TSMOM proxy under-spans, not book engineering.
-- Instability the other way: excluding 2025→ gives t=2.04 — the estimate swings ±0.5t
+- Instability the other way: excluding 2025→ gives t=2.04: the estimate swings ±0.5t
   on window choice; that is evidence of regime concentration, not of alpha.
 
 **Outcome: WEAKENED.** Replacement claim: *"trend_vol_qqq's residual is a single 2022
-bear-regime payoff shared with (and exceeded by) its naive trend parent — consistent
+bear-regime payoff shared with (and exceeded by) its naive trend parent, consistent
 with imperfectly-spanned trend premium; no independent evidence of engineering alpha
 (ex-2022: +3.8%/yr, t=0.6)."*
 
 **Smallest falsification test.** Next SPY drawdown ≥ 15% peak-to-trough: book must beat
 bench_qqq_sma200_2x by ≥ 3pp net over the drawdown window (mechanism claim), OR 3 years
-of forward paper NAV with M2 alpha ≥ 4%/yr — whichever comes first.
+of forward paper NAV with M2 alpha ≥ 4%/yr, whichever comes first.
 
 ### Finding 4 — dual_momentum_gem "+15.8%/yr, t=1.12 (1y)" — KILLED as evidence (uninformative cell)
 
@@ -119,12 +119,12 @@ distinguish zero from +28%/yr. P(t≥2 | true alpha = 10%/yr) ≈ 10%. Half-spli
 switch month; n=219; GLD control moves nothing (−0.8pp).
 
 **Outcome: KILLED as evidence.** Replacement claim: *"gem's 1y cell is statistically
-empty — a +15.8% point estimate with a 14% standard error and a sign flip across
+empty: a +15.8% point estimate with a 14% standard error and a sign flip across
 halves; it neither supports nor damages a residual-alpha claim."*
 
-**Smallest falsification test.** None available in-sample — the cell is information-
+**Smallest falsification test.** None available in-sample: the cell is information-
 free. Forward only: 24 months of paper NAV; M2 alpha t ≥ 2 on the accumulated window
-(SE shrinks to ~9.5% at n≈470; still only detects >19%/yr — state this in the memo).
+(SE shrinks to ~9.5% at n≈470; still only detects >19%/yr: state this in the memo).
 
 ### Finding 5 — "No book clears t ≥ 2" carries almost no weight against moderate alpha — SURVIVES only with the MDA table attached
 
@@ -153,7 +153,7 @@ Findings 1–4 explain the point estimates; Finding 5 caps what the t-stats ever
 
 **Smallest falsification test.** Not falsifiable retrospectively; the binding forward
 test is the live paper book: at ~2x the observations (n≈2500, 5y book) the defensive
-cell's MDA drops to ~5.3%/yr — pre-register that number now.
+cell's MDA drops to ~5.3%/yr: pre-register that number now.
 
 ### Finding 6 — "Is alpha-vs-M2 the right null for a factor-timing strategy?" — SURVIVES, with a mandatory disclosure
 
@@ -162,20 +162,20 @@ worry is that it absorbs the books' own claimed skill by construction.
 
 **Attack + evidence.**
 - The direct check the task asked for: **timing skill would show as positive alpha in a
-  static-factor regression — and it did.** Under M1 (FF5+MOM only, no TSMOM/QQQRES),
-  defensive_ensemble's blind alpha is +9.52%/yr with **t=2.01** — it clears the static-
+  static-factor regression, and it did.** Under M1 (FF5+MOM only, no TSMOM/QQQRES),
+  defensive_ensemble's blind alpha is +9.52%/yr with **t=2.01**: it clears the static-
   premia bar. It fails only when TSMOM (a strategy return, the book's own mechanism
   class) enters (t=1.77) and rule 1 demands both.
 - However: (a) TSMOM is a published, investable premium (Moskowitz-Ooi-Pedersen 2012)
-  and was pre-registered as a *known* factor — charging a trend book for generic trend
+  and was pre-registered as a *known* factor: charging a trend book for generic trend
   exposure is precisely what attribution is for; (b) the TSMOM proxy is PIT and nearly
   costless to trade (6 ETFs, 2 bps); (c) the residual left AFTER M2 is the book's
   timing-beyond-generic-trend, and per Finding 1 that residual is gold + financing;
-  (d) the QQQRES look-ahead (audit F2) biases alpha UP, not down — PIT construction
+  (d) the QQQRES look-ahead (audit F2) biases alpha UP, not down: PIT construction
   lowers the best cells to t=1.73/1.36. So M2 is not stealing genuine skill; if
   anything it is slightly generous.
 - Residual scale sanity: defensive_ensemble M2 residual vol is 8.2%/yr on a 1.92x-gross
-  book — the model leaves plenty of room for alpha to show; it just isn't there after
+  book: the model leaves plenty of room for alpha to show; it just isn't there after
   Findings 1–2.
 
 **Outcome: SURVIVES.** Mandatory disclosure for the memo: *"the verdict is conditional
@@ -195,7 +195,7 @@ alpha t ≥ 2 under fixed betas. One regression.
 **Attack + evidence.** They are the max over 7 books (≈3 independent clusters per the
 prereg's own INDEPENDENCE_MATRIX) from a process TRIAL_LEDGER scores at ">18 effective
 trials" with Hunt 2 explicitly adaptive (5y books designed after seeing Hunt-1 2022
-stress — the same 2022 window that drives Finding 3, and the gold menu of Finding 2).
+stress: the same 2022 window that drives Finding 3, and the gold menu of Finding 2).
 Under the null, P(max t of 3 independent cells ≥ 1.77) ≈ **0.11** (≈ 0.24 with 7).
 A best-of-family t=1.77 is the expected outcome of no alpha plus selection.
 
@@ -208,7 +208,7 @@ The audit's quantifications are confirmed as directionally offsetting at this
 experiment's level (F1 understates: t 1.77→1.83 fixed; F2 overstates: t 1.77→1.73
 PIT); both fixes together ≈ t 1.8, same verdict. The real exposure is upstream: the
 frozen results5y/holdout headline scores embed ~6 weeks of corrupted post-2026-05-25
-returns — the hunt "+18%" numbers in memos/hunt2026-verdict.md carry that asterisk
+returns: the hunt "+18%" numbers in memos/hunt2026-verdict.md carry that asterisk
 until holdout.parquet is fixed and re-frozen. Survivorship (F3) only makes the one
 negative-alpha stock book more negative. No change to either verdict; the memo should
 cite the audit rather than re-litigate.
@@ -225,27 +225,27 @@ cite the audit rather than re-litigate.
 1. *"No value" vs the record:* the long-only vol reduction is statistically real at
    every window (−2.6→−0.5 bps/yr, all p<0.0001, monotone in p/n, mechanism-confirmed).
    "No practical value" is defensible only if "practical" is pinned to the
-   pre-committed materiality bars — every one of which (−0.2 bps gate, ±0.3 bps
+   pre-committed materiality bars: every one of which (−0.2 bps gate, ±0.3 bps
    calibration, 0.5 net-Sharpe revival, turnover rule, F-021 deployment lock) was
    missed by an order of magnitude. Say that, not "no value".
 2. *"In this system" vs coverage:* JSE_BOUNDARY_MAP §5 concedes a benchmark-relative /
    tracking-error min-var book was **never run** ("Untested — no claim"), and the gap
    table shows tracking error and residual vol MISSING at every k. A partially
    sign-constrained book sits between the long-only (tiny help) and unconstrained
-   (real harm) endpoints — the prior is unfavorable but it is a prior, not a result.
+   (real harm) endpoints: the prior is unfavorable but it is a prior, not a result.
 3. *Overstated support line:* the "direction right in every eval mode" talking point
    (hunt2026-walkforward item 6, echoed in JSE_SYNTHESIS §6(i)-against) is wrong on its
-   own numbers — the 44-window median excess favors RAW by 0.1pp (+3.4 vs +3.5;
+   own numbers: the 44-window median excess favors RAW by 0.1pp (+3.4 vs +3.5;
    synthesis C2). Both sides of the JSE argument should stop citing the hunt pair;
    ±10–15 bps with no t-stat is noise-grade in every direction.
 
 **Outcome: WEAKENED-to:** *"No deployment-material JSE value on any book tested:
-the only real effect is a long-only min-var vol reduction ≤ 2.6 bps/yr — statistically
+the only real effect is a long-only min-var vol reduction ≤ 2.6 bps/yr: statistically
 robust, an order of magnitude below every pre-committed materiality bar; JSE is
 significantly harmful wherever shorts are allowed (+14 to +49 bps) and in every direct
 hedging/regime/calibration extension (F-026→F-031); ψ̂₁ ≈ 1 on all accessible S&P
-panels means there is nothing for the correction to fix at this scale. One book class —
-benchmark-relative/tracking-error — was never run and carries no claim."*
+panels means there is nothing for the correction to fix at this scale. One book class,
+benchmark-relative/tracking-error, was never run and carries no claim."*
 
 **Smallest falsification test (the cheap overturn the task asked for).** One run on the
 existing 138-month cached panel: benchmark-relative min-var (active weights vs SPY,
@@ -257,8 +257,8 @@ and closes BOUNDARY_MAP §5. Cost: one script on cached data.
 
 ### Finding 10 — The JSE program's remaining live claim is correctly scoped — SURVIVES
 
-The defensible scientific residue ("JSE improves long-only min-var realized vol —
-statistically real, economically immaterial — and nothing else in this system",
+The defensible scientific residue ("JSE improves long-only min-var realized vol,
+statistically real, economically immaterial, and nothing else in this system",
 JSE_SYNTHESIS §6(iii)) survives attack: it is backed by monotone dose-response across
 six window lengths, an audit that reconciled the one prose contradiction (C1) to
 byte-identical pipelines, and two independent mechanism closures (subspace-invariance +
@@ -271,7 +271,7 @@ observed on S&P-scale panels", not a theorem.
 
 ## Verdict wording I would accept
 
-**Q1 — residual alpha.** The prereg mapping fires mechanically and may not be
+**Q1: residual alpha.** The prereg mapping fires mechanically and may not be
 relabeled post-hoc: *"factor-premium harvesting with some unexplained residual
 return"* is the correct pre-committed label. But the memo must carry it with these
 riders, without which I dissent:
@@ -289,13 +289,13 @@ riders, without which I dissent:
 > not "proven absent". Best-of-family t=1.77 has familywise p ≈ 0.11 under the null
 > given ≥18 adaptive trials.
 
-**Q2 — JSE.** Replace "no practical JSE value in this system" with:
+**Q2: JSE.** Replace "no practical JSE value in this system" with:
 
 > No deployment-material JSE value on any book tested. The long-only vol reduction is
-> statistically real (all p < 0.0001) but ≤ 2.6 bps/yr — an order of magnitude below
+> statistically real (all p < 0.0001) but ≤ 2.6 bps/yr: an order of magnitude below
 > every pre-committed materiality bar; JSE is significantly harmful with shorts and in
 > every hedging/regime/calibration extension; ψ̂₁ ≈ 1 on all accessible S&P panels.
-> Untested: the benchmark-relative/tracking-error book (BOUNDARY_MAP §5) — one cheap
+> Untested: the benchmark-relative/tracking-error book (BOUNDARY_MAP §5): one cheap
 > pre-registered run on the cached 138-month panel closes it and is the only in-system
 > test that could overturn this verdict. Retire the "direction right in every eval
 > mode" hunt-pair talking point (the 44-window median favors raw by 0.1pp).

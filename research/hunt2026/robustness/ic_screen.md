@@ -2,7 +2,7 @@
 
 Follow-up to the momentum-IC kill (F-016, `ic.md`). Same methodology, replicated exactly
 before screening: 12-1 momentum through this code gives mean IC −0.0014, t −0.07, hit 50%,
-n 135, identical by-year — so the pipeline matches `ic.md` to the fourth decimal.
+n 135, identical by-year, so the pipeline matches `ic.md` to the fourth decimal.
 
 Method: month-end trading days 2015-01→2026-03 (135 months; last month requires 63
 trading days of forward data). Universe = PIT members via panel field `member`, ETFs and
@@ -36,7 +36,7 @@ n = 135 months everywhere except residual_mom_12_1 (133; longest lookback chain)
 
 **No candidates. Nothing reaches |t| ≥ 2 at either horizon.** The best of ten,
 residual momentum at 63d (t = 1.22, hit 61%), is exactly what one draw from ten noise
-signals looks like after selection — and its by-year IC track is ~0.97-correlated with
+signals looks like after selection, and its by-year IC track is ~0.97-correlated with
 plain 12-1 momentum's (same 2016 blowup, same 2026 pop), so it is F-016's corpse with a
 sector hedge, not new information.
 
@@ -49,9 +49,9 @@ Reading by family:
 - **Vol family (4, 9):** low-vol and low-ivol have zero mean IC and were badly negative
   in 2025 (−0.05 to −0.10). No defensive ranking power in this universe/era.
 - **Reversal family (1, 5):** short-term reversal had mild positive IC 2015-19 (+0.036)
-  and has been *negative* since 2020 — consistent with the known post-2015 decay of STR
+  and has been *negative* since 2020, consistent with the known post-2015 decay of STR
   in large caps. Dispersion-residual is the same story, noisier.
-- **Microstructure family (6, 7, 8):** volume shock, overnight share, gap persistence —
+- **Microstructure family (6, 7, 8):** volume shock, overnight share, gap persistence,
   flat everywhere, |t| ≤ 0.52. Nothing.
 
 Half-decade columns show the deeper problem: no signal has a stable sign across

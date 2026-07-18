@@ -20,8 +20,8 @@ trend_vol_qqq, defensive_ensemble). For each watch-tier candidate
 - Daily net series per book from the exact runner path (`compute_book` → `_heal_etfs` →
   `harness.run`) on `panel_2005.parquet`, costs 2/10 bps. Window **2005-01-03 → 2026-07-10, n = 5,413**.
 - **Two fixed weighting designs**, both applied identically to control and treatment:
-  - **equal-capital** — simple mean of member series.
-  - **equal-risk** — inverse-vol weights (1/σ, full-sample, a fixed rule, not tuned).
+  - **equal-capital**: simple mean of member series.
+  - **equal-risk**: inverse-vol weights (1/σ, full-sample, a fixed rule, not tuned).
 - **Primary method**: circular block-bootstrap (L=21d ≈ 1 month, 4,000 reps) of the
   **difference in net Sharpe**, with treatment **re-scaled to control's vol each replicate**
   so the test is *skill, not leverage*. Report **P(ΔSharpe > 0)** and 95% CI.
@@ -42,7 +42,7 @@ trend_vol_qqq, defensive_ensemble). For each watch-tier candidate
 | equal-capital | 0.99 | 20.4% | 21.0% | −30.6% | −26.2% | 7.0% | 2.82 |
 | equal-risk | 1.00 | 19.4% | 19.8% | −26.9% | −22.8% | 7.0% | 2.87 |
 
-The control already carries a real, significant factor-adjusted alpha (t ≈ 2.8) — it is a
+The control already carries a real, significant factor-adjusted alpha (t ≈ 2.8): it is a
 strong benchmark to beat. That is the point: the question is *marginal*, not standalone.
 
 ## Scoreboard — incremental effect of each candidate
@@ -57,16 +57,16 @@ Primary numbers are the **equal-risk** design (equal-capital in brackets where i
 
 ### Read-out
 
-- **dual_momentum_gold** — the *least bad* addition, and still non-incremental. ΔSharpe is a
+- **dual_momentum_gold**: the *least bad* addition, and still non-incremental. ΔSharpe is a
   rounding error (+0.003 / +0.007) and the bootstrap is a coin flip (**P = 0.53**), CI
   straddles 0. Its marginal residual alpha vs the control (+2.3%/yr) is **not significant**
-  (t = 0.5). Sub-period ΔSharpe is unstable — thirds run [+0.011, **−0.056**, +0.043]: whatever
+  (t = 0.5). Sub-period ΔSharpe is unstable: thirds run [+0.011, **−0.056**, +0.043]: whatever
   tiny edge exists lives in one third and reverses in the middle. **Concentrated, not
   significant → fails the gate.**
-- **dual_momentum_gem** — ΔSharpe negative, P = 0.36, marginal residual alpha exactly 0.0
+- **dual_momentum_gem**: ΔSharpe negative, P = 0.36, marginal residual alpha exactly 0.0
   (t = 0.0) at **corr 0.75** to the control. It is the most redundant of the three: it adds
   nothing the frozen ensemble does not already span. **Fails.**
-- **momentum_concentrated** — **actively harmful.** ΔSharpe −0.057, **P = 0.07** (i.e. ~93%
+- **momentum_concentrated**: **actively harmful.** ΔSharpe −0.057, **P = 0.07** (i.e. ~93%
   chance it *lowers* Sharpe), negative marginal residual alpha (−2.8%/yr, t = −1.0), and the
   damage is worst in the recent half (ΔSharpe H2 = −0.10, thirds [0.00, −0.096, −0.076]).
   This is the dead cross-sectional-momentum book (F-015/16, 0/10 rank IC) dragging the
@@ -77,7 +77,7 @@ Primary numbers are the **equal-risk** design (equal-capital in brackets where i
 Raw (un-re-levered) treatment max-DD looks *better* for every candidate (e.g. gold −24% vs
 control −27%, ΔmaxDD +0.026 to +0.055). This is **pure dilution, not skill**: the candidate
 books carry lower vol, so mixing them de-risks the book. The effect vanishes once you re-lever
-to equal vol — which is exactly why the Sharpe/equal-vol test (scale-free) shows no gain.
+to equal vol, which is exactly why the Sharpe/equal-vol test (scale-free) shows no gain.
 Reporting the DD improvement as "value added" would be the classic *added-beta/leverage*
 trap the gate is built to catch. Turnover barely moves (Δ ≈ −0.004, candidates are low-turnover).
 
@@ -97,7 +97,7 @@ cross-market non-replication **F-020** (3/7), and Agent 7's independence result
 (`INDEPENDENCE_MATRIX.md`: n_eff ≈ 3 clusters, everything long-biased US equity risk,
 raw pairwise corr 0.49–0.96) predict: the seven books are one risk family, so bolting a
 correlated long-biased sleeve onto an already-diversified 4-book control adds no independent
-forecasting value — only leverage/dilution, which the equal-vol test strips out.
+forecasting value, only leverage/dilution, which the equal-vol test strips out.
 
 **Level-4 count: 0 of 3.** The frozen 4-book ensemble is not improved by any watch-tier book.
 
@@ -105,4 +105,4 @@ forecasting value — only leverage/dilution, which the equal-vol test strips ou
 
 *Distinctions honored: this measures **Portfolio alpha** (does the source improve the combined
 book?), which is strictly weaker than an independent **Market** forecast. Even a positive result
-here would NOT have been an independent market alpha — and none was positive.*
+here would NOT have been an independent market alpha, and none was positive.*

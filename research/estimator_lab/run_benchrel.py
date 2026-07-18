@@ -1,4 +1,4 @@
-"""Benchmark-relative (tracking) JSE vs PCA adjudication — EXP-2026-07-14-jse-benchrel.
+"""Benchmark-relative (tracking) JSE vs PCA adjudication: EXP-2026-07-14-jse-benchrel.
 Prereg: research/hunt2026/preregistrations/jse-benchrel-2026-07-14.md (frozen; run once).
 Mirrors run_minvar.py conventions; only the objective (min tracking error to an EW
 benchmark from a restricted basket) is new."""

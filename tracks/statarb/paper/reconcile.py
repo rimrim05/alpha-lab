@@ -1,7 +1,7 @@
-"""Terminal-event disambiguation — the survivorship SENSOR (highest-risk unit).
+"""Terminal-event disambiguation: the survivorship SENSOR (highest-risk unit).
 
 A false `delisted` injects a fake dead-name loss and *manufactures* the very signal
-we're testing for — so every rule here is conservative and ambiguity NEVER
+we're testing for, so every rule here is conservative and ambiguity NEVER
 auto-books a dead-name loss (→ quarantine, flagged for human review). See the
 disambiguation table in the spec; this is that table as code.
 

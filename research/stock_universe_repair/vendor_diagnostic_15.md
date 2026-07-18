@@ -8,7 +8,7 @@ a data pull or a panel change.*
 ## The four questions (per security, per platform)
 1. **Complete daily history through the final trading date?** (does the series run to the actual last
    trade, no early truncation, no survivorship drop?)
-2. **Stable identifiers?** (a permanent id — CUSIP/CIK/FIGI/vendor-permId — that survives the ticker change?)
+2. **Stable identifiers?** (a permanent id, CUSIP/CIK/FIGI/vendor-permId, that survives the ticker change?)
 3. **Corporate actions present?** (splits, dividends, delisting/merger terms, delisting return?)
 4. **Export capability?** (bulk/API/CSV export of the daily series + actions?)
 
@@ -49,10 +49,10 @@ a data pull or a panel change.*
 For each cell, record and keep the underlying evidence:
 - **screenshot or exported fields** (attach/keep the file);
 - **source date** (when you pulled it) and **platform**;
-- **identifier used** (ticker vs CUSIP/permId/CIK/FIGI — note which resolved the delisted name);
+- **identifier used** (ticker vs CUSIP/permId/CIK/FIGI, note which resolved the delisted name);
 - **final trading date** the series reaches;
 - **price-history availability** (complete-to-last-trade / partial / absent);
-- **corporate-action treatment** (splits, dividends, delisting return, merger terms — present? how?);
+- **corporate-action treatment** (splits, dividends, delisting return, merger terms, present? how?);
 - **export restrictions** (API / CSV / manual-only / blocked; row/quota caps).
 
 Suggested columns:

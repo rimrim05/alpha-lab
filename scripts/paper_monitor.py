@@ -1,4 +1,4 @@
-"""paper_monitor.py — read-only monitoring cadence + email alerts for the hunt2026 paper system.
+"""paper_monitor.py: read-only monitoring cadence + email alerts for the hunt2026 paper system.
 
 This is the OBSERVER, not the trader. It NEVER submits/cancels/replaces orders, never recomputes
 strategy targets, never writes any ledger or DEPLOYMENT_MANIFEST.md. Its ONLY writes are its own
@@ -7,14 +7,14 @@ It reuses paper_status.build_status() for the (read-only) picture of the system.
 
 Roles (chosen per launchd job, not inferred):
   --role watch    : intraday polls. Writes a snapshot every run. Emails ONLY when the alarm
-                    signature CHANGES (new problem, changed problem, or recovery) — no spam when
+                    signature CHANGES (new problem, changed problem, or recovery); no spam when
                     the same condition persists across polls.
   --role summary  : one post-close run. Always emails a concise daily summary (or the exception).
 
 Email: SMTP (Gmail) using a credential file ~/.config/rimrimos/alpha_alert_smtp.json:
   {"user": "you@gmail.com", "app_password": "<16-char app password>", "to": "kris10harim@gmail.com"}
 If that file is absent, the monitor still writes the local snapshot and logs that email is
-unconfigured — it never crashes and never blocks Monday's read-only observation.
+unconfigured; it never crashes and never blocks Monday's read-only observation.
 
 Usage: .venv/bin/python scripts/paper_monitor.py --role watch
 Exit:  always 0 (a monitor must not make launchd retry); problems are reported, not raised.
@@ -42,13 +42,13 @@ SMTP_CRED = Path.home() / ".config" / "rimrimos" / "alpha_alert_smtp.json"
 # ---------- pure core (offline-testable) ----------
 
 def signature(status: dict) -> str:
-    """Stable fingerprint of the OPERATIONAL condition — ignores volatile dollar amounts so
+    """Stable fingerprint of the OPERATIONAL condition; ignores volatile dollar amounts so
     identical conditions across polls collapse to one alert. Changes when the situation changes."""
     rh = status.get("run_health", {})
     broker = status.get("broker", {})
     gate = status.get("gate", {})
     clock = status.get("clock", {})
-    # alarm *categories* (prefix before ':'), sorted — not the full text with dollar figures
+    # alarm *categories* (prefix before ':'), sorted, not the full text with dollar figures
     cats = sorted({a.split(":", 1)[0].strip() for a in status.get("alarms", [])})
     parts = [
         rh.get("status", "?"),
@@ -115,7 +115,7 @@ def _send_email(subject: str, body: str) -> tuple[bool, str]:
             s.login(cred["user"], cred["app_password"])
             s.send_message(msg)
         return True, "sent"
-    except Exception as e:  # bad creds / network / SMTP — log, never crash the monitor
+    except Exception as e:  # bad creds / network / SMTP: log, never crash the monitor
         return False, f"email failed: {type(e).__name__}"
 
 

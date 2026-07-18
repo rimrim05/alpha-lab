@@ -11,5 +11,5 @@ and whipsaw tolerance. Known fragility: only the 63d lookback clears 18% CAGR on
 (neighbors ~17%), and 2022-2025H1 delivered just 9%/yr because mega-cap-concentrated
 rallies keep it de-levered. **Falsifier:** a forward year where breadth-positive regimes
 underperform breadth-negative ones on SPY (the gate inverts), or where the strategy lags
-1x SPY by more than its de-lever drag would explain — i.e., narrow rallies continuing to
+1x SPY by more than its de-lever drag would explain, i.e., narrow rallies continuing to
 be the dominant, durable bull-market mode.

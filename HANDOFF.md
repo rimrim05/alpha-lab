@@ -2,7 +2,7 @@
 
 One-read orientation for a new session. This file holds **stable** orientation and governance only.
 It deliberately does **not** restate live numbers (book counts, allocations, NAVs, entitlement/pilot
-state) — those drift, and duplicating them here creates a second source of truth that goes stale.
+state); those drift, and duplicating them here creates a second source of truth that goes stale.
 For anything dynamic, read the authoritative file linked below.
 
 **DEPLOYMENT_MANIFEST.md is the single authority on live/deployment state; where anything disagrees,

@@ -12,7 +12,7 @@ from scripts.hunt_paper_reconcile import reconcile_date, reconcile_mc_date
 
 
 class _FakeBroker:
-    """Minimal broker double for submit_leg — records calls, optionally raises on submit."""
+    """Minimal broker double for submit_leg: records calls, optionally raises on submit."""
     def __init__(self, raise_on_submit=False, fills=None):
         self.raise_on_submit = raise_on_submit
         self._fills = fills or []
@@ -122,7 +122,7 @@ def test_mc_ignores_foreign_tagged_orders():
     orders = [{"ticker": "AAPL", "side": "buy", "status": "rejected", "filled_qty": 0.0,
                "fill_price": None, "client_order_id": "h26-AAPL-xyz"}]   # shared-account tag
     row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 50.0}, orders, CLOSES, None)
-    assert row["orders"]["rejected"] == 0             # not an h26mc order — not counted here
+    assert row["orders"]["rejected"] == 0             # not an h26mc order, not counted here
 
 
 def test_mc_silent_flat_alarms_after_two_nights():
@@ -156,7 +156,7 @@ def test_submit_leg_success_returns_fills_and_ok():
 
 
 def test_submit_leg_failure_is_caught_and_flagged():
-    # a raising broker (e.g. network error) must NOT propagate — it returns ([], False) so the
+    # a raising broker (e.g. network error) must NOT propagate; it returns ([], False) so the
     # caller still writes the ledger row and the other account's leg proceeds
     brk = _FakeBroker(raise_on_submit=True)
     got, ok = submit_leg("dedicated momentum_concentrated", brk, {"AAPL": 5_000}, "h26mc")

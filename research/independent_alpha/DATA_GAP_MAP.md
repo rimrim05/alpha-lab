@@ -8,13 +8,13 @@ data wins.** No history was fabricated; every "FORWARD-COLLECTABLE" item is one 
 can only accrue going forward, not backfill honestly.
 
 Classification legend:
-- **TESTABLE NOW** — enough clean history on disk to run an IC/backtest today.
-- **FORWARD-COLLECTABLE** — a free feed exists and a collector is (or can be) wired, but
+- **TESTABLE NOW**: enough clean history on disk to run an IC/backtest today.
+- **FORWARD-COLLECTABLE**: a free feed exists and a collector is (or can be) wired, but
   only forward-in-time; no honest historical backfill.
-- **BLOCKED-WITHOUT-VENDOR** — needs a paid/entitled source (WRDS/CRSP, options, estimates).
-- **UNSAFE** — present but carries leakage or survivorship that makes naive use misleading.
+- **BLOCKED-WITHOUT-VENDOR**: needs a paid/entitled source (WRDS/CRSP, options, estimates).
+- **UNSAFE**: present but carries leakage or survivorship that makes naive use misleading.
 
-Credentials on hand: EODHD token (price tier — calendar/fundamentals endpoints 403 at this
+Credentials on hand: EODHD token (price tier, calendar/fundamentals endpoints 403 at this
 plan), Alpaca **paper** keys (news + prices + `easy_to_borrow`/`shortable` flags), Finnhub
 free (`~/.config/rimrimos/finnhub.env`, 60/min). **No WRDS/CRSP, no Polygon/Tiingo, no
 options or estimate vendor.**
@@ -61,19 +61,19 @@ options or estimate vendor.**
   2005→2026 OHLCV panel (`panel_2005`).
 - **Depth:** 20yr on the panel; 16yr on the wide close matrix.
 - **PIT quality:** GOOD for prices (a close is a close). Adjusted with `auto_adjust=True`
-  so dividends/splits are baked in — see corporate actions below.
+  so dividends/splits are baked in; see corporate actions below.
 - **Survivorship:** the **wide/statarb close matrices are survivor-biased** (Wikipedia
   current members). The `panel_2005.member` mask fixes *inclusion* look-ahead but not
-  *delisting* — dead tickers have no yfinance history to include (see §2.4).
+  *delisting*: dead tickers have no yfinance history to include (see §2.4).
 - **Leakage:** low. Engine applies a one-day lag; opens are same-day-tradeable.
 - **Free.** Acquisition value: n/a (have it). Unlocks: everything price-based (momentum,
-  reversal, vol-management — all already built on this).
+  reversal, vol-management, all already built on this).
 
 ### 2.2 Opens / closes (intraday proxy) — **TESTABLE NOW (with caveats)**
 - `panel_2005` and `train` carry **open + close**; `reactions.jsonl` snaps earnings-session
   open/close. Enables open-to-close vs close-to-close split, overnight-gap studies, and
   execution-at-open assumptions.
-- **PIT/quality caveat:** yfinance opens are the weak link — occasionally the prior-close
+- **PIT/quality caveat:** yfinance opens are the weak link: occasionally the prior-close
   echo or an unadjusted print. Fine for signal research, **not** for execution-alpha claims.
 - Free. Unlocks: gap-reversal, overnight-return factor, PEAD reaction timing.
 
@@ -90,16 +90,16 @@ options or estimate vendor.**
   at the current EODHD plan.
 
 ### 2.4 Survivorship / delisting — **UNSAFE (known, unfixed) → biggest TRUTH gap**
-- **State:** `universe.py` is explicit — current-membership universes are survivor-biased;
+- **State:** `universe.py` is explicit: current-membership universes are survivor-biased;
   `sp500_pit.parquet` + `panel_2005.member` fix S&P 500 *inclusion* only. Delisted/acquired/
   failed names are simply **absent** (no yfinance prices), so reversal/momentum backtests
   on the 400/600 sleeves over-state returns by an unknown, positive amount.
 - **PIT quality:** membership PIT is good for **S&P 500 only**. S&P 400/600 membership is
-  **current-only** (Wikipedia) — not PIT at all.
+  **current-only** (Wikipedia), not PIT at all.
 - **Fix path (free, in roadmap):** iShares dated-holdings download (IJH/IJR) reconstructs
   400/600 membership back to ~2007; a −30% delisting-return penalty (Shumway 1997) bounds
   the bias. True fix = CRSP delisting returns (BLOCKED-WITHOUT-VENDOR / WRDS).
-- Acquisition value: **HIGH** — it doesn't add alpha, it tells you which existing alpha is
+- Acquisition value: **HIGH**: it doesn't add alpha, it tells you which existing alpha is
   real. Gates whether the small-cap reversal edge in the roadmap is deployable.
 
 ### 2.5 Point-in-time S&P membership — **TESTABLE NOW (500) / partial**
@@ -110,13 +110,13 @@ options or estimate vendor.**
 
 ### 2.6 Earnings timestamps — **mixed: statarb file UNSAFE, fwd collector FORWARD-COLLECTABLE**
 - `statarb_earnings.parquet` (2007→2026, 23.9k rows) has report dates + actual/estimate,
-  **but the estimate is the current yfinance vintage** — revised after the fact. Using its
+  **but the estimate is the current yfinance vintage**: revised after the fact. Using its
   `eps_estimate` as an as-of-date consensus is **look-ahead**. Report *dates* are usable;
   the surprise is not PIT.
 - `earnings_collect.py` (Finnhub) is the **honest** path: it flags `point_in_time=True`
   only for events it watched go actual inside the pull window, and pre-registration
   (`exp-ic-earnings-fwd-2026-07-10.md`) *excludes* the stale backfill from scoring. Today:
-  8 events, 2 names — **accumulating, n≫threshold(300) is months away**.
+  8 events, 2 names, **accumulating, n≫threshold(300) is months away**.
 
 ### 2.7 EPS / revenue surprise — **EPS FORWARD-COLLECTABLE, revenue BLOCKED**
 - EPS surprise: forward via Finnhub (`surprise`, `surprise_pct` already in `events.jsonl`).
@@ -136,17 +136,17 @@ options or estimate vendor.**
 ### 2.10 Fundamentals — **TESTABLE NOW but thin**
 - EDGAR-sourced: **assets, net income, book equity, shares** only (2006/1998→2026).
   Timestamped by filing so reasonably PIT-safe at monthly granularity (the loaders lag 6mo).
-- **Gap:** no margins, cash flow, debt, capex, R&D — so quality/profitability factors
+- **Gap:** no margins, cash flow, debt, capex, R&D, so quality/profitability factors
   (gross-profitability, accruals, F-score) can't be built. Extending EDGAR pulls to more
   XBRL tags is free work, not a vendor purchase → the *richer-fundamentals* need is
   FORWARD/BUILDABLE, not blocked.
 
 ### 2.11 Short interest / borrow — **historical BLOCKED-free-partial, live FORWARD-COLLECTABLE**
 - **None on disk.** FINRA publishes bi-monthly short interest **free** (historical,
-  downloadable) — that's TESTABLE-NOW-after-a-pull, not blocked. Borrow fee / rebate is
+  downloadable): that's TESTABLE-NOW-after-a-pull, not blocked. Borrow fee / rebate is
   vendor-only (S3, Markit) = BLOCKED. Alpaca `easy_to_borrow`/`shortable` flags are free but
   **live-only** (no history) = FORWARD-COLLECTABLE.
-- Value: the long-short books currently charge **zero** short cost — modeling it converts an
+- Value: the long-short books currently charge **zero** short cost: modeling it converts an
   unknown into a bounded drag and removes a live dollar-neutrality failure mode (roadmap
   proposal). Honesty > alpha.
 
@@ -158,7 +158,7 @@ options or estimate vendor.**
 ### 2.13 Macro / rates — **UNSAFE-by-absence → FORWARD/BUILDABLE (free)**
 - **No VIX file, no treasury curve, no CPI/FF on disk** despite VIX-conditioning appearing
   in the roadmap and vol-books. Currently proxied by ETF prices in the panel (SVXY, GLD).
-- FRED (rates, CPI, FF) and `^VIX` via yfinance are **free and deep** (VIX to 1990) — this
+- FRED (rates, CPI, FF) and `^VIX` via yfinance are **free and deep** (VIX to 1990): this
   is the cheapest real gap to close. Classify: TESTABLE-NOW-after-a-pull.
 
 ### 2.14 Borrow / liquidity — **liquidity TESTABLE NOW, borrow see §2.11**
@@ -167,8 +167,8 @@ options or estimate vendor.**
 
 ### 2.15 Auction / intraday / tick — **BLOCKED-WITHOUT-VENDOR**
 - Daily open/close only. No minute bars, no auction (open/close cross) prices, no tick.
-  Execution-alpha claims (the 4th alpha type) are **not measurable** with current data —
-  important guardrail: no book here can claim execution alpha on this data.
+  Execution-alpha claims (the 4th alpha type) are **not measurable** with current data.
+  Important guardrail: no book here can claim execution alpha on this data.
 
 ### 2.16 News / sentiment — **FORWARD-COLLECTABLE (short history now)**
 - `news.parquet`: Alpaca/Benzinga headlines, 54k rows, **only 2025-09→2026-07 (~10 months)**.
@@ -219,16 +219,16 @@ corporate-action-adjusted matrices re-pulled at different dates (silent re-adjus
    claim. Cost: engineering only.
 
 2. **FINRA bi-monthly short interest (historical, FREE) + Alpaca borrow flags (live).**
-   The long-short books currently charge **zero** short cost — an unmodeled drag *and* a
+   The long-short books currently charge **zero** short cost: an unmodeled drag *and* a
    live dollar-neutrality failure mode. FINRA gives testable history now; Alpaca flags close
    the live loop. Converts an unknown into a bounded, honest cost. Cost: one pull + a PnL line.
 
-3. **Macro/VIX/rates from FRED + `^VIX` (FREE, deep) — then keep feeding the Finnhub PIT
+3. **Macro/VIX/rates from FRED + `^VIX` (FREE, deep): then keep feeding the Finnhub PIT
    earnings collector.** VIX-conditioning already appears in the vol-books yet **no VIX/rate
-   series is on disk** — the cheapest real gap to close (VIX to 1990, rates via FRED),
+   series is on disk**: the cheapest real gap to close (VIX to 1990, rates via FRED),
    unlocking honest regime-conditioning tests instead of ETF proxies. Pair with continuing
-   `earnings_collect.py` (the only honest PIT new-information track — but months from n=300).
+   `earnings_collect.py` (the only honest PIT new-information track, but months from n=300).
 
 **Deliberately NOT recommended to buy yet:** analyst revisions / options-implied / intraday
-(all BLOCKED-WITHOUT-VENDOR) — real edges live there, but they need WRDS/OptionMetrics-class
+(all BLOCKED-WITHOUT-VENDOR): real edges live there, but they need WRDS/OptionMetrics-class
 spend and should wait until a free-data book earns Level-5 forward evidence first.

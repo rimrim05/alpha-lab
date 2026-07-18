@@ -1,6 +1,6 @@
 """SEC EDGAR companyfacts fetch for annual total assets (free, ~10yr history).
 
-Network — called only from scripts. EDGAR gives point-in-time annual `Assets`
+Network, called only from scripts. EDGAR gives point-in-time annual `Assets`
 (us-gaap) from 10-K filings, far more history than yfinance's ~4 years, which is
 what an annual asset-growth sort needs.
 """

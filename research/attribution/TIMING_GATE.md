@@ -59,9 +59,9 @@ Prereg: timing-tm-2026-07-14.md (frozen incl. dispositions 1–9). M2T = M2 + γ
 
 **Verdict NOT SUPPORTED, overdetermined.** Two independent routes give the same answer:
 (a) 0/7 books pass the timing-positive conjunction; (b) the pre-committed control
-adjudication (disposition 6) fired — CTRL_qqq_1.5x_static blind-1y has t_γ = −2.90
+adjudication (disposition 6) fired: CTRL_qqq_1.5x_static blind-1y has t_γ = −2.90
 with stationary-bootstrap p ≈ 1.0, i.e. a genuinely nonzero NEGATIVE γ on a static
-book. Diagnosis: not pipeline plumbing and not beta asymmetry — the control's own
+book. Diagnosis: not pipeline plumbing and not beta asymmetry: the control's own
 daily-rebalance cost term (cost ∝ |r|) is a concave drag, TM-visible at TV ≈ −0.07%/yr
 (economically nil, statistically resolvable). Model limitation recorded; gate defaults
 to NOT SUPPORTED, which the book results independently confirm.
@@ -70,7 +70,7 @@ Mechanism finding worth keeping: in the blind year the three flagged books show
 SIGNIFICANTLY NEGATIVE market convexity beyond M2 (vol_managed_qqq γ t −2.79,
 vol_core_svxy −3.19, momentum_concentrated −2.08) offset by positive level α
 (+14–15%/yr), netting to ≈ 0 after the financing haircut (−0.7%, −1.2%, −8.1%).
-That is the short-gamma / premium-harvesting signature — the OPPOSITE of timing
+That is the short-gamma / premium-harvesting signature: the OPPOSITE of timing
 convexity. The naive trend parent was itself whipsawed concave in the blind year
 (γ −23, t −2.06). Books with positive γ (gem +0.72, defensive +0.81, gold +1.28)
 are all deep inside noise.
@@ -88,10 +88,10 @@ stationary-bootstrap p fell inside (0.05, 0.95) → adjudicated as NW-size noise
 pre-committed rule (the reviewer's Monte Carlo predicted exactly this ~2–3× size
 distortion on squared regressors); γ = +0.48, TV +1.5%/yr, consistent with a small
 SPY-vs-CRSP-market composition artifact. PIT-QQQRES robustness (disposition 8):
-identical t_γ to two decimals for every book — the F2 look-ahead does not move γ.
+identical t_γ to two decimals for every book: the F2 look-ahead does not move γ.
 
 Read the verdict against the MDE table: hunt-1 books could only have shown TV ≥
 +11–19%/yr (implausibly large); the powered test is the 5y books, where TV ≥ +5.4%/yr
 (defensive_ensemble) was detectable and nothing appeared. Scope: TM-visible timing
-only — vol-space convexity, discrete Henriksson–Merton switching, and horizon-
+only: vol-space convexity, discrete Henriksson–Merton switching, and horizon-
 mismatched timing are invisible to a single daily (Mkt−RF)² term by design.

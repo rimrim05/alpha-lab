@@ -2,7 +2,7 @@
 > This was a docs-only proposal written before the status tooling existed. It has since been built:
 > the reader is **`scripts/paper_status.py`** and the monitor is **`scripts/paper_monitor.py`**
 > (both live, wired into the `com.rimrim.hunt2026-*` launchd jobs). The body below is kept only for
-> the historical design reasoning — everything it describes as "not implemented" / "not yet wired"
+> the historical design reasoning, everything it describes as "not implemented" / "not yet wired"
 > is now false. For current behavior read the scripts, not this memo.
 
 ---
@@ -11,7 +11,7 @@
 
 **Status:** DOCUMENTATION-ONLY. `scripts/paper_status.py` is **not implemented**. This memo neither changes
 launchd, nor wires alerts, nor fixes a monitoring cadence. It records the resolved data sources and the revised
-output design for approval **before** any code is written. Read-only sweep only — no file under the control plane
+output design for approval **before** any code is written. Read-only sweep only, no file under the control plane
 was modified.
 
 Scope guardrail: the eventual tool **writes nothing on any path** (no ledger, no manifest, no clean-start marker).
@@ -33,27 +33,27 @@ Both point to the **same file**: `/Users/kristenho/projects/alpha-lab/artifacts/
 
 ### 3. Real log location — currently ABSENT
 `artifacts/hunt2026/paper/` exists but is **empty**; `nightly.log` does not exist. The only `nightly.log` present
-is `artifacts/statarb/paper/nightly.log`, a different program. So the launchd job has produced **no stdout yet** —
+is `artifacts/statarb/paper/nightly.log`, a different program. So the launchd job has produced **no stdout yet**,
 it has not run under launchd.
 
 ### 4. Does LastExitStatus correspond to the most recent scheduled run? — NO
 `launchctl list` shows `LastExitStatus = 0`, no PID. But `RunAtLoad = false`, the schedule is weekdays 20:30, the
 plist was installed **Sat 2026-07-10 23:00**, today is **Sat 2026-07-11**, and the next fire is **Mon 2026-07-13
 20:30**. launchd has therefore **never fired this job**; `0` is the loaded-but-never-run default, not a real run
-result. (The `_reconcile.jsonl` rows stamped 2026-07-10 ~22:45 were a **manual** invocation — 22:45 ≠ the 20:30
+result. (The `_reconcile.jsonl` rows stamped 2026-07-10 ~22:45 were a **manual** invocation, 22:45 ≠ the 20:30
 schedule.) **Consequence:** exit code + log are unreliable run-success signals until the job fires once under
 launchd. Run health must be derived from **ledger evidence** (§5), with launchctl/log as secondary corroboration.
 
 ### 5. Ledger append that proves a successful nightly cycle
 `hunt_paper_run.py` writes the seven book rows first, then writes the **`_account` live row last** (`_write_ledger`
-at the end of the live path). That aggregate row — `{date: D, book: "_account", mode: "live"}` — is the runner's
+at the end of the live path). That aggregate row, `{date: D, book: "_account", mode: "live"}`, is the runner's
 completion marker. The reconcile step then appends one `_reconcile.jsonl` row for `D`. So:
 
 > **A successful nightly cycle for session date D** = `_account.jsonl` has a `mode:"live"` row for `D`
 > **AND** `_reconcile.jsonl` has a row for `D`. Runner-only (no reconcile row) = PARTIAL.
 
 ### 6. Authoritative clean-forward-start source
-There is **no clean-forward-start timestamp anywhere yet** — not in `DEPLOYMENT_MANIFEST.md`, not in
+There is **no clean-forward-start timestamp anywhere yet**, not in `DEPLOYMENT_MANIFEST.md`, not in
 `research/hunt2026/STATUS.md`. Per `CLEAN_CYCLE_REPORT_TEMPLATE.md` §11, the clean start is recorded by a
 **Coordinator edit to `DEPLOYMENT_MANIFEST.md`** only after an approved clean-cycle report. Therefore:
 
@@ -62,7 +62,7 @@ There is **no clean-forward-start timestamp anywhere yet** — not in `DEPLOYMEN
 
 Do not conflate this with manifest line 50 ("Active books (7) — started 2026-07-10"): that is the book-deployment
 date, which still carries stat-arb residue. The clean-forward clock is the post-flatten, contamination-free
-incubation start — a future, not-yet-recorded event.
+incubation start, a future, not-yet-recorded event.
 
 ---
 
@@ -144,7 +144,7 @@ read-only, `paper=True`). The tool imports them; it does not re-open a broker pa
 - **Ledger stale** if latest ledger `date` is behind the most recent completed session.
 - Live broker snapshot is always "as-of now" (labelled).
 - **Old-schema reconcile rows** (`flatten_complete` absent) degrade to `n == 0` fallback, as `print_report`
-  already does — the current 4 rows are old-schema.
+  already does, the current 4 rows are old-schema.
 
 ## E. Next action (deterministic precedence, first match wins)
 1. Broker unreachable → "Restore broker connectivity; status degraded."

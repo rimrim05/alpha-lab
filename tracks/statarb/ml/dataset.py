@@ -2,7 +2,7 @@
 
 The model predicts, AT ENTRY, whether a signal will mean-revert. So a feature is legitimate only if
 its value is known at entry. `holding_days`, `close_reason`, `exit_date`, and the realized/counterfactual
-P&L are known only at EXIT — using them as inputs is within-trade leakage (a suspiciously-high AUC that
+P&L are known only at EXIT; using them as inputs is within-trade leakage (a suspiciously-high AUC that
 collapses forward). The walk-forward split guards *cross-month* leakage; this partition guards
 *within-trade* leakage. Both are required. `build_features` selects ONLY entry-time columns and asserts
 no exit-only column leaks in.

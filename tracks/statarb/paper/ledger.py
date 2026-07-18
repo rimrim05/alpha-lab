@@ -1,4 +1,4 @@
-"""Append-only JSONL ledgers — one immutable row per event, four logs under one dir.
+"""Append-only JSONL ledgers: one immutable row per event, four logs under one dir.
 
 Every number in the resolver reconstructs from these (registry.register ethos: you
 never mutate a row, you append the next event). The four logs and their rows are in

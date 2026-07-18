@@ -2,7 +2,7 @@
 
 Form pairs by minimum sum-of-squared-deviation between normalized price paths in
 a formation window; trade divergences of the normalized spread in the next window.
-Runs on daily EOD closes — the most free-data-replicable StatArb strategy.
+Runs on daily EOD closes, the most free-data-replicable StatArb strategy.
 """
 import pandas as pd
 from tracks.statarb.bands import band_positions
@@ -85,7 +85,7 @@ def pair_zscore_oos(form_a: pd.Series, form_b: pd.Series,
 
 def pair_pnl(positions: pd.Series, ret_a: pd.Series, ret_b: pd.Series) -> pd.Series:
     """Daily P&L of a pair. position +1 = long A / short B. Position lagged one day
-    (formed on yesterday's close, earns today's spread return) — no look-ahead."""
+    (formed on yesterday's close, earns today's spread return), no look-ahead."""
     df = pd.concat([positions.rename("pos"), ret_a.rename("a"), ret_b.rename("b")], axis=1).dropna()
     held = df["pos"].shift(1).fillna(0)
     return held * (df["a"] - df["b"])

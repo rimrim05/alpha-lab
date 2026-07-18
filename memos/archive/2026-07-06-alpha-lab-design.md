@@ -6,7 +6,7 @@
 
 ## Context
 
-- Kristen has institutional data access via Berkeley: WRDS (CRSP/Compustat/IBES), Bloomberg terminals, Capital IQ, Refinitiv/LSEG Workspace, FactSet, plus free retail APIs (yfinance, Alpaca, Ken French). Terminal access is on-campus, manual-export, download-capped — usable for building historical datasets, not live pipelines.
+- Kristen has institutional data access via Berkeley: WRDS (CRSP/Compustat/IBES), Bloomberg terminals, Capital IQ, Refinitiv/LSEG Workspace, FactSet, plus free retail APIs (yfinance, Alpaca, Ken French). Terminal access is on-campus, manual-export, download-capped: usable for building historical datasets, not live pipelines.
 - Workflow split: Kristen sets direction, approves hypothesis gates, and makes kill/promote calls. Claude runs pipelines, backtests, and writeups in background sessions.
 - The vault trading-lab (`09-Pipeline/trading-lab/`) already defines the quality bar: mechanism first, kill criteria before data, paper trading only. Existing `HYP-001 — Post-earnings announcement drift` seeds the PEAD track.
 - Source material: two research syntheses (Downloads) covering LLM news sentiment (Lopez-Lira & Tang), PEAD.txt, Gu-Kelly-Xiu ML cross-section, dynamic factor timing, DeepLOB/TLOB, IPCA, formulaic alphas, DRL execution.
@@ -14,9 +14,9 @@
 ## Decisions Made
 
 1. **Structure: monorepo + vault journal.** New git repo outside iCloud; vault keeps hypothesis notes and memos. (Chosen over vault-native and repo-per-track.)
-2. **First tracks (3):** LLM news sentiment, PEAD → PEAD.txt, GKX ML cross-section. Backlog: dynamic factor timing (cheap, later), LOB deep learning (skills exercise only — not deployable alpha for an individual; revisit for learning value, not signal).
-3. **Decision A — LLM contamination handling: honest version.** Historical backtests restricted to post-training-cutoff windows; entity-masked robustness check; the live forward paper-trade is the primary evidence. No full-history backtest with a model that has seen the outcomes.
-4. **Decision B — GKX data: use Chen-Zimmermann Open Source Asset Pricing panel** (~200 pre-built replicated characteristics) instead of hand-building 94 characteristics from raw CRSP/Compustat. Validate ~5 characteristics against raw Compustat as a spot check. Research effort shifts to modeling and OOS discipline.
+2. **First tracks (3):** LLM news sentiment, PEAD → PEAD.txt, GKX ML cross-section. Backlog: dynamic factor timing (cheap, later), LOB deep learning (skills exercise only, not deployable alpha for an individual; revisit for learning value, not signal).
+3. **Decision A, LLM contamination handling: honest version.** Historical backtests restricted to post-training-cutoff windows; entity-masked robustness check; the live forward paper-trade is the primary evidence. No full-history backtest with a model that has seen the outcomes.
+4. **Decision B, GKX data: use Chen-Zimmermann Open Source Asset Pricing panel** (~200 pre-built replicated characteristics) instead of hand-building 94 characteristics from raw CRSP/Compustat. Validate ~5 characteristics against raw Compustat as a spot check. Research effort shifts to modeling and OOS discipline.
 
 ## Architecture
 
@@ -42,12 +42,12 @@ Vault side: each track gets a `HYP-XXX` note in `09-Pipeline/trading-lab/` follo
 
 ## Lifecycle (stage-gate, identical for every track)
 
-- **Stage 0 — Hypothesis.** HYP note in the vault: mechanism, why the edge should persist today, kill criteria, and the OOS evaluation protocol — all written before any data is pulled. **Kristen approves this gate; it is the only gate requiring her.**
-- **Stage 1 — Data build.** Point-in-time dataset with a lineage manifest (source, pull date, filters, universe definition).
-- **Stage 2 — Replication.** Reproduce the paper's headline result on its original sample period. Validates the pipeline, not the alpha.
-- **Stage 3 — OOS + robustness.** Modern sample, net of costs, deflated Sharpe, subperiod/regime splits, decay curve.
-- **Stage 4 — Verdict.** Kill-or-promote memo to the vault. Kristen decides.
-- **Stage 5 — Paper trading.** Promoted signals run live on Alpaca paper with a nightly job tracking live vs. backtest divergence.
+- **Stage 0: Hypothesis.** HYP note in the vault: mechanism, why the edge should persist today, kill criteria, and the OOS evaluation protocol, all written before any data is pulled. **Kristen approves this gate; it is the only gate requiring her.**
+- **Stage 1: Data build.** Point-in-time dataset with a lineage manifest (source, pull date, filters, universe definition).
+- **Stage 2: Replication.** Reproduce the paper's headline result on its original sample period. Validates the pipeline, not the alpha.
+- **Stage 3: OOS + robustness.** Modern sample, net of costs, deflated Sharpe, subperiod/regime splits, decay curve.
+- **Stage 4: Verdict.** Kill-or-promote memo to the vault. Kristen decides.
+- **Stage 5: Paper trading.** Promoted signals run live on Alpaca paper with a nightly job tracking live vs. backtest divergence.
 
 Misses and killed hypotheses are logged with root causes (mirrors the lock-in error-log discipline).
 
@@ -67,7 +67,7 @@ Non-negotiable for all tracks:
 ### LLM news sentiment (fastest to live signal)
 - Data: Refinitiv/LSEG news archive exports for history; Alpaca news API (or equivalent free feed) for the live loop. Scoring with Claude (cheap tier, e.g. Haiku) using the paper's YES/NO/UNKNOWN prompt structure as the baseline, then prompt variants.
 - Contamination protocol (Decision A): historical evaluation only on windows after the scoring model's training cutoff; entity-masked robustness check (does the signal survive when tickers/companies are anonymized?); primary evidence is the live forward test: daily headline scoring → daily-rebalanced long-short paper portfolio.
-- Known risk: this alpha is decaying as LLM adoption spreads — the decay rate is itself a documented, testable sub-hypothesis.
+- Known risk: this alpha is decaying as LLM adoption spreads; the decay rate is itself a documented, testable sub-hypothesis.
 
 ### PEAD → PEAD.txt (extends HYP-001)
 - Phase 1 (numeric): SUE from Compustat + IBES via WRDS; event-study + calendar-time portfolio on the full panel; upgrades vault HYP-001 from sketch to full study.
@@ -94,6 +94,6 @@ Non-negotiable for all tracks:
 
 ## Success Criteria
 
-- Each active track reaches Stage 4 with an honest verdict — a well-documented kill is a success.
+- Each active track reaches Stage 4 with an honest verdict; a well-documented kill is a success.
 - At least one signal survives to Stage 5 and its live paper performance is tracked against backtest expectations.
 - The vault trading-lab contains the full reasoning trail: hypothesis → protocol → verdict → (if promoted) live divergence log.

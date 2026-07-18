@@ -23,34 +23,34 @@ Derived STATE features (inputs, not signals): `slope_2s10s`, `slope_3m10y`, `ter
 `rolldown_10y5y_proxy`, `vol_ts_spread` (VIX3M−VIX), `vol_ts_ratio` (VIX3M/VIX).
 
 ## Coverage & feasible frequency
-- **Rates layer usable from 2005-01-03**; **rates+vol-state from 2007-12-04** (VXVCLS inception —
+- **Rates layer usable from 2005-01-03**; **rates+vol-state from 2007-12-04** (VXVCLS inception,
   no synthetic pre-inception history). Feasible decision frequency: **daily**.
 - Trading calendar = `panel_2005` index (n=5,413 days), so the layer aligns name-for-date with the
   books and the orthogonality benchmark.
 
 ## Leakage audit (all PASS)
-- **availability_no_lookahead: True** — every sampled aligned value at date t traces to an
+- **availability_no_lookahead: True**: every sampled aligned value at date t traces to an
   observation whose availability date (obs + lag BDay) ≤ t.
-- **future_poison_stable: True** — NaN-ing all raw obs after a 60%-cutoff leaves every aligned
+- **future_poison_stable: True**: NaN-ing all raw obs after a 60%-cutoff leaves every aligned
   value at t ≤ cutoff byte-identical. No future information flows backward.
-- **truncation_stable: True** — building on data truncated at T reproduces the full-build values
+- **truncation_stable: True**: building on data truncated at T reproduces the full-build values
   for all t ≤ T. Deterministic, no peeking.
-- **calendar_aligned: True** — index is exactly the trading calendar, monotonic, unique.
-- **vix_panel_corr: 1.0** — VIXCLS reproduces the in-repo panel `^VIX` exactly (independent cross-check).
+- **calendar_aligned: True**: index is exactly the trading calendar, monotonic, unique.
+- **vix_panel_corr: 1.0**: VIXCLS reproduces the in-repo panel `^VIX` exactly (independent cross-check).
 
 ## Honesty notes (what a PASS here does and does not mean)
-- **Staleness is value-constancy, not holes.** `max_stale_run_days`: DFF 288, DGS3MO 16 — these are a
+- **Staleness is value-constancy, not holes.** `max_stale_run_days`: DFF 288, DGS3MO 16: these are a
   policy rate held constant (ZIRP) and a pinned bill rate, NOT forward-filled gaps (DFF missing=0%).
   Descriptive only; not a PIT failure.
 - **Revision exposure is LOW by construction, not by luck.** Treasury CMT yields, T10Y2Y, and the VIX
   indices are published-final; DFF revisions are immaterial. Heavily-revised macro (GDP, CPI, payrolls)
-  is **deliberately excluded** — those would require ALFRED vintages before any historical use.
+  is **deliberately excluded**: those would require ALFRED vintages before any historical use.
 - **Rates avail lag = 1 BDay is conservative** (Treasury actually posts same-day ~4pm ET; FRED lags
   T+1). Using t−1's value at a decision on t cannot leak. A prereg may tighten to 0 only with a
   documented same-day-availability argument.
 - **VIX/VIX3M are STATE variables only.** `vol_ts_spread`/`vol_ts_ratio` describe the volatility
   **curve shape**, NOT the return to holding volatility. No implementable vol-carry is claimed here;
-  that needs VIX futures / a properly modeled roll (BLOCKED BY DATA — CARRY_FEASIBILITY.md).
+  that needs VIX futures / a properly modeled roll (BLOCKED BY DATA, CARRY_FEASIBILITY.md).
 
 ## Files
 `state_aligned.parquet` (PIT frame), `provenance.jsonl` (per-series manifest), `raw/*.parquet`

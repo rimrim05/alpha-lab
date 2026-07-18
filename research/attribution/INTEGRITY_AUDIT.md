@@ -27,12 +27,12 @@ with data for exactly one ticker: ^VIX (16.59). Every tradable close is NaN.
 Consequences:
 
 1. In the harness, `pct_change` returns NaN on 05-25 AND 05-26 for every
-   asset; `gross.fillna(0.0)` silently zeroes the book P&L both days — the
+   asset; `gross.fillna(0.0)` silently zeroes the book P&L both days: the
    real close(05-22)→close(05-26) market return never accrues to any book.
    (defensive_ensemble true 05-26 net: +1.91%; recorded: 0.00%.)
 2. In `build_factors`, the NaN poisons `raw.rolling(63).std()`, so TSMOM (and
    hence the whole inner-joined factor frame) ends 2026-05-22 instead of the
-   prereg end 2026-05-29 — the regressions silently drop the last 4 FF days
+   prereg end 2026-05-29: the regressions silently drop the last 4 FF days
    (n = 219 vs 223 available for blind-1y, 1223 vs 1227 for blind-5y).
 3. Worse, downstream of the attribution: the NaN propagates through
    spec-level realized-vol windows, so book weights/leverage AFTER 05-25 are
@@ -53,7 +53,7 @@ factors rebuilt, book rerun):
 
 **Direction:** as-run attribution alpha is UNDERSTATED (small). No decision
 rule or verdict flips. But the phantom row should be removed from
-`holdout.parquet` and the frozen post-05-25 book scores re-derived — that
+`holdout.parquet` and the frozen post-05-25 book scores re-derived: that
 defect lives in the hunt scorecard, not just here.
 
 ### F2 — QQQ-residual full-sample projection — mild look-ahead BY DESIGN (disclosed in prereg), alpha OVERSTATED
@@ -89,50 +89,50 @@ acquired names are invisible to the momentum universe, and a held name that
 delists simply stops contributing (implicit liquidation at last price, no
 delisting loss). Both effects OVERSTATE momentum_concentrated's returns.
 Its blind M2 alpha is already −7.5%/yr (t=−0.68); the true number is more
-negative. The bias therefore cannot rescue the book — it makes the "no
+negative. The bias therefore cannot rescue the book: it makes the "no
 residual alpha" conclusion for the only stock book conservative in the safe
 direction. ETF books unaffected.
 
 ### F4 — PASS items (checklist)
 
-1. **Timing / look-ahead alignment — PASS.** Harness `net[d] =
+1. **Timing / look-ahead alignment: PASS.** Harness `net[d] =
    W.shift(1)·pct_change` puts the close(d−1)→close(d) return at index d;
    FF daily factors use the same convention. Empirical: corr(SPY panel
    return, same-day Mkt−RF) = 0.995; ±1-day shifts drop to −0.11. SPY
    placebo R² = 0.996 confirms no off-by-one deflation.
-2. **TSMOM proxy PIT — PASS.** Signal uses close.shift(21)/close.shift(273),
+2. **TSMOM proxy PIT: PASS.** Signal uses close.shift(21)/close.shift(273),
    held via `sig.shift(1)`, vol scale via `rolling(63).std().shift(1)`; all
    information available at the prior close. Blind-1y realized: mean
    +20%/yr at 11.5% ann vol (TSMOM genuinely worked; not an artifact).
-3. **RF / excess / financing stress — PASS.** FF parquet is daily decimal
+3. **RF / excess / financing stress: PASS.** FF parquet is daily decimal
    (RF mean 1.7e-4); regressions use net_daily − RF; stress line implements
    the prereg formula alpha − max(avg_gross−1, 0)×(mean-window RF ann +
    0.50%) exactly. Minor: subperiod rows reuse the full-window avg_gross
    (context-only rows, no decision impact).
-4. **NW self-checks — PASS.** `_selfcheck()` executes at import (verified by
+4. **NW self-checks: PASS.** `_selfcheck()` executes at import (verified by
    importing the module: betas ≡ lstsq, NW lag-5 SE > OLS SE under AR(1)
    ρ=0.5, lag-0 ≡ White HC0). Hand-rolled Bartlett meat is standard. Minor:
-   no small-sample (n/(n−k)) correction — conventional, slightly
+   no small-sample (n/(n−k)) correction: conventional, slightly
    anti-conservative, irrelevant at n ≥ 219.
-5. **Blind boundaries / half-split — PASS.** `start="2025-07-10"` with the
+5. **Blind boundaries / half-split: PASS.** `start="2025-07-10"` with the
    harness's `idx > start` yields first P&L day 2025-07-11; `"2021-07-10"`
-   (Saturday) yields 2021-07-12; end truncated at FF_END 2026-05-29 — all
+   (Saturday) yields 2021-07-12; end truncated at FF_END 2026-05-29, all
    exactly per prereg. Half-split is a row-count split of the joined
    regression frame (109/110 for the 1y books); faithful to "split in half".
-6. **Multiple-testing / verdict mapping — PASS.** Rule 1 requires BOTH M2
+6. **Multiple-testing / verdict mapping: PASS.** Rule 1 requires BOTH M2
    and M1 t ≥ 2 (defensive_ensemble M1 t=2.01 but M2 t=1.77 → correctly
    fails). The Bonferroni-adjusted t ≥ 2.4 bar is applied only in the
    "strong evidence" tier as prereg wrote it. With zero rule-1 passes and
    four books at alpha > 2%/yr with 1 ≤ t < 2, "factor-premium harvesting
    with some unexplained residual return" is the correct mapping.
-7. **Controls — PASS.** SPY/QQQ hard gate |t| < 2 holds; the 1.5x-QQQ
+7. **Controls: PASS.** SPY/QQQ hard gate |t| < 2 holds; the 1.5x-QQQ
    leverage-placebo failure on blind-5y (t=2.09) is correctly propagated as
    a rule-3 failure to all three 5y books (conservative, per prereg), and
    the free-financing mechanism given in the Story section is right
    (~0.5 × RF ≈ 2%/yr of mechanical alpha).
-8. **Reproducibility — PASS** (with the F1 caveat). Integrity gate matched
+8. **Reproducibility: PASS** (with the F1 caveat). Integrity gate matched
    all 7 frozen total_net/sharpe to <1e-9, i.e. the regressions used exactly
-   the frozen books — including their embedded phantom-row artifact.
+   the frozen books, including their embedded phantom-row artifact.
 
 ### Checklist verdicts
 
@@ -150,10 +150,10 @@ direction. ETF books unaffected.
 ## Recommended follow-ups (outside this experiment)
 
 1. Remove the 2026-05-25 row from `research/hunt2026/holdout.parquet` (or
-   drop all-but-^VIX rows at load) and regenerate the frozen results —
+   drop all-but-^VIX rows at load) and regenerate the frozen results:
    the post-2026-05-25 stretch of every frozen score is contaminated.
 2. If this attribution is rerun, drop the phantom row first and prefer the
    pre-blind (or expanding) QQQ-residual projection; both changes together
-   move defensive_ensemble to roughly +6.7%/yr, t≈1.8 — same verdict.
+   move defensive_ensemble to roughly +6.7%/yr, t≈1.8: same verdict.
 3. Note in FLOOR/scorecard docs that momentum_concentrated's panel has
    ~13% member-day price gaps and 148 ever-member names with no history.

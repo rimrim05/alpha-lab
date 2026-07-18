@@ -1,5 +1,5 @@
 """Offline check for the dashboard's live-paper reducer: NAV compounding, day P&L, holdings.
-No network, no ledgers on disk — writes a tiny synthetic ledger to a tmp dir."""
+No network, no ledgers on disk; writes a tiny synthetic ledger to a tmp dir."""
 import json
 from pathlib import Path
 

@@ -1,15 +1,15 @@
-"""hunt2026 shared scoring harness. One P&L convention for every spec — implementable only.
+"""hunt2026 shared scoring harness. One P&L convention for every spec: implementable only.
 
 Spec interface (frozen): a module exposing  target_weights(panel) -> DataFrame
   - panel: MultiIndex-column frame, level 0 in {open, close, volume, member}, level 1 = ticker.
   - returns daily target weights (dates x tickers), fraction of NAV, set at each date's CLOSE
     using information through that close. May cover any subset of panel dates/tickers.
 
-P&L convention (identical for all specs — no residual-space accounting):
+P&L convention (identical for all specs, no residual-space accounting):
   - weights set at close t earn close-to-close returns at t+1 (held = W.shift(1))
   - costs per side: 10 bps stocks, 2 bps ETFs, charged on |change in weight|
   - gross exposure sum|w| capped at 2.0: days above are scaled down (violation counted)
-  - signal-only tickers (^VIX) must carry zero weight — nonzero raises
+  - signal-only tickers (^VIX) must carry zero weight; nonzero raises
 """
 import importlib.util
 import json

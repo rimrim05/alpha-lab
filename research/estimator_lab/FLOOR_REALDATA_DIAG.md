@@ -5,7 +5,7 @@ Read-only; frozen pipeline untouched. Prescribed in the adversarial review of FL
 ## (a) Negative-control seed sweep (seeds 1–20)
 - pass-rate distribution: min 10.0%, median 14.3%, max 20.0%
 - seeds exceeding the 10% bar (would flip verdict to FAIL): 19/20
-- seed-0 SUCCESS was a coin flip — the verdict rule is seed-fragile
+- seed-0 SUCCESS was a coin flip, the verdict rule is seed-fragile
 
 ## (b) Empirical shuffled-quantile recount (pooled per PC rank, 280 shuffled panels)
 | PC | shuffled median SNR̂ | shuffled q99 | C4 cut | real passers > q99 |

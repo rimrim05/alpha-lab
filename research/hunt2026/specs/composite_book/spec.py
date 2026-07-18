@@ -1,7 +1,7 @@
 """composite_book: 1.2x banded-EW S&P core + 0.5x gap-drift sleeve + 0.3x SPY panic
 sleeve, whole-book VIX-40 halving gate. Gross <= 2.0 by construction.
 
-Standalone reimplementation — no imports from sibling specs.
+Standalone reimplementation: no imports from sibling specs.
 """
 import json
 from pathlib import Path

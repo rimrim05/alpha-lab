@@ -1,4 +1,4 @@
-"""Agent 7 — independence / residualization of the 7 live paper books.
+"""Agent 7: independence / residualization of the 7 live paper books.
 
 Reconstructs each book's daily net return series using the SAME harness the paper
 runner uses (compute_book -> _heal_etfs -> harness.run), on panel_2005.parquet.
@@ -67,7 +67,7 @@ def main():
     # align on common dates where every book + both factors are defined (books start when
     # their signal lookbacks fill; momentum_concentrated needs member stocks populated)
     df = books.join(factors, how="inner").dropna()
-    # drop the leading warmup where books sit flat at 0 (no position yet) — those zero rows
+    # drop the leading warmup where books sit flat at 0 (no position yet); those zero rows
     # are not real return observations and would inflate correlations toward the flat book
     active = (books.reindex(df.index).abs().sum(axis=1) > 0)
     first_active = active[active].index.min()

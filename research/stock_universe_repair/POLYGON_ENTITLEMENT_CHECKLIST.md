@@ -16,7 +16,7 @@ checking the Polygon account/pricing page. **No upgrade is recommended here.***
 
 ## Bottom line
 The **only** thing blocking the price panel is that this plan serves no aggregates. Whether Polygon is
-the right upgrade depends on confirming the rows above — especially **history depth vs the 2005+ span**
+the right upgrade depends on confirming the rows above: especially **history depth vs the 2005+ span**
 and that **delisted names' price bars** are included at whatever tier is chosen. Until those are
 verified against Polygon's official plan documentation, no upgrade is recommended; evaluate it head-to-head
 with the Capital IQ Pro / GFD diagnostic (`vendor_diagnostic_15.md`).

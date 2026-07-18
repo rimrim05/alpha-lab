@@ -1,6 +1,6 @@
 # JSE Evidence Synthesis — every completed James-Stein / shrinkage experiment in alpha-lab
 
-Compiled 2026-07-14 (Agent D-synth). Collation only — no reruns, no new experiments.
+Compiled 2026-07-14 (Agent D-synth). Collation only: no reruns, no new experiments.
 Numbers quoted exactly as recorded in the source files. Sources: research/estimator_lab/
 (PLAN, RESULTS, CROSSOVER, FACTOR_GATE, THEOREM_COMPLETE, HEDGE_PAIR, REGIME_MAP,
 SUBSPACE_INVARIANCE, SUBSPACE_AVERAGING, ROBUST_ROTATION, STEP4_SYNTHESIS,
@@ -43,7 +43,7 @@ metric is vol/turnover; positive = JSE better when the metric is return/Sharpe).
 | subspace-averaging (F-030, Avenue 2) | 1/3/5 | 63, 252 | unconstrained | paired rel Δ vol vs L=1 | decisive (small n=63 k=5): −4.09% best (p=0.130); elsewhere **+1.4% to +14.64% worse** (large k=3 L=12: +14.64%, p=0.000) | see table | yes (Stage-0) | **NO EFFECT** decisive, net HARMFUL broadly; drift, not noise | SUBSPACE_AVERAGING.md |
 | robust-rotation SOCP (F-031, Avenue 3) | 5 | 63, 252 | unconstrained | paired rel Δ vol vs raw PCA | decisive (large n=63 κ=1): **+10.36%** (p=0.003); harmful 5/6 cells (small n=63 **+48.07%**); monotone in κ | see table | yes | **HARMFUL** — acting on the rotation bound costs vol; per-factor beats uniform (−12% to −23%) but κ→0 is best | ROBUST_ROTATION.md |
 
-Not experiments, but part of the record: AUDIT_JSE_RECONCILIATION.md (forensic — pipelines
+Not experiments, but part of the record: AUDIT_JSE_RECONCILIATION.md (forensic: pipelines
 byte-identical, conflict was prose; see §Contradictions) and STEP4_SYNTHESIS.md /
 JSE_BOUNDARY_MAP.md (syntheses of the above, no new runs).
 
@@ -61,7 +61,7 @@ Mean realized ann vol, min-var walk-forward (summary.csv 137 mo n=252; summary_w
 | long-only, n=63 | **jse1 11.57%** (pca1 11.58%) | 13.27% | 12.67% | 11.58% | 11.57% | 13.76% |
 
 Read: unconstrained books are won by spectrum-level shrinkage (MP clipping at n=252, LW at
-n=63) — both beat every factor model, and JSE never beats LW there. Long-only books are won
+n=63): both beat every factor model, and JSE never beats LW there. Long-only books are won
 by low-k factor models (pca1/jse1, a coin flip between them); LW/MP fall ~1.5–2 vol points
 behind. RESULTS.md prereg line "lw competitive, mp ≈ lw" was scored "Held, understated."
 Side note from ROBUST_ROTATION.md: LW vs full-PCA is mixed across universes (−3.3% large
@@ -83,10 +83,10 @@ n=252, p=0.006 helping, +8.63% small n=63 hurting).
    invariant to within-subspace frame rotation (CV 1.4% decisive cell) and sensitive only to
    the projector P (+26% for a random subspace); the pure-projector portfolio w∝(I−P)1 lands
    within 1.9% of full min-var. Combined with F-031 (acting on the rotation bound raises vol,
-   monotone in κ): **the within-subspace rotation — Theorem 1's hard term, the Davis-Kahan/t₆
-   object — has no positive min-var value**, from two independent directions (ignoring it is
+   monotone in κ): **the within-subspace rotation (Theorem 1's hard term, the Davis-Kahan/t₆
+   object) has no positive min-var value**, from two independent directions (ignoring it is
    free; hedging it costs).
-3. **Drift, not noise.** F-030: the single-window subspace error is drift-dominated — the
+3. **Drift, not noise.** F-030: the single-window subspace error is drift-dominated: the
    k-th eigenvalue of the L-window projector mean drops to 0.30–0.45 in short-window
    multi-factor cells, and averaging (which fixes variance, not bias) makes vol significantly
    worse there (up to +14.6%, p<0.001). The distilled open problem is a drift-aware subspace
@@ -96,7 +96,7 @@ n=252, p=0.006 helping, +8.63% small n=63 hurting).
    by the design constant p/n (≈ −0.24 bps realized vol per unit p/n, so it pays meaningfully
    only when p/n ≳ 5, i.e. n ≤ ~90 on a ~470-name book). No month-level state variable (ψ̂,
    eigengap) has timing content within a fixed n. Nothing in S&P large/mid/small reaches the
-   regime where the correction earns its keep — that requires genuinely thin panels (tens of
+   regime where the correction earns its keep: that requires genuinely thin panels (tens of
    names) or much shorter windows, i.e. a different asset class (REGIME_MAP.md,
    JSE_BOUNDARY_MAP.md). Max realized benefit ever observed: −2.6 bps ann vol (n=42,
    long-only).
@@ -123,7 +123,7 @@ Notes:
   pre-registered primary metric), not realized **residual** vol relative to a factor model.
   Residual vol was never computed or recorded anywhere in these files.
 - (b) **Tracking error was never reported by any experiment.** No benchmark-relative book was
-  ever run — JSE_BOUNDARY_MAP.md §5 states it explicitly: "A tracking-error /
+  ever run: JSE_BOUNDARY_MAP.md §5 states it explicitly: "A tracking-error /
   benchmark-relative min-var was never run. Untested — no claim." Per instruction, no
   substitute is derived here. (The hunt2026 walk-forward reports median SPY *excess return*,
   which is a return statistic, not a tracking error.)
@@ -139,7 +139,7 @@ Notes:
 - **C1 (resolved on the record by the audit):** RESULTS.md line 59 prose ("statistically
   significant at k=3,5 but economically zero") contradicts its own table (−0.6 bps, t=−8.2,
   p<0.001); the F-021 "sign flip at n=63" narrative inherited the error.
-  AUDIT_JSE_RECONCILIATION.md verdict: REPORTING DRIFT — pipelines byte-identical (max
+  AUDIT_JSE_RECONCILIATION.md verdict: REPORTING DRIFT, pipelines byte-identical (max
   per-month diff 2.7e-16), divergence was prose only; corrected numbers −0.53 bps t=−7.39
   (n=252) / −1.98 bps t=−5.99 (n=63) on the 138-month panel. Both readings are kept above.
 - **C2 (unresolved wording):** memos/hunt2026-walkforward.md item 6 says "JSE ≥ raw again
@@ -150,7 +150,7 @@ Notes:
   n=252 long-only" is explicitly superseded by its own Follow-ups section and CROSSOVER.md
   ("tiny but real and significant at every window").
 - **C4 (metric subtlety, self-documented):** FACTOR_GATE.md reports median Δ = +0.00 with
-  pooled t = −2.81 (p=0.0057) in the same row — not an error (treatment == control in most
+  pooled t = −2.81 (p=0.0057) in the same row: not an error (treatment == control in most
   months, so the median cannot move), but the verdict REDUNDANT is driven by the
   pre-committed median rule while the mean where the gate binds is −0.36 bps.
 
@@ -166,26 +166,26 @@ For (strongest three):
    Director closure locked "below deployment materiality on ~470-name S&P books"; 8
    cumulative registered overlay chances since closure, best outcome "tiny help, far below
    any deployment bar" (THEOREM_COMPLETE.md).
-2. Everywhere shorts are allowed JSE is significantly harmful (+14 to +49 bps, t 6.6–12) —
+2. Everywhere shorts are allowed JSE is significantly harmful (+14 to +49 bps, t 6.6–12),
    and this system's alpha books are the short-enabled kind.
 3. As a risk overlay it is a small net negative on every accessible universe: raises turnover
    (t=6–12) for Δvol ≈ 0 (F-029); no effect on hedge β (F-028); ψ̂₁≈1 means there is nothing
    to correct at S&P scale.
 Against:
 1. The long-only benefit is real, significant at every n (all p<0.0001), monotone, and
-   mechanism-confirmed — "no value" overstates; "no material value" is exact.
+   mechanism-confirmed: "no value" overstates; "no material value" is exact.
 2. The hunt2026 pair went the right direction in all three eval modes (+15 bps 1y blind,
-   +10 bps CAGR 5y, marginally better worst over 44 windows) — never hurt.
+   +10 bps CAGR 5y, marginally better worst over 44 windows): never hurt.
 3. The program produced deployable knowledge (the boundary, the p/n rule, the drift
    diagnosis) even if not deployable P&L.
 
 ### (ii) "JSE improves risk diagnostics only" — PARTIALLY SUPPORTED, wrong emphasis
-For: the validated outputs are diagnostic — rotation-MC diagnosis matches the theorem
+For: the validated outputs are diagnostic: rotation-MC diagnosis matches the theorem
 (f1 ~0.02, f2–f5 0.13–0.55, t₆>normal); the subspace-stability metric (F-030) is "kept for
 reuse"; ψ̂ is a clean regime descriptor. Against: ψ̂ has ZERO month-level timing content
 (6/6 windows, all p>0.3); the rotation bound has "no positive min-var value" from both
 directions; and JSE does slightly improve realized *risk* (not just diagnostics) in
-long-only books — so "diagnostics only" is simultaneously too generous (the diagnostics
+long-only books: so "diagnostics only" is simultaneously too generous (the diagnostics
 don't time anything) and too stingy (there is a real, tiny risk reduction).
 
 ### (iii) "JSE improves hedging/risk control but not alpha" — SUPPORTED as the literal
@@ -202,10 +202,10 @@ Against (strongest three):
    hedging" is contradicted by the two experiments that tested hedging specifically.
 2. In the unconstrained (risk-control-relevant, shorts-on) book it *raises* realized vol at
    every k and every n.
-3. The improvement it does deliver is ≤2.6 bps/yr — an order of magnitude below the
+3. The improvement it does deliver is ≤2.6 bps/yr: an order of magnitude below the
    pre-committed deployment bars, and plain LW/MP shrinkage beats it wherever it matters.
-So the defensible form is: **"JSE improves long-only min-var risk control — statistically
-real, economically immaterial — and nothing else in this system."**
+So the defensible form is: **"JSE improves long-only min-var risk control (statistically
+real, economically immaterial) and nothing else in this system."**
 
 ### (iv) "JSE materially improves risk-adjusted implementation" — NOT SUPPORTED
 No experiment supports it. Every pre-committed materiality bar was missed: −0.2 bps median
@@ -216,6 +216,6 @@ No evidence lines "for" exist at recorded thresholds.
 ### Bottom line for the verdict memo
 The evidence supports (iii) restricted to long-only min-var realized vol, with (i) as the
 correct operational conclusion: statistically real, economically immaterial, book-sign-
-dependent, ψ̂/p-n-bounded — and every attempt to enlarge it (gating, eq.-13 calibration,
+dependent, ψ̂/p-n-bounded, and every attempt to enlarge it (gating, eq.-13 calibration,
 hedging, regime targeting, averaging, robust rotation) either did nothing or hurt. The
 publishable object is the boundary map, not a deployment.

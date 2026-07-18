@@ -1,8 +1,8 @@
 # AUDIT — JSE/PCA result reconciliation (forensic, 2026-07-10)
 
-Charge: reconcile the three conflicting F-021 narratives — (1) original n=252 run
+Charge: reconcile the three conflicting F-021 narratives: (1) original n=252 run
 "long-only economically zero", (2) n=63 rerun "sign flip", (3) crossover sweep
-"long-only helps at every n incl. 252" — and find the first line where they diverge.
+"long-only helps at every n incl. 252", and find the first line where they diverge.
 No new hypotheses, no tuning. Re-runs done in `audit/` (frozen scripts untouched;
 audit copies differ only in the panel path and, for the crossover copy, WINDOWS=(252,)).
 
@@ -21,7 +21,7 @@ The conflict lives entirely in prose:
    rounding is the first divergence.
 2. **The n=63 "sign flip" narrative (5562106) was wrong.** n=252 long-only was already
    negative and significant; n=63 only made it 4x larger (−0.5 → −2.0 bps). No sign
-   flipped in long-only, ever. (Unconstrained is positive/harmful at every n — also no flip.)
+   flipped in long-only, ever. (Unconstrained is positive/harmful at every n, also no flip.)
 3. **The month-set "discrepancy" (137 vs 138, 2015-02 vs 2015-01) is two labeling
    conventions plus one real tail month.** The original run's rebalance dates were
    2015-01-02 → 2026-05-01 (137 rebalances; verified from `git show
@@ -77,12 +77,12 @@ long-only vols moved ≤0.42 vol-bps, unconstrained ≤0.79), **plus one new tai
 Both pipelines re-run in `audit/` on the current panel (2026-07-10):
 
 - run_minvar path vs crossover path: **same 138 months (index-equal), max per-month
-  |difference| = 2.7e-16** — identical series, not offset, not rescaled.
+  |difference| = 2.7e-16**: identical series, not offset, not rescaled.
 - fresh run_minvar vs committed `results.csv` (4b35553): max diff **0.0** (byte-reproducible).
 - fresh crossover vs committed `crossover.csv`: max diff **0.0**.
 - committed 32f71c6 `results.csv` vs current: differs only as described above
-  (2026-05-01 + tail month) — consistent with old-panel provenance, not with any code change.
-- n=63 check: run_minvar w63 path vs crossover n=63 — same 138 months, max diff 1.2e-16.
+  (2026-05-01 + tail month): consistent with old-panel provenance, not with any code change.
+- n=63 check: run_minvar w63 path vs crossover n=63: same 138 months, max diff 1.2e-16.
 
 ## Protocol items 4–5 — corrected numbers (current panel, 138 months, k=3, paired t)
 
@@ -97,7 +97,7 @@ Both pipelines re-run in `audit/` on the current panel (2026-07-10):
 
 **The crossover sweep's conclusion STANDS**: no crossover, long-only JSE helps at every
 n with monotone decay (−2.6 → −0.5 bps), unconstrained hurts at every n. It does not
-need re-running — its endpoints are byte-reproducible and equal to the standalone runs
+need re-running: its endpoints are byte-reproducible and equal to the standalone runs
 on the same panel. The scientific/operational/paper split in the Director's provisional
 note survives unchanged: directionally real long-only, below deployment materiality,
 constraint-dependent sign + p/n monotonicity is the publishable shape.
@@ -108,5 +108,5 @@ constraint-dependent sign + p/n monotonicity is the publishable shape.
 - RESULTS.md/CROSSOVER.md left as-is (historical record); this file + the F-021
   amendment are the corrections of record.
 - Recommendation: RESULTS.md-style headers should state rebalance-date ranges, not
-  hold-end months — that single labeling choice caused the entire "month-set
+  hold-end months: that single labeling choice caused the entire "month-set
   discrepancy" scare.

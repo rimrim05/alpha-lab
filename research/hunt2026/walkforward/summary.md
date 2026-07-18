@@ -1,7 +1,7 @@
 # hunt2026 walk-forward — rolling 12m windows, quarterly steps
 
 Panel: panel_2005.parquet. SPY: 82 windows, median +14.2%, ≥18% in 34%, worst -36.8%.
-Windows before a spec's fit_end overlap its fit window — `oos_*` columns are the
+Windows before a spec's fit_end overlap its fit window; `oos_*` columns are the
 clean subset (round1 fit_end 2025-07-10; round2 2021-07-10). Adjacent windows
 overlap (252d window, 63d step): ~4x fewer effectively independent draws.
 

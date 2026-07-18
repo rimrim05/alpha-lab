@@ -1,4 +1,4 @@
-"""paper_publish.py — publish a SANITIZED paper status to GitHub; keep the full report local.
+"""paper_publish.py: publish a SANITIZED paper status to GitHub; keep the full report local.
 
 Option A (local): a launchd job runs this on a schedule. It reuses paper_status.build_status()
 (the SAME read-only reconciliation / gate / broker picture) and produces two outputs:
@@ -10,7 +10,7 @@ Option A (local): a launchd job runs this on a schedule. It reuses paper_status.
 
 Isolation: ALL git operations happen in a DEDICATED CLONE (~/projects/alpha-lab-status-publisher),
 never in the active development tree. The publisher fetches + hard-resets that clone to origin/main,
-writes STATUS.md, commits, and pushes from there — so it can never collide with your uncommitted
+writes STATUS.md, commits, and pushes from there, so it can never collide with your uncommitted
 research, a branch switch, another agent, or a failed autostash. build_status() still runs in the
 main tree (it needs the code + .env), but that is read-only and touches no git.
 
@@ -73,7 +73,7 @@ def sanitize(status: dict, code: int) -> list[tuple[str, str]]:
 
 
 def render_public(status: dict, code: int) -> str:
-    """The committed STATUS.md — sanitized, GitHub renders it as the public insights surface."""
+    """The committed STATUS.md, sanitized. GitHub renders it as the public insights surface."""
     rows = sanitize(status, code)
     w = max(len(k) for k, _ in rows)
     block = "\n".join(f"{(k + ':').ljust(w + 1)}  {v}" for k, v in rows)

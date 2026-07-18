@@ -19,13 +19,13 @@ slack = (a)_j − floor_j per factor; SNRhat = θ_j/ℓ − 1 observable. C1 = n
 
 - held-out median |slack|: raw 0.193 | C1 0.153 | C2 0.058
 - pooled median |slack|: SNRhat>1: 0.198 | ≤1: 0.302
-- A1 oracle-resid spot-check (500,63), |slack| above cut: 0.064 (matches the A0 cell — residualization transfer confirmed again)
+- A1 oracle-resid spot-check (500,63), |slack| above cut: 0.064 (matches the A0 cell, residualization transfer confirmed again)
 
 ## Decision (pre-committed): **UNCALIBRATABLE under the frozen corrections**
 
 ## Story (the structure behind the verdict)
 
-- **The slack has clean n/p scaling for genuinely detectable factors.** Above-edge |slack| tracks ≈ n/(2p): (1000,40) 0.016, (1000,63) 0.025, (500,63)≈(1000,126) 0.063/0.066 — same n/p, same slack. The floor's p→∞ limit converges at rate ~n/p, so 'when is the floor a good approximation' has a quantitative answer: **p/n ≳ 15 for ~5% accuracy**. Practitioner translation: S&P at n=63 (p/n≈8) is borderline (~6% under-report); at n=252 (p/n≈2) the floor is MATERIALLY optimistic. The paper's own US-equity use case sits at the edge of its asymptotics.
-- **The naive observable trust cut breaks at moderate n/p — visibly at (500,126) where ALL factors pass the cut with +0.33 slack.** Mechanism: the finite-p noise bulk is Marchenko-Pastur-spread, not flat; its top edge ≈ (δ²/n)(1+√(n/p))², so sub-detection factors ride the inflated edge past SNRhat>1. The trust cut must be n/p-aware (≈ (1+√(n/p))²−1 + margin), not a constant.
-- **C2 near-missed the bar** (held-out 0.058 vs 0.05; did satisfy the ≤raw/3 condition) — the bias is largely capturable from observables, just not by the frozen linear form. Per the stop-iterating rule, no post-hoc correction is fitted here; the n/p-linear correction + MP-edge-aware cut are the SINGLE pre-registered Phase-3 candidates.
-- **Theory candidates for the lab (Kristen's to derive, not fitted here):** the ≈ c·n/p slack law and the MP-edge trust threshold both look closed-form-able — a finite-p refinement of Corollary 1.
+- **The slack has clean n/p scaling for genuinely detectable factors.** Above-edge |slack| tracks ≈ n/(2p): (1000,40) 0.016, (1000,63) 0.025, (500,63)≈(1000,126) 0.063/0.066, same n/p, same slack. The floor's p→∞ limit converges at rate ~n/p, so 'when is the floor a good approximation' has a quantitative answer: **p/n ≳ 15 for ~5% accuracy**. Practitioner translation: S&P at n=63 (p/n≈8) is borderline (~6% under-report); at n=252 (p/n≈2) the floor is MATERIALLY optimistic. The paper's own US-equity use case sits at the edge of its asymptotics.
+- **The naive observable trust cut breaks at moderate n/p, visibly at (500,126) where ALL factors pass the cut with +0.33 slack.** Mechanism: the finite-p noise bulk is Marchenko-Pastur-spread, not flat; its top edge ≈ (δ²/n)(1+√(n/p))², so sub-detection factors ride the inflated edge past SNRhat>1. The trust cut must be n/p-aware (≈ (1+√(n/p))²−1 + margin), not a constant.
+- **C2 near-missed the bar** (held-out 0.058 vs 0.05; did satisfy the ≤raw/3 condition): the bias is largely capturable from observables, just not by the frozen linear form. Per the stop-iterating rule, no post-hoc correction is fitted here; the n/p-linear correction + MP-edge-aware cut are the SINGLE pre-registered Phase-3 candidates.
+- **Theory candidates for the lab (Kristen's to derive, not fitted here):** the ≈ c·n/p slack law and the MP-edge trust threshold both look closed-form-able, a finite-p refinement of Corollary 1.

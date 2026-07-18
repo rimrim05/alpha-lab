@@ -7,7 +7,7 @@ residualization, dual-space PCA, C4 screen, floor correction rule, D vs publishe
 F-test, and circular-shift null. Localization L is imported from
 run_floor_realdata_diag.py.
 
-Added on top (the M3 vetting layer — new GATES, not new methodology):
+Added on top (the M3 vetting layer: new GATES, not new methodology):
 - PC1 excluded always (leakage footprint, FLOOR_REALDATA.md Story #3)
 - keep PC2-5 iff passes C4, floor_rep in [0,1], NOT leakage-flagged
   (leak = D >= window null q99 AND F-test p < 0.01), and L <= 0.30

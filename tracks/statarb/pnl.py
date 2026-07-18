@@ -3,7 +3,7 @@
 This is the single P&L formula behind the headline backtest result. Both the backtest
 (`run_residual`) and the ML-gated backtest call it, so a gated book's Sharpe comes from the same
 code path as the headline number, not a reconstruction. `rets` must be the IMPLEMENTABLE return
-matrix (see tracks/statarb/residual.hedged_returns) — scoring on the residual itself would credit
+matrix (see tracks/statarb/residual.hedged_returns); scoring on the residual itself would credit
 the book with the unhedgeable trailing-alpha term (2026-07-10 engine fix).
 """
 import pandas as pd

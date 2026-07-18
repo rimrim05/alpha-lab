@@ -2,7 +2,7 @@
 
 The asset-growth anomaly is partly a size bet (fast-growing firms cluster by size)
 and can tilt sectors. Neutralizing residualizes the score each month against
-log-size and sector dummies, so the long-short is orthogonal to both — isolating
+log-size and sector dummies, so the long-short is orthogonal to both, isolating
 the PURE asset-growth effect rather than an accidental size/sector tilt.
 """
 import numpy as np
@@ -13,7 +13,7 @@ def neutralize_score(score: pd.DataFrame, size: pd.DataFrame, sectors: dict,
                      min_names: int = 10) -> pd.DataFrame:
     """Per-month OLS residual of score ~ log(size) + C(sector).
 
-    score, size: date x ticker (size in levels, e.g. total assets — logged inside).
+    score, size: date x ticker (size in levels, e.g. total assets, logged inside).
     sectors: ticker -> sector label. Rows with < min_names valid names are dropped.
     """
     sec = pd.Series(sectors)

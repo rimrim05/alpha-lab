@@ -1,4 +1,4 @@
-"""Today's target book — the live signal, reusing the backtest math verbatim.
+"""Today's target book: the live signal, reusing the backtest math verbatim.
 
 `rolling_residual` + `band_positions` are imported UNCHANGED from the backtest, so
 the live book is the backtest book by construction (the parity harness, added

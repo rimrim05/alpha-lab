@@ -1,7 +1,7 @@
 """EXP-EST-CROSSOVER: jse3 vs pca3 matched pair across estimation windows
 n in {42,63,90,126,189,252}, same 137 months (all require >=252d history so the
 month set is identical across n). Logs per month: paired realized-vol delta per
-book, per-factor psi-hat, eigengap, p/n — state computed from the estimation
+book, per-factor psi-hat, eigengap, p/n: state computed from the estimation
 window ONLY (predictor available before construction).
 Prereg: research/hunt2026/preregistrations/est-crossover-2026-07-10.md."""
 from pathlib import Path

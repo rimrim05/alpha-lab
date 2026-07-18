@@ -2,7 +2,7 @@
 
 Monthly at the first close of each month: estimate a 1-factor covariance model
 Sigma = lam1 v v' + delta2 I from the trailing 252 days of demeaned returns,
-with v = the RAW sample leading eigenvector (no dispersion-bias correction —
+with v = the RAW sample leading eigenvector (no dispersion-bias correction;
 this is the control leg of the Goldberg et al. matched pair). Min-var weights
 via Sherman-Morrison, long-only clipped, 2% name cap, levered 2x.
 """
@@ -25,7 +25,7 @@ def _minvar_weights(Y, cap, lev):
     h = U[:, 0]
     lam1 = s[0] ** 2 / n
     delta2 = (s[1:] ** 2).sum() / ((p - 1) * n)
-    # step 5: NO correction — v is the raw sample eigenvector
+    # step 5: NO correction, v is the raw sample eigenvector
     v = h
     # Sherman-Morrison: Sigma^{-1} 1 ∝ 1 - lam1 (v'1)/(delta2 + lam1) v  (||v||=1)
     w = 1.0 - (lam1 * v.sum() / (delta2 + lam1)) * v

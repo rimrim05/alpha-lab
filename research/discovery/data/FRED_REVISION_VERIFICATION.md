@@ -9,18 +9,18 @@ verification addendum to `DATA_QUALITY_REPORT.md`; it does not alter the layer, 
 ## "First print" defined exactly
 The observations endpoint collapses consecutive identical vintages into one row spanning
 `[realtime_start .. realtime_end]`. For each sampled observation we record:
-- **observation_date** — the calendar date of the data point.
-- **earliest_vintage** — the first `realtime_start` at which the observation was *published
+- **observation_date**: the calendar date of the data point.
+- **earliest_vintage**: the first `realtime_start` at which the observation was *published
   with a real value* (this is also the release date → gives the release lag).
-- **first_published_value** — value at the earliest vintage.
-- **latest_value** — current value.
+- **first_published_value**: value at the earliest vintage.
+- **latest_value**: current value.
 - **difference** = latest − first.
-- **n_distinct_values** — number of distinct published values (1 ⇒ never revised).
-- **backfilled** — whether the observation was first published as `.`/missing and a value
+- **n_distinct_values**: number of distinct published values (1 ⇒ never revised).
+- **backfilled**: whether the observation was first published as `.`/missing and a value
   added later.
 
 ## Complete nine-series revision table (all series the layer ingests)
-Two sampled observations (2020-06-01 calm, 2023-03-15 SVB week) — identical verdicts; the
+Two sampled observations (2020-06-01 calm, 2023-03-15 SVB week): identical verdicts; the
 2020-06-01 rows are shown, and both samples gave diff 0 / n_distinct 1 / no backfill for all
 nine layer series.
 
@@ -36,7 +36,7 @@ nine layer series.
 | VIXCLS | 2020-06-01 | 0 | 28.23 | 28.23 | 0.0 | 1 | no | unrevised |
 | VXVCLS | 2020-06-01 | 0 | 30.92 | 30.92 | 0.0 | 1 | no | unrevised |
 
-Excluded macro (control — must be revised for exclusion to be justified):
+Excluded macro (control, must be revised for exclusion to be justified):
 
 | series | earliest_vintage | release lag (bd) | first | latest | diff | n_distinct | revision |
 |---|---|---|---|---|---|---|---|
@@ -47,7 +47,7 @@ Excluded macro (control — must be revised for exclusion to be justified):
 - **Revision axis (this file):** all nine layer series are unrevised (diff 0, one distinct
   value, no backfill) → latest-revised == point-in-time value, no revision look-ahead.
 - **Release-timing axis (frozen rules, unchanged):** the measured `earliest_vintage`
-  *confirms* the layer's frozen conventions rather than changing them — DGS*/DFF first publish
+  *confirms* the layer's frozen conventions rather than changing them: DGS*/DFF first publish
   at **obs + 1 business day** (H.15 next-morning release) → the frozen **1-business-day rate
   lag** holds; T10Y2Y/VIXCLS/VXVCLS publish **same day** → the frozen **same-day VIX/state**
   convention holds. An unrevised value is still unusable before its release timestamp; the
@@ -61,7 +61,7 @@ Excluded macro (control — must be revised for exclusion to be justified):
 > ALFRED vintage retrieval before use.
 
 **Scope of this claim (not a universal all-date proof):** the verdict covers the two sampled
-observations per series (2020-06-01, 2023-03-15) across all nine ingested series — a
+observations per series (2020-06-01, 2023-03-15) across all nine ingested series: a
 representative check, not an exhaustive every-date audit. It establishes that these series
 belong to the *class* FRED does not revise (rates/vol vs restated macro), consistent with
 their known release mechanics; it does not certify every historical observation. No further

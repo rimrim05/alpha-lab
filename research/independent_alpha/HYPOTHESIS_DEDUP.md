@@ -55,46 +55,46 @@ t≥2, n≥600). They differ only in framing lane. Kept HYP-A4-03 as canonical b
 **free** coverage feed (Finnhub `stock/recommendation` count-sum), making it testable a quarter sooner
 than H-E2's I/B/E/S / premium-endpoint path. One pre-registration, not two.
 
-**Two sanctioned FAILURES reopens (near-zero research overhead — the F-021/F-006 pattern).**
+**Two sanctioned FAILURES reopens (near-zero research overhead, the F-021/F-006 pattern).**
 - **H-E1** satisfies NR-1 verbatim: *"vol-conditioned entry timing remains the one untested angle"*
   (Dai et al. NBER w30917), and `ic_screen.md`'s verdict explicitly sanctions *"an interaction
   hypothesis with a mechanism"* as the one open door. All data on disk. This is the cheapest,
   highest-info reopen in the whole batch. Caveat carried forward: even a confirmed conditional IC is
-  **level-1 predictive only** — tradability stays gated behind NR-1's cost wall (≤2-3 bps/side or
+  **level-1 predictive only**: tradability stays gated behind NR-1's cost wall (≤2-3 bps/side or
   intraday), so it is a signal-space object, never promoted straight to a book.
 - **H-E4** satisfies F-016's named reopen ("interaction conditioning (momentum × … earnings)"). Needs
   PIT earnings-surprise sign; the `earnings-fwd` collector is already accruing, so the data pipeline
-  exists — only depth is missing. Forward-collect, do not backfill (yfinance cache is survivorship-biased).
+  exists: only depth is missing. Forward-collect, do not backfill (yfinance cache is survivorship-biased).
 - **H-FF-01** satisfies F-005's named reopen ("tested on S&P 600 adds … needs survivorship-safe data").
-  Reopen is legitimate but **data-blocked** — the repo has no PIT 600/400 membership and no
+  Reopen is legitimate but **data-blocked**: the repo has no PIT 600/400 membership and no
   delisted-inclusive small-cap price panel. Reopen ≠ testable now.
 
 **H-C-sbcorr / H-cov-temporal-smooth NEEDS_DIFF (distinct but adjacent).**
 - H-C-sbcorr's correlation signal is genuinely new, but `dual_momentum_gold` *already* momentum-picks
   TLT vs BIL and so partially captures bond-hedge failure in rising-rate regimes (its own MECHANISM
   cites 2013/2018). Its own failure condition already says it must beat that leg. Honest classification
-  stands: **Portfolio/Estimator**, not an independent market forecast — score it as a hedge (NR-5), never
+  stands: **Portfolio/Estimator**, not an independent market forecast; score it as a hedge (NR-5), never
   as additive alpha.
 - H-cov-temporal-smooth is distinct from queue #4 (post-optimization no-trade *band* clips weights off
-  the frontier) and #5 (EWMA reweights *within* a window for recency — opposite objective). But all three
+  the frontier) and #5 (EWMA reweights *within* a window for recency, opposite objective). But all three
   attack turnover on the same min-var harness; it must be run reporting the paired delta vs #4 and #5,
   or it re-measures a docketed lever.
 
 **Nothing else is a duplicate or parameter variant.** The four Lane-F estimator hypotheses are four
-distinct levers (shrinkage-target / moment-robustness / residual-diagonal / temporal-path) — none
+distinct levers (shrinkage-target / moment-robustness / residual-diagonal / temporal-path): none
 touches the same layer as another, and none re-runs the settled JSE/MP/PCA eigenspectrum question
 (F-010/F-021 closed). The three Lane-D execution hypotheses are three distinct fill-time levers, all
 distinct from queue #2's session-attribution question. The Lane-A/-B new-information and forced-flow
 sources have **no** prior test in the repo (no PIT earnings-revision, revenue, coverage, dispersion,
-IPO, SEO, Russell, or small-cap index data exists — confirmed against DATA_GAP_MAP.md and the panels).
+IPO, SEO, Russell, or small-cap index data exists, confirmed against DATA_GAP_MAP.md and the panels).
 
 ## Disposition summary
 
-- **APPROVE (new source): 12** — A4-01, A4-02, A4-03, A4-04, FF-02, FF-03, FF-04, C-carry, C-value,
+- **APPROVE (new source): 12** = A4-01, A4-02, A4-03, A4-04, FF-02, FF-03, FF-04, C-carry, C-value,
   C-breakeven, D1, D2, D3, D4(park), E3. *(15 including the two NEEDS_DIFF and the park.)*
-- **REOPEN (sanctioned): 3** — H-FF-01 (F-005, data-blocked), H-E1 (NR-1, testable now), H-E4 (F-016, forward-collect).
-- **NEEDS_DIFF: 2** — H-C-sbcorr, H-cov-temporal-smooth.
-- **REJECT_DUPLICATE: 1** — H-E2 (→ HYP-A4-03-lowcov).
+- **REOPEN (sanctioned): 3** = H-FF-01 (F-005, data-blocked), H-E1 (NR-1, testable now), H-E4 (F-016, forward-collect).
+- **NEEDS_DIFF: 2** = H-C-sbcorr, H-cov-temporal-smooth.
+- **REJECT_DUPLICATE: 1** = H-E2 (→ HYP-A4-03-lowcov).
 - **REJECT_PARAM: 0.**
 
 **Survivors carried to HYPOTHESIS_QUEUE.md: 23** (all but H-E2). Of these, **10 are testable now**

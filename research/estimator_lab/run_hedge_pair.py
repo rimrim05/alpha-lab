@@ -5,9 +5,9 @@ Harness frozen at the 2026-07-10 verdict basis: window=60, entry=1.25, exit=0.5,
 PIT membership, implementable P&L via run_residual, cost = 10 bps/side. Only the hedge
 factor varies. Factor-1 series re-estimated monthly from the trailing n_est days
 (full-coverage names), sign-fixed h1; jse1 rotates h1 toward q exactly as estimators.py
-(k=1, same tau) — equivalence asserted against ESTIMATORS machinery.
+(k=1, same tau): equivalence asserted against ESTIMATORS machinery.
 
-Decisive pair (prereg): jse1 vs pca1 at n_est=63 — paired monthly |rolling 63d beta vs
+Decisive pair (prereg): jse1 vs pca1 at n_est=63, paired monthly |rolling 63d beta vs
 SPY| of the book's net returns + gross-Sharpe delta. Revival gate: any variant net
 Sharpe >= 0.5 (deflated, n_trials=5) -> Stage-2 candidacy for Kristen.
 Prereg: research/hunt2026/preregistrations/jse-hedge-pair-2026-07-14.md.
@@ -41,7 +41,7 @@ N_TRIALS_REVIVAL = 5
 def factor1_series(rets, firsts, pos, n_est, jse):
     """Monthly re-estimated factor-1 return series (one Series over all days).
     h1 from trailing n_est days of full-coverage names; jse rotates toward q with
-    psi^2 = max(TAU, 1 - p*delta2/s1^2) — identical formulas to estimators._pca_parts."""
+    psi^2 = max(TAU, 1 - p*delta2/s1^2): identical formulas to estimators._pca_parts."""
     out = pd.Series(np.nan, index=rets.index)
     checked = False
     for m, (per, d) in enumerate(firsts.items()):

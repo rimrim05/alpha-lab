@@ -9,7 +9,7 @@ Rules:
 1. Commit the filled block (and the TRIAL_LEDGER.md row) before touching holdout or
    walk-forward data. Train-data exploration is allowed first; say so in the hypothesis.
 2. One layer per experiment (A-D per RESEARCH_OBJECTS.md) against a registered baseline.
-3. If the design was influenced by any prior out-of-sample result, flag it — that makes
+3. If the design was influenced by any prior out-of-sample result, flag it, that makes
    the hunt an adaptive loop and it must say so in its hunt-level ledger row.
 4. The kill condition must be decidable from numbers the harness already emits.
 5. Results get appended to the same block after the run: pass → CONFIDENCE_LADDER.md
@@ -53,9 +53,9 @@ link to FAILURES.md entry or CONFIDENCE_LADDER.md placement.
 
 | exp | layer | tag | one-liner |
 |---|---|---|---|
-| ~~JSE k=3-5 unconstrained min-var, walk-forward~~ | B | estimator | **ANSWERED — do not re-run** (queue row predated the answers landing later on 2026-07-10): F-021 (n=252, k=1/3/5 unconstrained: JSE worse, t≈8-12) + its n=63 resolution (unconstrained still worse, t>6) + est-crossover (worse at every n=42..252, no crossover, F-021 CLOSED). Final rule: JSE always-on long-only / never unconstrained (estimator_lab/CROSSOVER.md) |
-| ~~open+close execution in harness~~ | D | execution | **RUN 2026-07-14 — closed**: premium real (75% share both ETFs) but NOT exploitable — loses to buy-hold even gross, break-even cost negative; F-006 CLOSED FINALLY (F-025; preregistrations/open-close-2026-07-14.md) |
-| ~~turnover-penalty (no-trade band) sweep, vol-managed family~~ | C | portfolio | **RUN 2026-07-14 — closed**: MIXED per rule, mechanism NOT supported (deltas were timing noise, 5-10x the cost saved; no adoptable band; preregistrations/turnover-band-2026-07-14.md) |
-| ~~EWMA vs realized-window vol inside vol_managed_qqq~~ | B | estimator | **RUN 2026-07-14 — closed**: REALIZED BETTER decisively (matched pair −63.6 bps / 35% win share; ghost-vol cliff is a feature; F-024; preregistrations/ewma-vol-2026-07-14.md) |
+| ~~JSE k=3-5 unconstrained min-var, walk-forward~~ | B | estimator | **ANSWERED, do not re-run** (queue row predated the answers landing later on 2026-07-10): F-021 (n=252, k=1/3/5 unconstrained: JSE worse, t≈8-12) + its n=63 resolution (unconstrained still worse, t>6) + est-crossover (worse at every n=42..252, no crossover, F-021 CLOSED). Final rule: JSE always-on long-only / never unconstrained (estimator_lab/CROSSOVER.md) |
+| ~~open+close execution in harness~~ | D | execution | **RUN 2026-07-14, closed**: premium real (75% share both ETFs) but NOT exploitable, loses to buy-hold even gross, break-even cost negative; F-006 CLOSED FINALLY (F-025; preregistrations/open-close-2026-07-14.md) |
+| ~~turnover-penalty (no-trade band) sweep, vol-managed family~~ | C | portfolio | **RUN 2026-07-14, closed**: MIXED per rule, mechanism NOT supported (deltas were timing noise, 5-10x the cost saved; no adoptable band; preregistrations/turnover-band-2026-07-14.md) |
+| ~~EWMA vs realized-window vol inside vol_managed_qqq~~ | B | estimator | **RUN 2026-07-14, closed**: REALIZED BETTER decisively (matched pair −63.6 bps / 35% win share; ghost-vol cliff is a feature; F-024; preregistrations/ewma-vol-2026-07-14.md) |
 
 Each remaining open row still needs its own filled template block before running.

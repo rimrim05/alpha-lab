@@ -1,6 +1,6 @@
 """Successor / rename resolution for the 175 ever-S&P members Polygon left unmatched.
 
-IDENTIFIER + CORPORATE-EVENT REPAIR ONLY — NOT a price-panel repair. It builds a NEW additive
+IDENTIFIER + CORPORATE-EVENT REPAIR ONLY, NOT a price-panel repair. It builds a NEW additive
 CANDIDATE file (`rename_candidates.csv`); it never edits the frozen panel or the curated `id_map.csv`
 (cross-checked, not overwritten). It does NOT join predecessor↔successor price series and does NOT
 assume economic continuity unless a same-security rename is supported (per authorization restrictions).
@@ -73,9 +73,9 @@ def classify_event(t: str, id_action: str | None) -> tuple[str, str]:
               "delist": "uncertain", "spinoff": "spinoff"}.get(id_action, id_action)
         return ev, "sourced:id_map"
     if len(t) > 1 and t.endswith("Q"):
-        return "bankruptcy_proceedings?", "pattern_candidate"   # Q-suffix — proceedings, not proven liquidation
+        return "bankruptcy_proceedings?", "pattern_candidate"   # Q-suffix: proceedings, not proven liquidation
     if any(s in t for s in (".WS", ".WT", ".U", "+")):
-        return "share-class/warrant?", "pattern_candidate"      # punctuation — not proven conversion
+        return "share-class/warrant?", "pattern_candidate"      # punctuation, not proven conversion
     if any(t.endswith(sfx) for sfx in ("-A", "-B", ".A", ".B", "-P")):
         return "share-class?", "pattern_candidate"
     return "uncertain", "unresolved"
@@ -116,7 +116,7 @@ def build():
                 figi = figi or poly[v]["figi"]
                 src.append(f"polygon_reference:{v}")
                 break
-        # 3) SEC current-ticker map — successor CIK if successor is a current ticker; flag reuse
+        # 3) SEC current-ticker map: successor CIK if successor is a current ticker; flag reuse
         if succ and succ in cur:
             new_cik, succ_name = f"{cur[succ][0]:010d}", cur[succ][1]
             src.append("sec_company_tickers:successor")
@@ -135,7 +135,7 @@ def build():
             "sources": ";".join(src) if src else "none",
             "identifier_confidence": id_conf,              # confidence in the ID evidence, NOT the event type
             "price_continuity_valid": False,               # False unless same-security positively verified w/ dates+evidence
-            "manual_review_required": True,                # every row — no continuity positively verified
+            "manual_review_required": True,                # every row, no continuity positively verified
         })
     out = pd.DataFrame(rows)
     out.to_csv(HERE / "rename_candidates.csv", index=False)

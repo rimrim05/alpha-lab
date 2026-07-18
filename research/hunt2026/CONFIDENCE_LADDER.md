@@ -19,7 +19,7 @@ level-3 robust and economically near-worthless (see trend_vol_qqq's F-014 attrib
 A spec sits at the highest level whose evidence still stands. Later evidence can demote
 (momentum_concentrated passed a blind but the walk-forward refuted generalization → capped
 below 3). **Nothing in this repo is above level 3, and the vol-managed family is capped
-there with a penalty:** cross-market replication was RUN and FAILED (F-020 — the mechanism
+there with a penalty:** cross-market replication was RUN and FAILED (F-020: the mechanism
 improves Sharpe in only 3/7 correlation clusters, p=0.77), so level 4 is not merely
 unattempted, it was tested and refused. The edge is confirmed as US-large-cap-equity-
 specific, not universal. The paper book is designed but not live
@@ -77,7 +77,7 @@ recorded in PREREGISTRATION.md format BEFORE the book goes live.
 ## Estimator-lab finding (2026-07-14) — min-var is a subspace functional (CONFIRMED)
 EXP-2026-07-14-subspace-invariance: on real S&P data (large-cap, n=63, k=5), unconstrained
 min-var realized vol is invariant to within-subspace frame rotation (CV 1.4%) while sensitive
-to the subspace P (+26% for a wrong subspace) — ~19x separation; the pure projector portfolio
+to the subspace P (+26% for a wrong subspace), ~19x separation; the pure projector portfolio
 w∝(I−P)1 lands within 1.9% of full min-var. Confirms the Avenue-2 algebra w∝(I−P)1 + O(δ²/λ):
 Theorem 1's unrecoverable in-subspace rotation is HARMLESS to min-var. Implication for the
 Goldberg step-4 (multifactor JSE): de-bias the subspace projector + eigenvalues, not the

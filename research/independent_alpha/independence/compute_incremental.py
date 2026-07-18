@@ -1,4 +1,4 @@
-"""Agent 9 — incremental portfolio value of each watch-tier book beyond the frozen ensemble.
+"""Agent 9: incremental portfolio value of each watch-tier book beyond the frozen ensemble.
 
 Reuses Agent 7's return-series reconstruction (compute_independence.book_returns /
 factor_returns): daily net series per book from the exact runner path
@@ -147,7 +147,7 @@ def subperiod_dsharpe(ctrl, treat):
 
 def residual_distinctness(cand, ctrl):
     """regress candidate on control; marginal residual alpha_ann + t, and correlation.
-    tests 'still distinct after residualization' — does the candidate carry return the
+    tests 'still distinct after residualization': does the candidate carry return the
     control does not already span?"""
     X = np.column_stack([np.ones(len(ctrl)), ctrl.values])
     coef, *_ = np.linalg.lstsq(X, cand.values, rcond=None)

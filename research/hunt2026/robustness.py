@@ -1,10 +1,10 @@
 """Robustness pass: parameter stability maps, deflated Sharpe, rank IC.
 
-A) Parameter maps — grid the two core designs' tunables and score each point by rolling
+A) Parameter maps: grid the two core designs' tunables and score each point by rolling
    12m walk-forward stats. This is a plateau test of the ALREADY-CHOSEN params, not a
    search: the registered params stay frozen regardless of the map (any re-pick would be
    a new trial in the ledger).
-B) Deflated Sharpe (Bailey & Lopez de Prado) on the 5y window with N=18 trials — the
+B) Deflated Sharpe (Bailey & Lopez de Prado) on the 5y window with N=18 trials: the
    probability that a survivor's Sharpe is real given how many things we tried.
 C) Rank IC of the 12-1 momentum signal (signal quality before portfolio construction).
 """

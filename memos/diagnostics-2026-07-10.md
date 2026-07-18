@@ -33,7 +33,7 @@ positions and data (identity: raw = resid + alpha_lag + beta_lag·f):
 
 The gap is the `alpha_lag` term: the trailing 60d drift estimate, subtracted inside
 `rolling_residual`, is booked as P&L by the engine but is NOT hedgeable (it is each name's own
-drift, not a factor exposure — the ETF hedge fixes vol, not return). Mechanically: the same
+drift, not a factor exposure, the ETF hedge fixes vol, not return). Mechanically: the same
 dislocation that triggers an entry drags the 60d alpha estimate against the position, so
 subtracting it credits the trade ~6 bps/day of accounting P&L regardless of what the stock
 does. The headline 2.67 is substantially this term. The implementable book grosses ~2%/yr
@@ -46,7 +46,7 @@ within months; the decomposition surfaces it now.
 ## 3. Turnover cost decomposition
 
 Daily one-way turnover 5.3% of book, median hold 15d. At 10 bps/side the cost drag is
-5.34%/yr — 29.9% of residual-space gross (3.80 → 2.67), and > 100% of implementable gross.
+5.34%/yr, 29.9% of residual-space gross (3.80 → 2.67), and > 100% of implementable gross.
 
 ## Consequences (pending Kristen's call — this is a verdict-level event)
 
@@ -103,7 +103,7 @@ suppressed) but shortens holds and adds churn, so net gets WORSE. Killed by its 
 1. The headline 2.67 was an accounting artifact: the engine credited the unhedgeable
    trailing-alpha term (−15.9%/yr of pure drift drag was being booked as profit).
 2. The real, implementable reversion edge on daily S&P 500 with a sector-ETF hedge is
-   ~1.3–1.6%/yr gross (Sharpe ~0.3). It exists — 63% win rate — but it is tiny.
+   ~1.3–1.6%/yr gross (Sharpe ~0.3). It exists, 63% win rate, but it is tiny.
 3. Turnover costs 5.3%/yr at 10 bps/side. Even at 2 bps/side (best institutional case)
    cost ≈ gross → net ≈ 0. The gap is ~4x, not a parameter-tuning distance.
 4. The A&L drift correction, the one change aimed at the failure mode, fails pre-registered.

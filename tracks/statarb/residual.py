@@ -31,7 +31,7 @@ def residual_returns(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame) -> pd.
 def rolling_beta(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
                  window: int = 60) -> pd.DataFrame:
     """Rolling single-factor beta per name. `factor_rets` has the SAME columns as
-    `stock_rets` — each column is that stock's matched factor return."""
+    `stock_rets`: each column is that stock's matched factor return."""
     rs, fr = stock_rets.align(factor_rets, join="inner")
     mean_s = rs.rolling(window).mean()
     mean_f = fr.rolling(window).mean()
@@ -42,11 +42,11 @@ def rolling_beta(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
 
 def rolling_residual(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
                      window: int = 60) -> pd.DataFrame:
-    """Vectorized single-factor rolling residual across many stocks — the SIGNAL space.
+    """Vectorized single-factor rolling residual across many stocks: the SIGNAL space.
 
     Betas are estimated on a trailing `window` and LAGGED one day before forming the
     residual, so no look-ahead. NOTE: the residual subtracts the trailing alpha
-    estimate, which no portfolio can capture — it defines the signal, never the P&L.
+    estimate, which no portfolio can capture; it defines the signal, never the P&L.
     P&L must be scored on `hedged_returns`.
     """
     rs, fr = stock_rets.align(factor_rets, join="inner")
@@ -59,7 +59,7 @@ def rolling_residual(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
 
 def hedged_returns(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
                    window: int = 60) -> pd.DataFrame:
-    """Implementable per-name return of stock minus lagged-beta x factor ETF — the P&L
+    """Implementable per-name return of stock minus lagged-beta x factor ETF: the P&L
     space. Identity: hedged == residual + lagged alpha. Unlike the residual, this is
     what a real long/short book with an ETF hedge overlay actually earns (the trailing
     alpha term is each name's own drift and cannot be hedged away)."""
@@ -72,7 +72,7 @@ def hedged_returns(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
 
 def rolling_alpha(stock_rets: pd.DataFrame, factor_rets: pd.DataFrame,
                   window: int = 60) -> pd.DataFrame:
-    """Rolling intercept of the single-factor regression — each name's trailing daily
+    """Rolling intercept of the single-factor regression: each name's trailing daily
     drift estimate. This is the term a hedged book earns ON TOP of the residual (and
     the drag the drift-adjusted s-score nets out of the signal)."""
     rs, fr = stock_rets.align(factor_rets, join="inner")
@@ -85,7 +85,7 @@ def drift_adjusted_s_score(residual: pd.DataFrame, drift: pd.DataFrame,
     """Avellaneda-Lee 'modified' s-score: s minus the standardized drift adjustment
     drift/(kappa*sigma), so a dislocation explained by the name's own trailing drift
     does not signal (their eq. for s_mod; zero tuned parameters). `drift` must be the
-    LAGGED daily alpha estimate (caller shifts — no look-ahead). Names whose AR(1) fit
+    LAGGED daily alpha estimate (caller shifts, no look-ahead). Names whose AR(1) fit
     implies no mean reversion (coefficient outside (0,1)) return NaN: untradable."""
     cum = residual.cumsum()
     x, xl = cum, cum.shift(1)

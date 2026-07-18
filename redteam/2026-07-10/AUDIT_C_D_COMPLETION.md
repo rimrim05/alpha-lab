@@ -23,7 +23,7 @@ spec weights. Net compared via one independent scorer on both weight sets. Toler
 **6 of 7 reproduce to 0.000 bp.** The early-history weight diffs (vol_core/trend/momentum)
 are pre-inception warmup that does not enter the holdout or 5y windows.
 
-**F-RT-07 — defensive_ensemble is not reproducible from its written specification.
+**F-RT-07: defensive_ensemble is not reproducible from its written specification.
 [MEDIUM, CONFIRMED METHODOLOGICAL WEAKNESS]**
 The clean-room diverged from day 1 (holdout total 0.36 vs 0.41). Traced to Sleeve A:
 `spec.py:41` implements **inverse-vol** `lev_q = (0.25 / rv21).clip(upper=2.0)`, but
@@ -34,9 +34,9 @@ materially different Sleeve A (inverse-variance, squared). **This is a docs↔co
 inconsistency, NOT a code bug and NOT leakage** (accounting ruled out by the independent
 engine at 0.0000 bp; look-ahead ruled out by the poison test). Consequence: the **lead**
 book's evidence rests on the specific frozen code, which is internally valid but **cannot be
-rebuilt from its writeup** — a reproducibility gap that matters most precisely because
-defensive_ensemble is the strongest book. Remediation (documentation only, NOT a code change
-— the frozen book stays frozen mid-forward-test): correct MECHANISM.md to state inverse-vol
+rebuilt from its writeup**: a reproducibility gap that matters most precisely because
+defensive_ensemble is the strongest book. Remediation (documentation only, NOT a code change,
+the frozen book stays frozen mid-forward-test): correct MECHANISM.md to state inverse-vol
 `0.25/rv21`, the QQQ 200d gate with 1% hysteresis, and the exact inverse-vol sleeve
 combination. Does not require rerunning trials. Belief impact: does not invalidate the
 result; lowers *reproducibility* confidence for defensive_ensemble until docs are tightened.
@@ -59,16 +59,16 @@ Degradation of holdout-year total net vs base (harness close-to-close convention
 
 **Verdict: all 7 books SURVIVE adversarial implementation.**
 - **open_to_open is the realistic live-execution model** (enter at opens, HOLD through
-  overnight — what `hunt_paper_run.py` actually does): degradation is **negligible and mostly
+  overnight, what `hunt_paper_run.py` actually does): degradation is **negligible and mostly
   positive** (+1.8 to +5.1; gold −5.6). The books do **not** depend on the impossible ability
   to trade at the close they signalled on.
 - **intraday_only** (re-establish the whole book at each open, forgo every overnight gap) is
-  **not a valid execution model** — it is a diagnostic. Its ~−40-point collapse confirms the
+  **not a valid execution model**: it is a diagnostic. Its ~−40-point collapse confirms the
   documented **night/day effect** (these ETFs' close-to-close return is ~entirely overnight in
-  this window; connects to F-006). Because the books **hold** overnight, they capture it — no
+  this window; connects to F-006). Because the books **hold** overnight, they capture it. No
   action. *This column would be a false alarm if read as an execution result; it is not one.*
 - **delay1 (full 1-day signal delay), cost×2, +5bps conservative fills, whole-shares
-  ($14.4k book)** are all **immaterial** (≤1.3 points) — the low-turnover design absorbs them.
+  ($14.4k book)** are all **immaterial** (≤1.3 points): the low-turnover design absorbs them.
 
 **Scope condition (important):** Audit C is modeled on the historical open/close panel, not
 real fills. Spread, market impact, and queue position are **not** in the panel. The genuine

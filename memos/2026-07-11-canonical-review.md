@@ -18,7 +18,7 @@ bp; no leakage), **one credible portfolio-construction object** (`defensive_ense
 independent alpha** (one Level-3 market source, cross-market replication run and refused), and **zero
 forward evidence** (go-live 2026-07-10; market not open since; 0 fills). Nothing is a live-capital
 candidate. The single most decision-relevant fact: the vol books' headline "excess vs naive" is
-**leverage, not alpha** — it survives a single-factor regression but not an exposure-matched benchmark.
+**leverage, not alpha**; it survives a single-factor regression but not an exposure-matched benchmark.
 
 ---
 
@@ -37,7 +37,7 @@ membership snapshots), `research/hunt2026/panel_2005.parquet` (the frozen price 
 | Distinct tickers as columns in the panel | 1,730 | All tradable columns in `panel_2005` (superset: non-S&P, ETFs, signal tickers) | `panel_2005.parquet` |
 | Ever-members **present** in the panel | **820** | ever-members ∩ panel close columns | recomputed (820 + 382 = 1,202) |
 | Ever-members **missing** from the panel | **382** | ever-members with **no column at all** (never fetched) | `POLYGON_STATUS.md` / `polygon_reference.py` |
-| Ever-members audited by the continuity audit | **777** | rows in `coverage.csv` (build's membership-mask set; 43 fewer than 820 — narrower "recent members" filter + share-class normalization) | `coverage.csv` |
+| Ever-members audited by the continuity audit | **777** | rows in `coverage.csv` (build's membership-mask set; 43 fewer than 820, narrower "recent members" filter + share-class normalization) | `coverage.csv` |
 | — of those, **zero-coverage** (empty column) | **168 (22%)** | flagged member, `priced_member_days = 0` (all-NaN price column) | `coverage.csv` (`coverage==0`) |
 | — **genuinely usable** PIT history (≥99%) | **595 (77%)** | `coverage ≥ 0.99` | `coverage.csv` |
 | — partial (0 < cov < 0.99) | 14 | | `coverage.csv` |
@@ -48,13 +48,13 @@ membership snapshots), `research/hunt2026/panel_2005.parquet` (the frozen price 
 **Empty columns vs usable histories (the distinction requested):**
 - **Genuinely usable PIT price histories:** ~**595–609** names (≥99% / >0 coverage). This is the *effective*
   tradable stock universe `momentum_concentrated` ever ranked over.
-- **Empty columns** (member flagged, price column all-NaN): **168** — present in the panel schema but
+- **Empty columns** (member flagged, price column all-NaN): **168**, present in the panel schema but
   contribute nothing; a name whose column is NaN cannot be ranked or held.
 - **No column at all:** **382** ever-members never fetched (delisted/merged/renamed before the yfinance
   window).
 - **Net:** of **1,202** ever-members, only ~**49–51%** are usable histories. The stock book is built on
   survivors. Bias is **bounded** (not falsely positive) because cross-sectional momentum's rank IC ≈ 0
-  (F-016, t = −0.07) — the incomplete universe makes the book *incomplete*, not *inflated*.
+  (F-016, t = −0.07), the incomplete universe makes the book *incomplete*, not *inflated*.
 
 **The "87.2%" vs "77.95%" gap** is not a contradiction: 87.2% is member-day-weighted (how much of the
 index is priceable on a typical day); 77.95% is the unweighted per-ticker mean (dragged down by dead
@@ -62,7 +62,7 @@ names with few member-days and zero coverage). Both are correct measures of diff
 
 **Repair status:** identifier/delisting track materially advanced (Polygon reference-tier joins
 auto-dated 205 of 382 missing delistings + 54 FIGIs; `id_map.csv` hand-seeds 15). **Price track still
-BLOCKED** — Polygon's provisioned plan returns `403 NOT_AUTHORIZED` on daily aggregates; a
+BLOCKED**: Polygon's provisioned plan returns `403 NOT_AUTHORIZED` on daily aggregates; a
 survivorship-complete price panel needs a price-tier upgrade or FactSet/Tiingo/CRSP. `panel_stocks_v2`
 does not yet exist; the frozen v1 panel and `momentum_concentrated`'s BLOCKED verdict are preserved.
 
@@ -89,11 +89,11 @@ Computation in `scripts/hunt_paper_reconcile.py:162-164`:
 | Status | **stat-arb flatten / AMAT NOT COMPLETE** | reconcile alarm; `position_gap_frac 2.5684` |
 
 **Honest limitation (as of the committed ledger):** the long/short/net/priced-unpriced/flatten-quantity
-decomposition was **not derivable from any committed artifact** — the reconcile schema persisted only
+decomposition was **not derivable from any committed artifact**; the reconcile schema persisted only
 aggregate gross dollars, the count, and the symbol list. This was an observability gap in the reconcile
 schema, now closed (see addendum).
 
-**Addendum — read-only broker snapshot, 2026-07-11 (resolves the fields above).** A read-only
+**Addendum: read-only broker snapshot, 2026-07-11 (resolves the fields above).** A read-only
 `get_all_positions` / `get_account` / `get_orders(OPEN)` snapshot (no ledger write, no order submitted)
 and the new decomposition instrumentation (`scripts/hunt_paper_reconcile.py`, commit `a644dec`) measure
 the signed decomposition directly:
@@ -112,11 +112,11 @@ the signed decomposition directly:
 | Open flatten orders | **271** (1,563 shares submitted, **0 filled**) |
 | Account equity | $100,794.31 |
 
-**Interpretation:** the $141.7K gross is **primarily offsetting long/short inventory** — 78% of the gross
-nets out (|net|/gross = 0.22) — **but it carries a material residual net short of −$30.8K (−30.6% of
+**Interpretation:** the $141.7K gross is **primarily offsetting long/short inventory**, 78% of the gross
+nets out (|net|/gross = 0.22), **but it carries a material residual net short of −$30.8K (−30.6% of
 equity)**, a real directional tilt, not negligible. This is consistent with the legacy stat-arb book being
 a long/short (106L/165S) roster mid-flatten. **Flatten is NOT complete:** 271 positions still held and
-1,563 flatten shares still unfilled (0 filled) — it fills at Monday's open. Per the standing rule, the
+1,563 flatten shares still unfilled (0 filled); it fills at Monday's open. Per the standing rule, the
 flatten is **not** to be called complete until broker positions **and** remaining flatten quantities are
 both zero.
 
@@ -139,10 +139,10 @@ else rejected/expired/closed-zero-fill → rejects[]).
 
 **Reconciling the two conflicting records:** the **first** reconcile (`22:56:54`, record 0) reported
 `n_rejects 68, reject_rate 1.0` under a **pre-fix schema** that lacked `n_canceled/n_partial/n_replaced`
-fields and lumped canceled orders into "rejects" — yet even there, every entry in its `rejects[]` array
+fields and lumped canceled orders into "rejects", yet even there, every entry in its `rejects[]` array
 carries `status: "canceled"`. The **later** reconciles (`22:58`, `00:31`, `00:32`, records 1–3) use the
 corrected classifier: **`n_canceled 68`, `n_rejects 0`**. Authoritative split = **68 canceled, 0
-rejected**. Cause (script `:224` self-report): "order(s) self-canceled by re-runs" — the 68
+rejected**. Cause (script `:224` self-report): "order(s) self-canceled by re-runs": the 68
 aggregate-target day-orders from Friday's 20:30 submission were canceled by subsequent nightly re-runs
 before Monday's open; **none ever reached a fill**. This is expected weekend behavior, not a rejection by
 the broker.
@@ -173,25 +173,25 @@ the book's actual exposure. Worked for **vol_managed_qqq** (all from `redteam/..
   realized beta below average notional. Model A credits that uncounted **(1.45 − 1.03) ≈ 0.42×** of
   persistent QQQ leverage as *alpha*; Model B charges it as *beta*.
 - **The gap is an identity, not a mystery:** regression-α(QQQ) − exposure-matched-excess ≈
-  (avg_gross − β_QQQ) × r_QQQ = (1.448 − 1.033) × 16.37% ≈ **+6.8%/yr** — which is essentially the entire
+  (avg_gross − β_QQQ) × r_QQQ = (1.448 − 1.033) × 16.37% ≈ **+6.8%/yr**, which is essentially the entire
   +6.20% one-factor-QQQ alpha. Subtract a benchmark 0.42× larger and the alpha evaporates.
 - **Financing.** Neither model charges borrow explicitly. But Model B forces you to compare against
   *actually holding* the leverage; add a ~5% short-rate cost on the 0.42× excess exposure (≈ −2.1%/yr)
   and the +1.0% long-window excess goes **negative** (row B3). Model A's free-β intercept hides this.
 - **Statistics converge out-of-sample.** Model A's alpha is significant only on the **full in-sample**
   window (t = 3.36, n = 4,659) where a persistent bull-era leverage premium looks like skill. On the
-  **blind 252-day holdout**, the same regression alpha is **+5.20%/yr, t = 0.43 — not significant** — and
+  **blind 252-day holdout**, the same regression alpha is **+5.20%/yr, t = 0.43, not significant**, and
   agrees with the exposure-matched excess (+0.32%). Both models say the same thing OOS: **no significant
   alpha.**
 
-**The exception that proves the rule — defensive_ensemble.** Its raw exposure-matched excess is *negative*
-(−4.74%/yr long) because it deliberately earns less return than a 1.88× SPY control — **but at far lower
+**The exception that proves the rule: defensive_ensemble.** Its raw exposure-matched excess is *negative*
+(−4.74%/yr long) because it deliberately earns less return than a 1.88× SPY control, **but at far lower
 risk**: `sharpe_minus_ctrl` = **+0.281 (long)** and **+0.702 (holdout)**, and its regression alpha is
 +9.42%/yr (t = 3.24 long) / +17.71%/yr (t = 1.71 holdout). Here the two models **agree** there is genuine
-*risk-adjusted* portfolio value — it is not levered beta. This is why it is the one book that survives as
+*risk-adjusted* portfolio value; it is not levered beta. This is why it is the one book that survives as
 a portfolio-construction object rather than a leverage vehicle.
 
-**Bottom line:** the vol/trend cluster has **no independent alpha** once benchmarked fairly — it is a
+**Bottom line:** the vol/trend cluster has **no independent alpha** once benchmarked fairly; it is a
 vol-timed levered-QQQ position whose "excess" is the leverage. `defensive_ensemble` is the only book with
 value that survives exposure matching (on a Sharpe basis). This is consistent across every source and is
 the load-bearing conclusion of the review.
@@ -241,7 +241,7 @@ PROVISIONAL; momentum_concentrated = BLOCKED. No book INVALIDATED.
 EXP-B conditional-vol **MECHANISM UNSUPPORTED** (wild-cluster bootstrap p=0.4375). No independent source
 found. Earnings lane 0/300 matured.
 
-**Estimator lab:** JSE effect real but immaterial — long-only helps at every window (−2.6 bps at n=42 →
+**Estimator lab:** JSE effect real but immaterial: long-only helps at every window (−2.6 bps at n=42 →
 −0.5 bps at n=252, all p<1e-4), unconstrained hurts (+18 to +49 bps); **no crossover**; ψ̂ has no timing
 content; MP-clipping best unconstrained, pca1 best long-only. F-021 = reporting drift only (pipelines
 agree to 2.7e-16). **Academically interesting, operationally immaterial.**
@@ -282,7 +282,7 @@ Benchmarks: 1Y SPY +21.2% / QQQ +31.5%; 5Y SPY CAGR +13.0%.
 | dual_momentum_gold | +11.2% | −25.5% | +16.3% | +51.1% | **+106.3%** | +19.3% |
 
 **Concentration flags:** levered vol books' cumulative edge sits in 2023 (+79/+87%); `dual_momentum_gold`
-is entirely the 2024–26 gold regime (rel_top10 0.68 per red-team) — remove it and the book is ordinary;
+is entirely the 2024–26 gold regime (rel_top10 0.68 per red-team), remove it and the book is ordinary;
 `defensive_ensemble`'s value shows in the 2022 down year (+0.4%). Single partial years are too short for a
 meaningful Sharpe; round-1 books are **not blind** on the 5Y window.
 
@@ -325,13 +325,13 @@ controls (0/3 add incremental value; momentum_concentrated P(ΔSharpe>0)=**0.07*
 
 ## 6. Unknowns & final judgment
 
-**Top unknowns (priority):** (1) do real fills match the backtest — **wait, watch nightly**; (2) does any
-book produce exposure-matched *forward* excess — the whole alpha question is unanswered forward; (3) does
+**Top unknowns (priority):** (1) do real fills match the backtest: **wait, watch nightly**; (2) does any
+book produce exposure-matched *forward* excess, the whole alpha question is unanswered forward; (3) does
 `defensive_ensemble` diversify forward; (4) gold vs gem divergence once positions differ; (5)
 `momentum_concentrated` on a repaired universe (vendor-blocked); (6) earnings PIT IC (0/300).
 
 **Final judgment:**
-1. **Discovered:** a rigorous method and one honest negative — in free-data US equities the only thing
+1. **Discovered:** a rigorous method and one honest negative: in free-data US equities the only thing
    that survives blind + walk-forward + red-team is **vol/trend risk-management of the equity premium**
    (one source), plus one **portfolio wrap** (defensive_ensemble). The most valuable discovery is what
    does *not* work.
@@ -357,13 +357,13 @@ at Monday's open. Pre-flatten baseline (read-only `get_account`/`get_all_positio
 long_mv $62,540.43, short_mv −$87,289.11; foreign inventory **271 positions**, gross **$141,671.42**, net
 **−$30,831.86**, 106 long / 165 short legs; **271 open flatten orders, 1,563 shares submitted, 0 filled.**
 
-**Four-part flatten gate — verified at the first post-open reconciliation via independent read-only broker
+**Four-part flatten gate, verified at the first post-open reconciliation via independent read-only broker
 queries compared against the persisted `_reconcile.jsonl`. Flatten is COMPLETE only if ALL four pass:**
-1. **Position gate** — foreign position count = 0.
-2. **Quantity gate** — remaining flatten quantity = 0.
-3. **Terminal-order gate** — no nonzero position is associated only with filled/canceled/rejected/expired
+1. **Position gate**: foreign position count = 0.
+2. **Quantity gate**: remaining flatten quantity = 0.
+3. **Terminal-order gate**: no nonzero position is associated only with filled/canceled/rejected/expired
    flatten orders.
-4. **Independent-reconciliation gate** — a fresh broker snapshot agrees with the ledger on positions,
+4. **Independent-reconciliation gate**: a fresh broker snapshot agrees with the ledger on positions,
    signed exposure, and flatten quantities.
 
 Code (`a644dec`) auto-enforces gates 1–2; gates 3–4 are checked by hand at report time (their automation

@@ -3,12 +3,12 @@
 Seven books (fixed registry below), each a frozen hunt2026 spec. Every night: build a fresh
 panel (panel_2005.parquet history + latest yfinance ETF bars), take each spec's target_weights
 LAST row as tonight's target book, size it to an equal share (equity/7) of account equity, log a
-ledger row (targets, fills, nav, both benchmark navs) per book, and — only with --live — submit.
+ledger row (targets, fills, nav, both benchmark navs) per book, and, only with --live, submit.
 
 Execution routing (cutover 2026-07-15, memos/mc-account-isolation-cutover-2026-07-15.md): the six
 ETF books aggregate into the SHARED Alpaca paper account (ALPACA_*, tag h26); momentum_concentrated
 executes ALONE in a DEDICATED paper account (ALPACA_MC_*, tag h26mc) so its single-stock fills,
-marks, and survivorship are broker-attributable. Sizing is unchanged — divisor stays 7.
+marks, and survivorship are broker-attributable. Sizing is unchanged: divisor stays 7.
 
 DEFAULT IS --dry-run: compute + print orders, write a ledger row marked "dry", submit NOTHING.
 --live submits to Alpaca paper only (never real money). Do NOT run --live unattended before review.
@@ -50,17 +50,17 @@ BOOKS = {
 # SIZING IS UNCHANGED: notional per book = shared_equity / N_BOOKS_TOTAL (still 7, never len(SHARED)).
 MC_BOOK = "momentum_concentrated"
 MC_CRED_NAMES = ("ALPACA_MC_API_KEY_ID", "ALPACA_MC_API_SECRET_KEY")
-N_BOOKS_TOTAL = len(BOOKS)                          # 7 — the sizing divisor, frozen across the split
+N_BOOKS_TOTAL = len(BOOKS)                          # 7, the sizing divisor, frozen across the split
 SHARED_BOOKS = [b for b in BOOKS if b != MC_BOOK]   # the six ETF books, aggregated into the shared acct
 
 
 def build_live_panel(lookback_days: int = 20) -> pd.DataFrame:
     """panel_2005 history extended with the latest yfinance bars, closes ffilled.
 
-    Refreshes the ETF + signal columns AND every current member stock — momentum_concentrated
+    Refreshes the ETF + signal columns AND every current member stock; momentum_concentrated
     ranks single names, so this is ~540 tickers, not the ~38 ETFs the books started with. ffill
     heals stray holiday-calendar NaNs in the union index that would otherwise poison rolling
-    windows. NETWORK — script-only; tests pass a fixture panel to compute_book directly.
+    windows. NETWORK, script-only; tests pass a fixture panel to compute_book directly.
     """
     from core.data.prices import fetch_prices_yf
 
@@ -143,7 +143,7 @@ def _naive_spec(kind: str):
 
 
 def compute_book(panel: pd.DataFrame, name: str, notional: float) -> dict:
-    """Tonight's book row for `name`, offline on `panel`. No network, no broker — the testable core."""
+    """Tonight's book row for `name`, offline on `panel`. No network, no broker; the testable core."""
     panel = _heal_etfs(panel)
     spec = harness.load_spec(SPECS / name)
     W = spec.target_weights(panel).astype(float).fillna(0.0)
@@ -160,7 +160,7 @@ def compute_book(panel: pd.DataFrame, name: str, notional: float) -> dict:
         "notional": round(notional, 2),
         "nav": round(1.0 + res["total_net"], 6),
         # measurement-only: today's true net daily return. The `nav` above is a rolling
-        # 252d-rebased index, so nav.pct_change() is NOT the daily return — the alpha-forward
+        # 252d-rebased index, so nav.pct_change() is NOT the daily return; the alpha-forward
         # layer (scripts/hunt_alpha_review.py) must read ret_1d.
         "ret_1d": round(float(res["net_daily"].iloc[-1]), 8),
         "bench_spy_nav": round(_nav(_spec_from_weights(W), panel, nav_start), 6),
@@ -173,7 +173,7 @@ def _write_ledger(row: dict) -> Path:
     path = LEDGER_DIR / f"{row['book']}.jsonl"
     # ponytail: same-date re-runs replace the day's row instead of appending a dup
     # (idempotent per book+date+mode; a --dry-run after the nightly --live must not
-    # erase the live row). Full rewrite is fine — ledgers are a few hundred rows.
+    # erase the live row). Full rewrite is fine; ledgers are a few hundred rows.
     kept = []
     if path.exists():
         kept = [ln for ln in path.read_text().splitlines()
@@ -198,8 +198,8 @@ def route_targets(rows_by_book: dict[str, dict]) -> tuple[dict[str, float], dict
     """Split computed book rows into (shared_agg, mc_targets) dollar targets, one per account.
 
     Six ETF books aggregate into shared_agg; momentum_concentrated alone into mc_targets. Enforces
-    the routing invariant that NO symbol may land in both account target sets (fail closed). Pure —
-    no broker, no network, no creds — so it is unit-tested offline and reused by dry-run and live."""
+    the routing invariant that NO symbol may land in both account target sets (fail closed). Pure:
+    no broker, no network, no creds, so it is unit-tested offline and reused by dry-run and live."""
     shared_agg: dict[str, float] = {}
     mc_targets: dict[str, float] = {}
     for name, row in rows_by_book.items():
@@ -227,7 +227,7 @@ def submit_leg(who: str, broker, targets: dict[str, float], tag: str):
             print(f"  {who}: {len(errs)} order(s) rejected (e.g. {errs[0]['ticker']}: "
                   f"{errs[0]['error'][:70]})")
         return fills, True
-    except Exception as e:   # noqa: BLE001 — fail loud + keep records; next run redoes deltas
+    except Exception as e:   # noqa: BLE001, fail loud + keep records; next run redoes deltas
         print(f"  !! {who} SUBMIT FAILED: {str(e)[:120]} — this account was NOT traded tonight; "
               f"the next run recomputes deltas from live broker state")
         return [], False
@@ -288,8 +288,8 @@ def live_run() -> None:
     symbols = sorted(book_syms | set(held_shared) | set(held_mc))
     dc = StockHistoricalDataClient(key, secret)
     price_fn = snapshot_price_fn(dc, symbols)
-    shared_broker = alpaca_paper_broker(price_fn)                        # ALPACA_* — six ETF books
-    mc_broker = alpaca_paper_broker(price_fn, cred_names=MC_CRED_NAMES)  # ALPACA_MC_* — momentum only
+    shared_broker = alpaca_paper_broker(price_fn)                        # ALPACA_*, six ETF books
+    mc_broker = alpaca_paper_broker(price_fn, cred_names=MC_CRED_NAMES)  # ALPACA_MC_*, momentum only
 
     acct = shared_broker.account()
     equity = float(getattr(acct, "equity", None) or acct.cash)
@@ -315,7 +315,7 @@ def live_run() -> None:
                  f"account buying power is ${mc_bp:,.0f}")
 
     # Write the per-book MODEL rows FIRST. They are model-marked (independent of fills), so a submit
-    # failure on EITHER account must never lose the night's book records — the two brokers can't be
+    # failure on EITHER account must never lose the night's book records; the two brokers can't be
     # made atomic, so instead we guarantee the record and submit each leg independently (reviewer fix).
     for row in rows:
         _print_row(row)

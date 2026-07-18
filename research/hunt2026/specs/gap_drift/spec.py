@@ -1,4 +1,4 @@
-"""gap_drift — price/volume PEAD proxy, concentrated long, 1.5x gross.
+"""gap_drift: price/volume PEAD proxy, concentrated long, 1.5x gross.
 
 Event day t: 1d return >= z_thresh trailing-60d sigmas AND volume >= vol_mult x
 trailing-20d median volume, on PIT S&P 500 members. Enter close t+1, hold `hold`

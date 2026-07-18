@@ -1,8 +1,8 @@
 # REPLICATION_SCOREBOARD.md — what has and has NOT replicated (2026-07-10)
 
 Agent 8 (independent-alpha program). Compiles replication evidence across **independent
-dimensions** — markets, eras/regimes, correlation clusters, sign, effect size, failure
-regimes, data vendor — for the live vol/trend cluster and the three watch-tier momentum
+dimensions** (markets, eras/regimes, correlation clusters, sign, effect size, failure
+regimes, data vendor) for the live vol/trend cluster and the three watch-tier momentum
 books. Reuses, does not rebuild: CONFIDENCE_LADDER.md, FAILURES.md (F-014/15/16/20/21),
 robustness/{xmarket,defensive_asset}.md, walkforward/summary.md, results5y/summary.md,
 memos/hunt2026-walkforward.md.
@@ -47,23 +47,23 @@ universal law*. Both are true; report both.
 > - **Sign consistency in-domain:** positive median excess in every era bucket tested. Not one
 >   regime flips it negative in US equity.
 > - **Two blind eras confirm:** 1y blind (round-1) and 5y blind 2021-26 (round-2, trend_vol_qqq
->   +24.7% CAGR, non-overlapping fit ≤2021-07-10) — genuinely non-overlapping holdout eras.
+>   +24.7% CAGR, non-overlapping fit ≤2021-07-10): genuinely non-overlapping holdout eras.
 
 > [!failure] Universal failure — level 4 refused (F-020, robustness/xmarket.md)
 > - **Cross-market:** frozen params sprayed unchanged onto 28 assets → **7 correlation clusters**.
 >   Vol management improves cluster-median Sharpe in **3/7** (sign-test p=0.77), trend gate 4/7
->   (p=0.50), combo 4/7 (p=0.50) — indistinguishable from a coin flip.
+>   (p=0.50), combo 4/7 (p=0.50): indistinguishable from a coin flip.
 > - **The 14 intl-equity + IWM/MDY/VNQ/HYG funds are ONE global-equity draw, not 18.** Ticker-level
->   "14/28 improved" is not 14 independent replications — this is the single most important
+>   "14/28 improved" is not 14 independent replications: this is the single most important
 >   correction on the scoreboard.
 > - **Effect size:** class-median ΔSharpe tiny and mixed-sign (intl-eq −0.01, bonds +0.03,
->   commod +0.02, fx +0.01). Isolated wins (VNQ +0.18, UNG, DBC) are cherry-picks — the gate
+>   commod +0.02, fx +0.01). Isolated wins (VNQ +0.18, UNG, DBC) are cherry-picks: the gate
 >   "wins" on disasters by owning less of a melting asset.
 > - **Verdict:** the edge is levered **equity-premium harvesting**, confirmed US-large-cap-specific.
->   It does not travel. Level 4 is not unattempted — it was tested and **refused**.
+>   It does not travel. Level 4 is not unattempted: it was tested and **refused**.
 
 **Internal replication caveat (F-014, NR-5):** the *combination* trend+vol does NOT replicate as
-additive alpha — combo +8.0pp median vs +13.4pp for **either** naive parent alone. The combo buys
+additive alpha: combo +8.0pp median vs +13.4pp for **either** naive parent alone. The combo buys
 tail relief (worst −22% vs −31%), not return. trend_vol_qqq is level-3 **robust** but its economic
 value claim is capped: a priced hedge, not independent estimator/market alpha.
 
@@ -91,7 +91,7 @@ would overstate independence ~3x.
 > [!warning] dual_momentum_gem — FRAGILE (F-012, ledger #6)
 > - WF median excess +9.3pp looks fine, but retired-in-ledger for fragility: the 1y-blind star was
 >   whipsaw-favorable; the 12m gate gave COVID −41% in-train, 2022 −25.5% blind (NR-3: slow gates
->   don't stop fast crashes). Currently holds an **identical position to gold** (both {QQQ:1.5}) —
+>   don't stop fast crashes). Currently holds an **identical position to gold** (both {QQQ:1.5}):
 >   real independence between the two is ~0 at this instant. Level **2**, forward-evidence only.
 
 > [!failure] momentum_concentrated — FAILED cross-regime + cross-space (NR-2)
@@ -100,9 +100,9 @@ would overstate independence ~3x.
 >   monthly rank IC −0.001, t=−0.07, 135 months, measured before any portfolio construction).
 > - The tolerable windows came from **construction** (concentration + vol targeting), not selection
 >   skill. F-016 addendum: sector-relative / residual / 52w-high variants all die with it (IC by-year
->   ~0.97-correlated — same dead signal, lower amplitude).
+>   ~0.97-correlated, same dead signal, lower amplitude).
 > - **Replication verdict:** cross-sectional stock momentum is dead in large caps post-2015. Its 1y
->   blind is a favorable draw. Level **2 (capped, sleeve-only)** — kept only as a near-uncorrelated
+>   blind is a favorable draw. Level **2 (capped, sleeve-only)**: kept only as a near-uncorrelated
 >   diversifier, never standalone. Reopen only on small caps / interaction conditioning / live IC return.
 
 ---
@@ -127,19 +127,19 @@ Legend: ✓ replicated · ~ partial/small · ✗ failed · — untested.
 ## 5. Answer to the task
 
 **Reached level 3 (multi-window walk-forward, in-domain):**
-- **The US large-cap vol/trend cluster** — vol_managed_qqq, vol_core_svxy, trend_vol_qqq. ONE
-  mechanism, three expressions. Level 3 and **capped there** — cross-market replication was run
+- **The US large-cap vol/trend cluster**: vol_managed_qqq, vol_core_svxy, trend_vol_qqq. ONE
+  mechanism, three expressions. Level 3 and **capped there**: cross-market replication was run
   and refused (F-020), so no level 4. trend_vol_qqq is robustness-3 but economic-value-capped
   (F-014: hedge, not additive alpha).
-- **defensive_ensemble** — level 3 in its **Portfolio / capital-preserver role only**, not as an
+- **defensive_ensemble**: level 3 in its **Portfolio / capital-preserver role only**, not as an
   independent market alpha (it is portfolio construction, not a market forecast).
 
 **Era/regime-conditional (did NOT reach level 3):**
-- **dual_momentum_gold** — regime artifact (defensive_asset.md); entire edge in 2024-26. Level 2.
-- **dual_momentum_gem** — fragile, whipsaw-favorable draw; identical live position to gold. Level 2.
-- **momentum_concentrated** — failed both return-space and signal-space replication (NR-2);
+- **dual_momentum_gold**: regime artifact (defensive_asset.md); entire edge in 2024-26. Level 2.
+- **dual_momentum_gem**: fragile, whipsaw-favorable draw; identical live position to gold. Level 2.
+- **momentum_concentrated**: failed both return-space and signal-space replication (NR-2);
   cross-sectional large-cap momentum is dead post-2015. Level 2, sleeve-only.
 
 **Repo-wide:** nothing is above level 3. No level-4 cross-market result exists (the only attempt,
 F-020, failed). Data-vendor replication (a distinct independent dimension) is UNTESTED for every
-source — the single largest un-run replication check remaining.
+source: the single largest un-run replication check remaining.

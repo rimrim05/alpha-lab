@@ -1,6 +1,6 @@
 # Six-security manual pilot — Capital IQ Pro & Finaeon (2026-07-11)
 
-*Run manually by Kristen (browser automation can't drive these SPAs — access confirmed, extraction not).
+*Run manually by Kristen (browser automation can't drive these SPAs, access confirmed, extraction not).
 Both tabs left open. The project/panel stays UNCHANGED until this pilot produces actual entitlement
 evidence. This is the survivorship-continuity acid test: the six names are chosen as identity traps.*
 

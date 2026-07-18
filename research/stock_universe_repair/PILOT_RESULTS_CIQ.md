@@ -4,7 +4,7 @@
 per security. This is actual entitlement evidence; the panel stays UNCHANGED per the standing rule.*
 
 ## Access + platform capabilities (confirmed live)
-- **Access: LIVE** — logged in as Kristen Ho, full CIQ Pro.
+- **Access: LIVE**, logged in as Kristen Ho, full CIQ Pro.
 - **Permanent identifiers exposed:** CIQ **MI KEY** + **SPCIQ KEY** (company-level), **CUSIP** + **ISIN**
   (security-level). Multiple identifier types available.
 - **Export formats:** **Excel** (structured), PNG, PDF, Word (from the Stock Chart "Export" menu).
@@ -24,7 +24,7 @@ per security. This is actual entitlement evidence; the panel stays UNCHANGED per
 | **HTZ** | name "Hertz Global Holdings" | Hertz Global Holdings, Inc. (NASDAQGS:HTZ, PUBLIC, Operating; CUSIP 42806J700) | (operating; **series STARTS 07/30/2021**→07/10/2026) | **yes — current HTZ price series starts 07/30/2021 (post 6/30/2021 emergence); does NOT bridge back to pre-2020 pre-bankruptcy Hertz common (cancelled, crashed to ~$0.40 in 2020). Old→new NOT joined.** | MI KEY 4993855; SPCIQ 30396158; CUSIP 42806J700 / ISIN US42806J7000 | **PASS** |
 
 ## Formal gate — Capital IQ Pro (closed 2026-07-11, all 6 driven)
-- **Identity integrity: PASS — 6/6.** Zero identity-continuity errors across all six traps: bankruptcy-
+- **Identity integrity: PASS, 6/6.** Zero identity-continuity errors across all six traps: bankruptcy-
   terminal (WAMUQ), acquisition-with-CVR (CELG), old/new-GM split (GM/MTLQQ), acquisition-subsidiary
   (XLNX), IBM spinoff (KD, series starts 10/29/2021), post-bankruptcy relisting (HTZ, series starts
   07/30/2021). CIQ never joins a predecessor series to its successor; acquired/bankrupt/spun securities
@@ -38,7 +38,7 @@ per security. This is actual entitlement evidence; the panel stays UNCHANGED per
   Inactive), ultimate parent, and event type (acquisition / spinoff / bankruptcy / relisting) documented
   per name.
 - **Structured export: PASS** (single-file test complete 2026-07-11). Kristen ran Export→Excel herself
-  (browser-automation clicks can't complete the download — no user gesture — so the file must be triggered
+  (browser-automation clicks can't complete the download, no user gesture, so the file must be triggered
   by a real click). File inspected:
   - **File:** `Kyndryl Holdings, Inc._StockChart_07_11_2026.xlsx` (96 KB; sheets `Stock Chart` [metadata] +
     `Data`).
@@ -46,48 +46,48 @@ per security. This is actual entitlement evidence; the panel stays UNCHANGED per
     (gap histogram 1d×585 / weekend 3d×136 / holiday 4d×20,2d×11; 0 dup dates; 0 blank price/vol).
   - **Columns:** `Pricing Date` · `KD | Share Price (Daily)($)` · `KD | Volume (Daily)`. Price + volume.
   - **Identifier preserved:** metadata sheet = `NYSE:KD (MI KEY: 29724772; SPCIQ KEY: 691274020)`.
-  - **⚠️ Adjusted/unadjusted NOT distinguished** — one price column, no adj/unadj flag in this export path.
+  - **⚠️ Adjusted/unadjusted NOT distinguished**: one price column, no adj/unadj flag in this export path.
   - **⚠️ Date cap:** daily granularity capped at **3-year windows** (tooltip: "shorten your range to ≤ 3
     years to enable daily data"). Max range silently downsamples to Monthly. Full KD history at daily =
     2 stitched windows. No row-cap hit within a 3Y window.
-  - The Stock-Chart Excel export is **single-security** — the KD file carried zero columns for the 5
+  - The Stock-Chart Excel export is **single-security**: the KD file carried zero columns for the 5
     comparison tickers loaded on the chart. So this path is one-name-at-a-time.
 - **Overall CIQ price gate: PASS** (identity 6/6, coverage 6/6, corporate actions documented, structured
-  export complete + usable). *Scale caveat below — a single-name PASS is NOT a full-panel PASS.*
+  export complete + usable). *Scale caveat below: a single-name PASS is NOT a full-panel PASS.*
 
 ## Bulk-export limit test (Companies screener, 2026-07-11)
 Ran a minimal screen `Market Capitalization [Current] ($M) > 0` → **79,681 companies** matched (full global
-universe is screenable — discovery is NOT the constraint). Findings:
+universe is screenable: discovery is NOT the constraint). Findings:
 - **Grid display** paginates at **250 rows/page** max (50/100/250 options; 319 pages for 79,681).
-- **Rows carry a permanent Entity ID** (e.g., 4984797) alongside name + ticker — IDs survive bulk output.
+- **Rows carry a permanent Entity ID** (e.g., 4984797) alongside name + ticker: IDs survive bulk output.
 - **Export modes:** Results As **Table Function** / **Single Cell Functions** / **Values** / **List** /
   **PDF** / Criteria to Maps.
-- **Structural limit — the decisive point:** the screener output is **cross-sectional** (one snapshot row
+- **Structural limit, the decisive point:** the screener output is **cross-sectional** (one snapshot row
   per company, e.g., current market cap), **NOT a daily time-series panel**. The Table-Function / Single-
   Cell modes export **live CIQ Excel-plugin formulas**, i.e., a daily/historical bulk pull is handed off to
-  the **CIQ Excel Plugin (Office add-in)** — a separate desktop tool + entitlement that is **UNTESTED**.
+  the **CIQ Excel Plugin (Office add-in)**: a separate desktop tool + entitlement that is **UNTESTED**.
 - **Net:** there is **no web-UI path that emits a multi-name daily-price panel**. Two real routes for
   panel_stocks_v2, both with open questions:
-  1. **Per-name Stock-Chart exports** — proven working + ID-preserving, but **1 name × ≤3-yr daily window
+  1. **Per-name Stock-Chart exports**: proven working + ID-preserving, but **1 name × ≤3-yr daily window
      per file**. For the ~382 missing delisted members that's roughly **382 names × ~2 windows ≈ 760 manual
-     exports** (each needs a real Save click — automation can't complete the download). Laborious but
+     exports** (each needs a real Save click, automation can't complete the download). Laborious but
      mechanically sound.
-  2. **CIQ Excel Plugin** (what Table-Function export feeds) — the actual bulk mechanism; **not installed/
+  2. **CIQ Excel Plugin** (what Table-Function export feeds): the actual bulk mechanism; **not installed/
      tested**, per-request cell/row caps + delisted-security time-series coverage unknown. This is the next
      thing to test before declaring CIQ can build the full panel.
 - **Do NOT yet conclude CIQ can support panel_stocks_v2 at scale.** Single-name daily export: PASS. Bulk
-  daily-panel export: **UNPROVEN** — gated on the Excel Plugin test.
+  daily-panel export: **UNPROVEN**, gated on the Excel Plugin test.
 
 ## Estimates PIT test (Recent Changes / Revisions / Detailed Estimates) — **INCONCLUSIVE (leans FAIL)**
 - **Fields found:** "Recent Changes" exposes an **Estimate Date Range (from/to)** filter over dated
-  estimate changes — the one dated-revision primitive that *could* support PIT reconstruction. No explicit
+  estimate changes: the one dated-revision primitive that *could* support PIT reconstruction. No explicit
   **As Of Date / Snapshot Date / Point-in-Time / Estimates Snapshot** labeled field found on any surface.
-- **Archived vs restated:** The populated surfaces — Detailed Estimates (current consensus by fiscal
-  period), Consensus, Revisions (trailing up/down *counts* for Last 1/2/3 Months, anchored to today) — are
+- **Archived vs restated:** The populated surfaces (Detailed Estimates (current consensus by fiscal
+  period), Consensus, Revisions (trailing up/down *counts* for Last 1/2/3 Months, anchored to today)) are
   all **current-anchored / restated**, not as-was snapshots.
 - **Blocker:** the only dated-revision surface (Recent Changes) is **entitlement-gated on this Berkeley
-  login** — banner: *"Your default broker entitlements are currently being validated… request entitlements"*
-  — so broker names + dated estimates are **not populated**. Cannot retrieve dated broker revisions to
+  login**, banner: *"Your default broker entitlements are currently being validated… request entitlements"*,
+  so broker names + dated estimates are **not populated**. Cannot retrieve dated broker revisions to
   reconstruct pre-announcement consensus.
 - **Result: INCONCLUSIVE.** No labeled PIT/snapshot consensus field; the dated-revision path exists in the
   UI but is not entitled on this login, so as-was consensus cannot be reconstructed today. Treat CIQ
@@ -107,7 +107,7 @@ S&P support (Reva) noted two caveats. They land on **different** tracks; do not 
    unblock. `DATA-BLOCKED` stands until both are verified live:
    - **PIT vs restated:** is "historical" a frozen as-of-that-day snapshot, or a restated view of
      the past? The in-app probe already found the one dated-revision surface (Recent Changes)
-     entitlement-gated pending broker validation — Reva may be describing that same surface once
+     entitlement-gated pending broker validation: Reva may be describing that same surface once
      validation clears, or something different. Do not assume.
    - **Analyst count under Berkeley:** prereg requires `analyst_count ≥ 3` at **both** ends of the
      60-day revision window. If "analysts your university subscribes to" means 1–2 visible
@@ -117,5 +117,5 @@ Do **not** flip EPS-revisions off DATA-BLOCKED, freeze EXP-IC-REVISIONS-FWD, or 
 on the strength of the email alone.
 
 ## Not yet tested
-Finaeon / GFD (Berkeley institutional login previously resisted the automated click — deferred to a manual
+Finaeon / GFD (Berkeley institutional login previously resisted the automated click, deferred to a manual
 Kristen click per the "stop and ask" rule). Panel unchanged.

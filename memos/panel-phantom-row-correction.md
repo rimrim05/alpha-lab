@@ -3,7 +3,7 @@
 Found by the factor-attribution integrity audit (research/attribution/INTEGRITY_AUDIT.md,
 FAIL item 1). Frozen results/*.json and results5y/*.json are write-once and were NOT
 modified; this memo is the correction of record. Corrected recomputations below are
-memo-only — every citation of the frozen numbers should now carry this memo as a footnote.
+memo-only; every citation of the frozen numbers should now carry this memo as a footnote.
 
 ## Root cause
 
@@ -22,31 +22,31 @@ gating and sizing.
 1. `build_sandbox.py`: rows with no non-signal close are now dropped before the
    train/holdout split (same guard as extend_panel.py).
 2. `holdout.parquet` (252→251 rows) and `holdout5y.parquet` (1256→1255): the single
-   phantom row was dropped surgically — no refetch, every other value bit-identical
+   phantom row was dropped surgically, no refetch, every other value bit-identical
    (asserted). Pre-fix originals archived at
    `research/hunt2026/archive/holdout{,5y}_phantom20260525.parquet` so the frozen JSONs
    remain reproducible against their as-run inputs.
 3. `sandbox_meta.json`: row counts updated + correction key.
 
 Not affected (verified): `panel_2005.parquet`, `train.parquet`, `train5y.parquet` (scanned:
-no near-empty rows); everything built on panel_2005 — walk-forward, estimator lab,
+no near-empty rows); everything built on panel_2005: walk-forward, estimator lab,
 independence matrix, live paper loop (`hunt_paper_run.py` uses panel_2005 + fresh bars
 with ffill healing). The factor-attribution experiment: the audit already reran affected
-cells with the row healed — no conclusion flips (its FF window also ends 2026-05-29).
+cells with the row healed, no conclusion flips (its FF window also ends 2026-05-29).
 
 ## Corrected numbers (harness rerun on fixed panels vs frozen JSONs)
 
 SPY benchmark (1y blind): **+21.97%, Sharpe 1.65, maxDD −8.9%** (was +21.17% / 1.59).
-SPY 5y: +85.5% total ≈ 13.1% CAGR (was 13.0%) — effectively unchanged.
+SPY 5y: +85.5% total ≈ 13.1% CAGR (was 13.0%), effectively unchanged.
 
 ### 1y blind (results/), corrected net and beta-matched excess (avg_gross × SPY convention)
 
 | spec | frozen net | corrected net | Δ pp | corrected excess (was) |
 |---|---|---|---|---|
 | dual_momentum_gem | +58.56% | +62.78% | +4.2 | **+29.8% (+26.8%)** |
-| momentum_concentrated | +35.44% | +37.07% | +1.6 | **+18.9% (+16.6%)** — Sharpe 1.21→1.46 |
+| momentum_concentrated | +35.44% | +37.07% | +1.6 | **+18.9% (+16.6%)**, Sharpe 1.21→1.46 |
 | deep_dip_reversion | +27.55% | +41.02% | **+13.5** | **+8.1% (−4.2%) SIGN FLIP** |
-| vol_managed_qqq | +42.51% | +40.77% | −1.7 | +7.1% (+12.3%) — avg gross 1.43→1.53 |
+| vol_managed_qqq | +42.51% | +40.77% | −1.7 | +7.1% (+12.3%), avg gross 1.43→1.53 |
 | gap_drift | +37.52% | +39.33% | +1.8 | +6.4% (+5.8%) |
 | vix_panic_buyer | +36.05% | +37.49% | +1.4 | +3.2% (+3.2%) |
 | vol_core_svxy | +36.10% | +39.85% | +3.7 | +1.2% (−1.1%) SIGN FLIP |

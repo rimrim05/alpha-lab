@@ -12,7 +12,7 @@ Usage (from repo root, .venv):
 
 Design decisions (review-audited 2026-07-14; policies in memos/alpha-forward-setup-2026-07-14.md):
 - Book daily returns come from the ledger's `ret_1d` field (the nightly `nav` is a rolling
-  252d-rebased index — nav.pct_change() is NOT a daily return; found by audit, B1).
+  252d-rebased index, nav.pct_change() is NOT a daily return; found by audit, B1).
 - Factor + placebo closes come from a dedicated ~550-day fresh yfinance pull so TSMOM's
   252+21+63d windows never cross the panel/fresh adjusted-close seam (audit finding 2).
 - A day is finalized only when the book return AND factors exist AND the day is at least
@@ -81,7 +81,7 @@ def fetch_ff_live():
 
 
 def fetch_factor_closes():
-    """~550 calendar days of fresh adjusted closes for every factor/placebo ticker —
+    """~550 calendar days of fresh adjusted closes for every factor/placebo ticker,
     one consistent adjustment vintage, no panel seam inside any TSMOM window."""
     from core.data.prices import fetch_prices_yf
     menu = FROZEN["tsmom_spec"]["menu"]
@@ -117,7 +117,7 @@ def forward_factors(fac_ff, closes):
 # ------------------------------------------------------------------ series
 def book_returns(name):
     """Daily net returns from the ledger's ret_1d field (live preferred over dry per date).
-    Rows without ret_1d (pre-2026-07-14 schema) are ignored — they predate the forward window."""
+    Rows without ret_1d (pre-2026-07-14 schema) are ignored; they predate the forward window."""
     path = LEDGER_DIR / f"{name}.jsonl"
     recs = [json.loads(l) for l in path.read_text().splitlines() if l.strip()]
     rows = [r for r in recs if r.get("mode") in ("live", "dry") and "ret_1d" in r]
@@ -228,7 +228,7 @@ def descriptive(df):
 
 
 def evaluate(df):
-    """6m/12m review stats (NW lag 5). Descriptive only — no decision automation."""
+    """6m/12m review stats (NW lag 5). Descriptive only, no decision automation."""
     if df.empty:
         return {}
     stats = descriptive(df)

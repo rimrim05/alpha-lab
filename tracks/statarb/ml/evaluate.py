@@ -6,7 +6,7 @@ not a reconstruction, so the gated-vs-ungated comparison uses identical machiner
 
 Pre-registration (anti-overfitting): the probability threshold is a fixed rule (top 30% of predicted
 probability) fit on the EARLIER 60% of trades by date, then applied to the LATER 40% (held-out). The
-result is reported whichever way it comes out — a null gated result is a finding, not a failure.
+result is reported whichever way it comes out: a null gated result is a finding, not a failure.
 
 Runs on the `costs` config (the equal-weight S&P 500 book behind the headline result).
 """
@@ -65,7 +65,7 @@ def evaluate(config: str = "costs", skip: int = 1, cost_bps: float = 10.0) -> di
     # REAL daily net from the audited path; report the held-out window (dates after the cut).
     # Coerce to float: equal_weight_net's internal pd.NA yields object dtype under pandas 3.0 (this
     # venv), which scipy's skew/kurtosis rejects. The audited .venv (pandas 2.2) is unaffected, so the
-    # parity-proven formula stays untouched — we just clean its output at this boundary.
+    # parity-proven formula stays untouched; we clean its output at this boundary.
     net_ung = equal_weight_net(positions, hedged, skip, cost_bps).astype(float)
     net_gat = equal_weight_net(gated, hedged, skip, cost_bps).astype(float)
     oos = lambda s: s[s.index > cut]

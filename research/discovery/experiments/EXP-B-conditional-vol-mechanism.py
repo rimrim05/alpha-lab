@@ -1,4 +1,4 @@
-"""EXP-B — Conditional volatility-management mechanism (measurement only).
+"""EXP-B: Conditional volatility-management mechanism (measurement only).
 
 Frozen prereg: research/discovery/prereg/EXP-B-conditional-vol-mechanism.md
 Does the cross-asset variation in vol-management BENEFIT get explained by four
@@ -216,7 +216,7 @@ def main():
     F_joint = W_stat / q
     p_joint_raw = float(stats.f.sf(F_joint, q, G - 1))
 
-    # naive iid OLS F (prereg says NOT to trust — treats 26 assets as independent) for reference
+    # naive iid OLS F (prereg says NOT to trust, treats 26 assets as independent) for reference
     k_full = Xd.shape[1]
     F_iid = (r2 / q) / ((1 - r2) / (len(y) - k_full))
     p_iid = float(stats.f.sf(F_iid, q, len(y) - k_full))

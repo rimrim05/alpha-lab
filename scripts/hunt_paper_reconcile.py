@@ -1,8 +1,8 @@
 """EXP-OPS-REALITY (layer D): reconcile the hunt2026 paper books against the Alpaca PAPER account.
 
-READ-ONLY vs the broker — this script only ever calls get_orders / get_all_positions; it never
+READ-ONLY vs the broker: this script only ever calls get_orders / get_all_positions; it never
 submits, cancels, or modifies anything. It measures the gap between the frozen backtest execution
-model (10 bps/side stocks, 2 bps/side ETFs, next-day fills, no rejects — research/hunt2026/
+model (10 bps/side stocks, 2 bps/side ETFs, next-day fills, no rejects; research/hunt2026/
 harness.py) and reality:
 
   per run-date: side-adjusted slippage per h26 fill vs that date's ledger reference close,
@@ -16,7 +16,7 @@ one JSONL row per night appends to ledgers/hunt2026/_reconcile.jsonl.
 Usage: .venv/bin/python scripts/hunt_paper_reconcile.py            # latest ledger date
        .venv/bin/python scripts/hunt_paper_reconcile.py --since 2026-07-10   # replay from date
 
-Nightly wiring (Director-approved plist edit required — research agents may not alter
+Nightly wiring (Director-approved plist edit required, research agents may not alter
 deployments): run this right after hunt_paper_run in com.rimrim.hunt2026-paper by making
 ProgramArguments a shell line, i.e.
   /bin/zsh -c '.venv/bin/python scripts/hunt_paper_run.py --live;
@@ -50,13 +50,13 @@ RECONCILE_MC = LEDGER_DIR / "_reconcile_mc.jsonl"
 # Enforced exactly as pre-registered, never re-tuned here (§Stop-iterating: this harness gets no
 # parameters to sweep):
 #   - slippage: the statistic is the TRAILING MEAN over the last >=TRAIL_MIN_FILLS fills per class,
-#     never a single night. A per-night breach is LOGGED ONLY — single fills embed overnight drift
+#     never a single night. A per-night breach is LOGGED ONLY; single fills embed overnight drift
 #     (measured per-fill stdev ~250 bps against a 15 bps band), so one night carries no signal.
 #     The decision trigger is the same band breached on the trailing statistic for
 #     SLIPPAGE_BREACH_NIGHTS consecutive nights (§Failure/kill).
 #   - reject rate: a per-night band, "< 2% of h26-tagged orders per night"; >= 2% is a listed
 #     Alternative Result (sizing/tradability bugs). Operational, not noisy like slippage, so it
-#     alarms the same night — 2026-07-15 lost 19/19 orders in silence before this was wired.
+#     alarms the same night; 2026-07-15 lost 19/19 orders in silence before this was wired.
 BANDS = {"stock_bps": (0.0, 15.0), "etf_bps": (0.0, 5.0),
          "reject_rate": 0.02, "book_drag_bps_month": 30.0}
 TRAIL_MIN_FILLS = 20
@@ -81,9 +81,9 @@ def load_ledger_rows() -> dict[str, dict[str, dict]]:
 # ---------- broker (the only network-touching part; read-only) ----------
 
 def orders_from_client(tc, since: str, statuses: str = "closed") -> list[dict]:
-    """Orders since `since` as plain dicts. get_orders only — never submits/cancels.
+    """Orders since `since` as plain dicts. get_orders only, never submits/cancels.
     `statuses`: "closed" (default; the execution/slippage metric), "open", or "all"
-    (open+closed — used only to observe pending flatten orders for foreign positions)."""
+    (open+closed, used only to observe pending flatten orders for foreign positions)."""
     from alpaca.trading.enums import QueryOrderStatus
     from alpaca.trading.requests import GetOrdersRequest
     status = {"closed": QueryOrderStatus.CLOSED, "open": QueryOrderStatus.OPEN,
@@ -234,9 +234,9 @@ def reconcile_date(date: str, books: dict[str, dict], orders: list[dict],
                           "partial": is_partial,
                           "slippage_bps": round(_slippage_bps(o, ref), 2) if ref else None})
         elif o["status"] == "replaced":
-            replaced += 1     # broker/venue order replacement — classified, not a reject
+            replaced += 1     # broker/venue order replacement, classified, not a reject
         elif o["status"] == "canceled":
-            # our own cancel_all_orders on idempotent re-runs — expected, not a broker reject
+            # our own cancel_all_orders on idempotent re-runs, expected, not a broker reject
             canceled += 1
         else:   # rejected / expired / closed-with-zero-fill = the pre-registered reject metric
             rejects.append({"ticker": o["ticker"], "status": o["status"]})
@@ -256,7 +256,7 @@ def reconcile_date(date: str, books: dict[str, dict], orders: list[dict],
         held = positions.get(sym, 0.0) * ref if ref else 0.0
         gap += abs(agg.get(sym, 0.0) - held)
     notional = acct.get("notional") or 1.0
-    # foreign positions: held symbols in NO book target and not a benchmark leg — this is the
+    # foreign positions: held symbols in NO book target and not a benchmark leg; this is the
     # dead stat-arb residue (+ any AMAT-style leftover). Empty => flatten complete. Directly
     # answers "did the stat-arb flatten / AMAT clear?" each night.
     known = set(agg)
@@ -318,7 +318,7 @@ def reconcile_date(date: str, books: dict[str, dict], orders: list[dict],
 
 def trailing_means(rows: list[dict]) -> dict:
     """Trailing-mean slippage over the last >=TRAIL_MIN_FILLS fills per class across all
-    reconcile rows — the pre-registered agreement statistic."""
+    reconcile rows, the pre-registered agreement statistic."""
     out = {}
     for cls in ("stock", "etf"):
         xs = [f["slippage_bps"] for r in rows for f in r.get("fills", [])
@@ -354,7 +354,7 @@ def slippage_alarms(breach: dict, trail: dict) -> list[str]:
         m = (trail.get(cls) or {}).get("mean_bps")
         below = m is not None and m < lo
         # Pre-reg §Alternative result: a negative trailing mean means the reference-close convention
-        # itself is biased — i.e. suspect the measurement before believing the free money.
+        # itself is biased, i.e. suspect the measurement before believing the free money.
         why = (" — negative beyond the band implicates the reference-close convention, so suspect a "
                "measurement bug before an execution win") if below else ""
         out.append(f"SLIPPAGE-{cls.upper()}: trailing mean {m:+.1f} bps outside the "
@@ -406,7 +406,7 @@ def print_report(row: dict, trail: dict) -> None:
 
 def reconcile_mc_date(date: str, mc_row: dict, positions: dict[str, float],
                       orders: list[dict], closes: dict[str, float], prior: dict | None) -> dict:
-    """One night's EXACT broker-vs-model reconcile for momentum_concentrated. No pro-rating — it is
+    """One night's EXACT broker-vs-model reconcile for momentum_concentrated. No pro-rating, it is
     the only book in its account, so broker positions/fills attribute to it directly. Pure/offline:
     `positions` = {sym: qty} broker snapshot, `orders` = the h26mc order dicts for this date,
     `closes` = {sym: adj close}, `prior` = last MC reconcile row (for trailing drag / flat streak)."""
@@ -475,14 +475,14 @@ def print_mc_report(row: dict) -> None:
 
 def reconcile_mc(dates: list[str], ledger: dict) -> None:
     """Read-only dedicated-account reconcile for momentum_concentrated. Skips (with a note) if the
-    ALPACA_MC_* keys are absent — monitoring must not crash the shared reconcile before cutover."""
+    ALPACA_MC_* keys are absent; monitoring must not crash the shared reconcile before cutover."""
     import os
     mc_key, mc_secret = os.environ.get(MC_CRED_NAMES[0]), os.environ.get(MC_CRED_NAMES[1])
     if not (mc_key and mc_secret):
         print(f"\n(momentum_concentrated dedicated reconcile skipped — {MC_CRED_NAMES[0]}/"
               f"{MC_CRED_NAMES[1]} not set; pre-cutover or keys not yet in .env)")
         return
-    # Only reconcile dates that actually traded in the dedicated account — an "_account_mc" row is
+    # Only reconcile dates that actually traded in the dedicated account; an "_account_mc" row is
     # written only by the post-cutover live path, so this never backfills pre-cutover broker
     # attribution even on a --since replay that crosses the cutover (reviewer caveat).
     mc_dates = [d for d in dates if MC_BOOK in ledger.get(d, {}) and "_account_mc" in ledger.get(d, {})]
@@ -542,11 +542,11 @@ def main() -> None:
     from alpaca.trading.client import TradingClient
     tc = TradingClient(key, secret, paper=True)   # read-only usage: get_orders / get_all_positions
     orders = orders_from_client(tc, since=dates[0])
-    # ponytail: positions are a NOW snapshot (broker keeps no history) — gap/flat metrics are
+    # ponytail: positions are a NOW snapshot (broker keeps no history); gap/flat metrics are
     # exact for the nightly run, indicative only when replaying old dates via --since
     positions = positions_from_client(tc)
     equity = account_equity(tc)                                    # read-only get_account
-    # all orders (open+closed) grouped by symbol — observed ONLY to track pending/partial flatten
+    # all orders (open+closed) grouped by symbol, observed ONLY to track pending/partial flatten
     # orders on foreign positions; never submitted or modified
     symbol_orders: dict[str, list[dict]] = defaultdict(list)
     for o in orders_from_client(tc, since=dates[0], statuses="all"):
@@ -575,7 +575,7 @@ def main() -> None:
         avail = px.loc[px.index <= d]
         if len(avail):
             closes = {s: float(v) for s, v in avail.iloc[-1].items() if v == v}
-        # momentum_concentrated executes in its own account (cutover 2026-07-15) — exclude it and its
+        # momentum_concentrated executes in its own account (cutover 2026-07-15); exclude it and its
         # _account_mc row from the shared reconcile so its absent shares aren't flagged silent-flat.
         shared_books = {k: v for k, v in ledger[d].items() if k not in (MC_BOOK, "_account_mc")}
         row = reconcile_date(d, shared_books, buckets.get(d, []), positions, closes, prior_flat,

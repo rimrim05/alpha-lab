@@ -1,4 +1,4 @@
-"""EXP-2026-07-14-vol-timing — VIX term-structure gate on SVXY carry.
+"""EXP-2026-07-14-vol-timing: VIX term-structure gate on SVXY carry.
 
 Frozen prereg: research/vol_timing/PREREG.md (incl. dispositions). Signal
 s_t = 1{VIX_t/VIX3M_t < 1}; strategy W_t = [SVXY: s_{t-1}, BIL: 1-s_{t-1}];
@@ -107,7 +107,7 @@ def main():
             W["BIL"] = 1.0 - s1
             return W
     hr = harness.run(_Spec, panel)["net_daily"].reindex(idx)
-    # parity: identical on all days except idx[0] — harness charges the full entry
+    # parity: identical on all days except idx[0]; harness charges the full entry
     # cost at PANEL start (2005, outside the window), the local engine at window
     # start. Local treatment applies equally to strategy and both benchmarks (fair).
     assert np.allclose(net_s.values[1:], hr.values[1:], atol=1e-12), "engine parity FAIL"

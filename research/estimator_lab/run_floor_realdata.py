@@ -1,4 +1,4 @@
-"""Phase 6: real FF-residualized S&P — descriptive floor + leakage-score prototype.
+"""Phase 6: real FF-residualized S&P: descriptive floor + leakage-score prototype.
 
 Frozen prereg: FLOOR_REALDATA_MEMO.md (Part B). Per 63-return-day window:
 PIT universe + screens -> vol-standardize by beta-window vol -> trailing-252d FF3+MOM
@@ -8,7 +8,7 @@ D_j vs published FF (primary) and vs Bhat-implied factor returns (secondary), bu
 by the window's circular-shift empirical null (material >= q99, low < q75).
 Controls: positive (no residualization, PC1 C4 + R2 vs Mkt-RF >= 0.7); negative
 (per-asset independent time permutation, screen-pass <= 10% of primary slots).
-Descriptive only — no oracle truth, no genuine/leaked claims, no portfolio claims.
+Descriptive only: no oracle truth, no genuine/leaked claims, no portfolio claims.
 """
 import hashlib
 import sys

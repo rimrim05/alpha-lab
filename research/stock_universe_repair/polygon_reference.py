@@ -7,7 +7,7 @@ Scope is dictated by the provisioned Polygon plan (probed 2026-07-11):
   survivorship-complete IDENTIFIER + DELISTING + corporate-action metadata, NOT prices. The ~150
   dead names' OHLCV (repair Track 3 price half) still needs a Polygon price-tier upgrade or FactSet.
 
-This is ADDITIVE to the concurrent repair project — it does not edit id_map.csv / PLAN.md /
+This is ADDITIVE to the concurrent repair project; it does not edit id_map.csv / PLAN.md /
 continuity_audit.py. It writes: polygon_raw/*.json (cached pages), delisting_map.csv (auto-completed
 delist dates + FIGI for the ever-S&P members missing from the panel).
 

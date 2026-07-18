@@ -79,8 +79,8 @@ def main():
                             "m2g_note": "M2+GLD refit on corrected panel, blind_5y window; "
                                         "as-run M2 alpha kept in alpha_ann_asrun"})
 
-    # Informative QQQ placebo: M1 betas, TSMOM/QQQRES zeroed (data-integrity review M4) —
-    # its residual = projection const + forward QQQRES, testing the frozen projection.
+    # Informative QQQ placebo: M1 betas, TSMOM/QQQRES zeroed (data-integrity review M4).
+    # Its residual = projection const + forward QQQRES, testing the frozen projection.
     row = att[(att.book == "CTRL_qqq_buyhold") & (att.model == "M1") & (att.window == "blind_5y")]
     assert len(row) == 1
     r = row.iloc[0]
@@ -108,7 +108,7 @@ def main():
         "center": books["CTRL_qqq_1.5x_static"]["alpha_ann_asrun"] - 0.5 * 0.005, "band": 0.007,
         "extra": "as-run alpha minus the 50bps-spread leg now charged externally"}
 
-    # QQQRES projection coefficients — same math as run_attribution.build_factors,
+    # QQQRES projection coefficients: same math as run_attribution.build_factors,
     # recomputed on the CORRECTED panel (as-run coefficients were not persisted;
     # deviation documented in the setup memo). Frozen here; never refit.
     panel = harness.load_full()

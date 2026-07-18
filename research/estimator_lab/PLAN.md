@@ -38,7 +38,7 @@ judged on realized RISK, not returns.
 |---|---|
 | sample | sample covariance (singular since p > n; min-var via pseudoinverse) |
 | pca1 / pca3 / pca5 | k-factor PCA: Σ = Σᵢ (σᵢ²/n) hᵢhᵢ' + diag(idio residual var) |
-| jse1 / jse3 / jse5 | same, but each hᵢ rotated toward the equal-weight direction q with ψᵢ² = max(τ, 1 − p·δ²/σᵢ²), τ = 0.01 — the hunt2026 pca_minvar_jse correction generalized to k>1 (factor_lab ψ-hat form) |
+| jse1 / jse3 / jse5 | same, but each hᵢ rotated toward the equal-weight direction q with ψᵢ² = max(τ, 1 − p·δ²/σᵢ²), τ = 0.01, the hunt2026 pca_minvar_jse correction generalized to k>1 (factor_lab ψ-hat form) |
 | lw | Ledoit-Wolf shrinkage to scaled identity (closed form; sklearn 1.9.0 is installed, used as implementation) |
 | mp | Marchenko-Pastur eigenvalue clipping: eigenvalues below λ₊ = σ̄²(1+√(p/n))² replaced by their mean (trace-preserving) |
 
@@ -52,7 +52,7 @@ Realized ann. vol, unconstrained book, relative to sample covariance:
 | pca1 | Large improvement over sample; roughly 8–11% ann. vol. |
 | pca3 | ≈ pca1 or slightly better (1–5% relative); more structure captured, little overfit at k=3. |
 | pca5 | ≈ pca3; diminishing returns, maybe flat or marginally worse than pca3. |
-| jse1 | Slightly below pca1 (0–2% relative vol reduction) — consistent with the muted k=1 hunt result. |
+| jse1 | Slightly below pca1 (0–2% relative vol reduction), consistent with the muted k=1 hunt result. |
 | jse3 | The interesting cell: expect the JSE edge to be a bit larger than at k=1 (1–3% relative vs pca3), since more factors ⇒ more dispersion bias to correct. Statistically, may still not clear p < 0.05 over ~138 months. |
 | jse5 | Same direction as jse3; correction on weak factors is floor-limited (τ), so gain similar to jse3, not bigger. |
 | lw | Competitive with pca3, within ±3% relative; LW-to-identity is a blunt target so likely slightly worse than the factor models. |

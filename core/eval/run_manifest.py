@@ -2,7 +2,7 @@
 
 Writes ``artifacts/<track>/<variant>_run.json`` next to the scorecard, capturing the
 exact params, code version, and time behind a result. Without this, two scorecards
-can't be compared later and "why this parameter?" has no answer — the quiet way a
+can't be compared later and "why this parameter?" has no answer, the quiet way a
 research repo fools itself.
 
 Pairs with ``core/eval/scorecard.py`` (the result) as the *inputs* record.

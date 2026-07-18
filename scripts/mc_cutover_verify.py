@@ -1,5 +1,5 @@
 """One-shot post-cutover verification for the momentum_concentrated account isolation
-(memos/mc-account-isolation-cutover-2026-07-15.md). Pure ledger-file reads — no creds, no network,
+(memos/mc-account-isolation-cutover-2026-07-15.md). Pure ledger-file reads, no creds, no network,
 no orders. Emits PASS/FAIL per check and exits non-zero on any failure.
 
 Checks (for the latest live run date):

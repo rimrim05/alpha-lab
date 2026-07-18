@@ -1,6 +1,6 @@
 # Stage 2 — alpha-book attribution (known / sector-mean / vetted residual)
 
-Prereg: FLOOR_ATTRIB_MEMO.md rev 2 (frozen). 14 primary windows, starts 2022-11-21 → 2026-03-02. Alphas per window, sign-flip permutation (10k joint draws). SELECTION-TAINTED history (n_trials ≥ 18, floor); live OOS excluded; 'industry' = 11-GICS-sector-MEAN controls; residual controls in 4/14 windows — SPOT-CHECKS, not robustness; L4 survival is NOT evidence of absence of residual common risk.
+Prereg: FLOOR_ATTRIB_MEMO.md rev 2 (frozen). 14 primary windows, starts 2022-11-21 → 2026-03-02. Alphas per window, sign-flip permutation (10k joint draws). SELECTION-TAINTED history (n_trials ≥ 18, floor); live OOS excluded; 'industry' = 11-GICS-sector-MEAN controls; residual controls in 4/14 windows: SPOT-CHECKS, not robustness; L4 survival is NOT evidence of absence of residual common risk.
 
 ## Verdict (pre-committed): **SUCCESS**
 - plumbing (bench beta 1.19, R² 0.94, |t₂| gate): PASS
@@ -54,7 +54,7 @@ the frozen rules. The adversarial review then established that the frozen rules 
 a NARROWER question than the label names suggest, and the prescribed minimum
 experiment (run read-only, run_floor_attrib_diag.py) quantified the gap:
 
-1. **The design is structurally blind to timing alpha — the books' main claim.** Per-
+1. **The design is structurally blind to timing alpha: the books' main claim.** Per-
    window OLS refits betas every 63 days, so cross-window beta variation (measured:
    vol_managed_qqq 1.31→3.21, dual_momentum_gold −4.09→+2.48) is absorbed into
    "factor exposure." A perfect vol-timer and naive levered QQQ get the same
@@ -70,26 +70,26 @@ experiment (run read-only, run_floor_attrib_diag.py) quantified the gap:
    Reading: the static-vs-windowed delta (~+9–11%/yr for the vol/trend books) is the
    timing channel's POINT ESTIMATE, unproven at 3.5 years of one bull regime. Gold's
    significance survives the bootstrap but not its provenance (hindsight-discounted,
-   regime artifact per hunt2026 robustness) — unadjudicated, not validated.
+   regime artifact per hunt2026 robustness): unadjudicated, not validated.
 3. **The VRP override was unfireable as frozen:** only 21.9% of SVXY's daily variance
    survives the L3 projection, capping the frozen raw-SVXY correlation at √0.219 ≈
-   0.47 < the 0.5 threshold — even a 100% static SVXY book could not trip it; the
+   0.47 < the 0.5 threshold: even a 100% static SVXY book could not trip it; the
    prereg's "expected to trip by construction" was wrong under its own definition
    (fourth rule-drafting error; the pattern is bars/rules frozen without a
    reachability check). Corrected statistic (vs L3-residualized SVXY):
-   vol_core_svxy +0.261, vol_managed_qqq +0.006, trend_vol_qqq +0.012 — a real but
+   vol_core_svxy +0.261, vol_managed_qqq +0.006, trend_vol_qqq +0.012: a real but
    non-dominant VRP tilt in vol_core_svxy; the VRP question remains open.
-4. **Class-2 label honesty split:** (a) genuinely-no-hint — momentum_concentrated
+4. **Class-2 label honesty split:** (a) genuinely-no-hint: momentum_concentrated
    (L2 −5.3%/yr, static −3.5%, hi-vol L4 −8.7%, WF-demoted −4.6pp: every arrow
    negative), dual_momentum_gem (≈0 to negative everywhere); (b) point-estimates-
-   positive-but-unproven — the four vol/trend books; (c) unadjudicated at this sample
-   size — dual_momentum_gold (windowed L2 SE ≈ 15%/yr; 80% power needs ≈ 43%/yr).
+   positive-but-unproven: the four vol/trend books; (c) unadjudicated at this sample
+   size: dual_momentum_gold (windowed L2 SE ≈ 15%/yr; 80% power needs ≈ 43%/yr).
 5. Permutation caveats (pre-stated + confirmed): contiguous windows share vol regimes
    → independent sign-flips are mildly anti-conservative; affects only L1 gates every
    book clears (sign-fractions 0.71–0.93). CSV gap: L1 sign-fraction column omitted
    (verified out-of-band ≥ 0.60 for all).
 
-**Transferable lesson:** an attribution design must match the strategy class — window-
+**Transferable lesson:** an attribution design must match the strategy class: window-
 refit betas measure selection-era intra-window alpha and CANNOT see regime-conditional
 beta, which is the entire thesis of vol/trend books. And every frozen threshold needs
 a reachability check against its own construction (the VRP ceiling, the a_match null,

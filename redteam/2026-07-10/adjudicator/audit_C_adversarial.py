@@ -1,9 +1,9 @@
-"""Audit C — adversarial implementation. Predeclared variant set (BEFORE running):
+"""Audit C: adversarial implementation. Predeclared variant set (BEFORE running):
   base         : harness convention (weight at close t earns close t -> close t+1)
-  open_to_open : REALISTIC live timing — you enter at opens but HOLD through overnight.
+  open_to_open : REALISTIC live timing: you enter at opens but HOLD through overnight.
                  Position W.shift(1) earns open(t)->open(t+1). Overnight gap is captured
                  (held, not forgone). This is what hunt_paper_run actually does.
-  intraday_only: pessimal — re-establish whole book at each open, earn open->close only,
+  intraday_only: pessimal: re-establish whole book at each open, earn open->close only,
                  forgo EVERY overnight gap daily. NOT how the live book trades; included
                  only to expose overnight-gap dependence (the night/day effect).
   delay1       : signal delayed one full day (held = W.shift(2))

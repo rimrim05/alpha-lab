@@ -1,6 +1,6 @@
 """Render a QuantStats HTML tearsheet from an ablation config's net-returns parquet.
 
-Runs in .venv-report. The backtest is NEVER re-run here — this only reads the parquet the audited
+Runs in .venv-report. The backtest is NEVER re-run here; this only reads the parquet the audited
 .venv wrote (the compute/present seam). QuantStats is the field-standard tearsheet; we feed it our
 own daily net series and nothing else.
 
@@ -25,7 +25,7 @@ def load_net(config: str) -> pd.Series:
     return pd.read_parquet(p)["net"].dropna()
 
 
-# minimum live sessions before QuantStats' annualized stats mean anything — below this the
+# minimum live sessions before QuantStats' annualized stats mean anything; below this the
 # tearsheet would print a confident Sharpe off ~a week of noise, so we render a placeholder instead.
 MIN_LIVE_ROWS = 20
 

@@ -23,18 +23,18 @@ completeness are documented.
 | non-commercial academic use | governed by Berkeley's S&P license | confirm terms with the library (do not assume) |
 
 ### 1b. Retrieval method (your CIQ-specific question)
-- **Screening** (CIQ Pro screener): bulk/universe — filter `company status = inactive/delisted`, export. Best for bulk inactive retrieval.
-- **Excel plug-in** (`CIQ(id, item, date)` formulas via CIQ Pro Office): programmatic per-field pulls; has a data/row cap — record it.
+- **Screening** (CIQ Pro screener): bulk/universe: filter `company status = inactive/delisted`, export. Best for bulk inactive retrieval.
+- **Excel plug-in** (`CIQ(id, item, date)` formulas via CIQ Pro Office): programmatic per-field pulls; has a data/row cap: record it.
 - **Downloadable report / tearsheet**: single-company.
-- **Inactive securities are best searched by COMPANY NAME or CUSIP or CIQ permanent ID** — the *old ticker* frequently fails after delisting/reuse. Bulk inactive = screener (or Xpressfeed for true bulk feed).
+- **Inactive securities are best searched by COMPANY NAME or CUSIP or CIQ permanent ID**: the *old ticker* frequently fails after delisting/reuse. Bulk inactive = screener (or Xpressfeed for true bulk feed).
 
 ### 1c. Point-in-time estimates (the decisive distinction)
 - Base CIQ Pro "Estimates" view can be **restated** (a current DB view of historical fiscal periods).
-- The archived product is **"S&P Capital IQ Estimates — Point-in-Time"** — a snapshot of every estimate
+- The archived product is **"S&P Capital IQ Estimates — Point-in-Time"**: a snapshot of every estimate
   change with its associated date/timestamp. **VERIFY Berkeley has the PIT snapshot entitlement** (often
   separate from base CIQ Pro; may require Xpressfeed or the PIT dataset specifically).
 - **Test:** pick a historical earnings date; retrieve the consensus *as of the day before* the release;
-  confirm it equals the then-current (as-was) consensus via the revision timestamps — NOT today's restated number.
+  confirm it equals the then-current (as-was) consensus via the revision timestamps: NOT today's restated number.
 
 ---
 
@@ -42,12 +42,12 @@ completeness are documented.
 
 - Finaeon has **US Stocks** + **US Delisted Equities** databases: individual current & delisted US stocks
   from every exchange, **25,000+ delisted names**, survivorship-free, with corporate actions + fundamentals
-  (sourced). So individual delisted US common stocks **are** covered — it is NOT index-only.
+  (sourced). So individual delisted US common stocks **are** covered: it is NOT index-only.
 - **VERIFY Berkeley licenses the US Stocks / US Delisted Equities modules** (vs only the GFDatabase
-  indices/macro series — a common narrower campus subscription). This is your GFD-specific question.
-- Identifiers: GFD permanent symbol/code, often with CUSIP — verify.
-- S&P 500 membership history: GFD carries index constituent series — verify as-of-date availability.
-- Export: Excel export; bulk via the database download interface — record row/download caps.
+  indices/macro series, a common narrower campus subscription). This is your GFD-specific question.
+- Identifiers: GFD permanent symbol/code, often with CUSIP: verify.
+- S&P 500 membership history: GFD carries index constituent series: verify as-of-date availability.
+- Export: Excel export; bulk via the database download interface: record row/download caps.
 - **Estimates: GFD does NOT provide analyst estimates** → the earnings-estimates lane is Capital IQ (or
   I/B/E/S, unavailable to you), never GFD.
 
@@ -80,7 +80,7 @@ the correct approach (its prereg forbids restated backfill anyway).
 ---
 
 ## Fastest way to actually get the answers
-Either (a) **I drive your real Chrome** (claude-in-chrome) while you're logged into CIQ Pro / Finaeon — I
+Either (a) **I drive your real Chrome** (claude-in-chrome) while you're logged into CIQ Pro / Finaeon: I
 run each lookup and fill the grid; or (b) you run it and paste/screenshot the results. Sources:
 [S&P Capital IQ Estimates](https://www.spglobal.com/market-intelligence/en/solutions/capital-iq-estimates)
 · [S&P Capital IQ Pro](https://www.spglobal.com/market-intelligence/en/solutions/products/sp-capital-iq-pro)

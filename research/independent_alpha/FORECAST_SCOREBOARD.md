@@ -1,10 +1,10 @@
 # FORECAST_SCOREBOARD.md — predictive-content evidence, by signal class (Agent 6)
 
 Auditor: Agent 6 (IC & Forecast scoreboard), 2026-07-10. This is a **summary of evidence
-that already exists** — no new runs. Every number is transcribed from the cited artifact;
+that already exists**: no new runs. Every number is transcribed from the cited artifact;
 where a doc and a ledger disagree, the ledger/code wins. Reuse, do not rebuild.
 
-Purpose: answer one question per candidate — **does the measured predictive statistic clear
+Purpose: answer one question per candidate: **does the measured predictive statistic clear
 the pre-registered gate that earns a portfolio?** The gate differs by alpha type, so the
 right statistic differs too. An estimator or portfolio-construction win is NOT a market
 forecast and is scored on its own axis.
@@ -46,13 +46,13 @@ forecast and is scored on its own axis.
 
 n = 135 months (residual_mom 133). **0/10 clear \|t\| ≥ 2 at either horizon; none holds a
 stable sign across 2015-19 / 2020-24 / 2025-26** (`ic_screen_byhalf.csv`). This is not weak
-alpha — it is regime-flipping noise. The three momentum variants are ~0.97-correlated by-year
+alpha: it is regime-flipping noise. The three momentum variants are ~0.97-correlated by-year
 with raw 12-1 momentum: F-016's corpse with a sector hedge, not new information.
 
 **XS verdict:** the cross-sectional stock-selection track on daily open/close/volume, S&P 500
 large caps, post-2015, is **CLOSED**. Corroborated in return space by F-015 (momentum_concentrated
 WF −4.6pp median excess) → aggregated as **NR-2, STRONG against**. Do not build a portfolio on
-any row. Reopen only per F-016: a different universe (small caps — blocked by the survivorship
+any row. Reopen only per F-016: a different universe (small caps, blocked by the survivorship
 gap, DATA_GAP_MAP §2.4), interaction conditioning (momentum × dispersion / × earnings), or IC
 returning in live regime monitoring.
 
@@ -66,12 +66,12 @@ No point-in-time earnings/analyst data exists in the repo (CANONICAL_STATE; DATA
   **8 events / 2 names** as of 2026-07-10 vs a pre-registered **n ≥ 300** gate. Months from
   testable. The existing `statarb_earnings.parquet` surprise is **look-ahead** (current-vintage
   consensus, revised after the fact) and is excluded from scoring. `gap_drift` (F-009) is the
-  price-only PEAD proxy — WATCH tier, never tested against *real* surprises.
+  price-only PEAD proxy, WATCH tier, never tested against *real* surprises.
 - **Revenue surprise, analyst revisions, coverage/dispersion:** **BLOCKED-WITHOUT-VENDOR**
   (need I/B/E/S / WRDS). Un-testable at any n on free data.
-- **News sentiment:** FORWARD-COLLECTABLE — `news.parquet` is only ~10 months deep (2025-09→).
+- **News sentiment:** FORWARD-COLLECTABLE: `news.parquet` is only ~10 months deep (2025-09→).
 
-**Event verdict:** 0 pass today; **none is even scoreable** — this lane is forward-collected,
+**Event verdict:** 0 pass today; **none is even scoreable**: this lane is forward-collected,
 not failed. Do not read the absence of a pass as a negative result.
 
 ---
@@ -81,7 +81,7 @@ not failed. Do not read the absence of a pass as a negative result.
 These are **not** rank-IC signals. They forecast the *return of an exposure through time*
 (lever/de-lever beta on a vol or trend state), scored by WF median excess vs the book's own
 naive benchmark + DSR (`walkforward/summary.md`, `deflated.md`). Passing here earns a book but
-is **market-timing / risk-management alpha, mostly "vol-managed beta" honestly priced — not a
+is **market-timing / risk-management alpha, mostly "vol-managed beta" honestly priced, not a
 cross-sectional forecast.**
 
 | Book | ann Sharpe | DSR | WF median excess vs SPY | Gate (positive WF median + DSR) | Ladder |
@@ -92,7 +92,7 @@ cross-sectional forecast.**
 
 Caps on this lane:
 - **Cross-market replication was RUN and FAILED** (F-020, `xmarket.md`): frozen params on 28
-  assets / 7 clusters → vol-mgmt improves 3/7 (sign-test p=0.77), trend gate 4/7 (p=0.50) —
+  assets / 7 clusters → vol-mgmt improves 3/7 (sign-test p=0.77), trend gate 4/7 (p=0.50):
   a coin flip. Edge is **CONFIRMED US-large-cap-equity-specific**; ladder capped at level 3
   with a penalty (level 4 refused, not merely unattempted).
 - **F-014:** trend+vol combo halves median excess; claim it as a priced tail hedge (worst
@@ -109,10 +109,10 @@ cross-sectional forecasting.
 ## 4. Estimator alpha — improvement, not a market forecast (F-021 chain)
 
 The Goldberg/JSE dispersion-bias correction (`research/estimator_lab/`): matched-pair realized-vol
-delta. Final bounded form — **long-only always helps, monotone in p/n** (−2.6 bps vol at n=42 →
+delta. Final bounded form: **long-only always helps, monotone in p/n** (−2.6 bps vol at n=42 →
 −0.5 bps at n=252, always p<0.0001); **unconstrained always hurts** (+18 to +49 bps). No
 month-level ψ̂ timing signal exists. Real but tiny (max ~2.6 bps vol/yr); confirmed and
-correctly bounded. **This is Estimator alpha (a better covariance) — it forecasts nothing about
+correctly bounded. **This is Estimator alpha (a better covariance): it forecasts nothing about
 the market and earns no standalone book.**
 
 ---
@@ -122,7 +122,7 @@ the market and earns no standalone book.**
 Daily open/close only; no minute bars, no auction cross, no tick (DATA_GAP_MAP §2.15). Spread
 capture / open-vs-close fill deltas cannot be computed. **No book here may claim execution
 alpha.** F-006 (overnight premium) is explicitly reopened *only* when an open+close execution
-harness exists — the effect is real, the daily convention was the constraint.
+harness exists: the effect is real, the daily convention was the constraint.
 
 ---
 
@@ -138,7 +138,7 @@ harness exists — the effect is real, the daily convention was the constraint.
 | Execution | spread capture | not measurable |
 
 **Signals passing the IC gate today: 0.** Zero of ten cross-sectional price/volume signals
-clear \|t\| ≥ 2 rank IC — the cross-sectional forecasting track is closed pending a new
+clear \|t\| ≥ 2 rank IC: the cross-sectional forecasting track is closed pending a new
 information source. The three promoted TS books are risk-management (market-timing) alpha, not
 independent cross-sectional forecasts, and the event lane cannot yet be scored for lack of PIT
 data.

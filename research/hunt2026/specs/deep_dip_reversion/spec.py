@@ -1,4 +1,4 @@
-"""deep_dip_reversion — long-only concentrated deep-dip residual reversion.
+"""deep_dip_reversion: long-only concentrated deep-dip residual reversion.
 
 The low-turnover inversion of the statarb kill: same 60d sector-ETF residual
 s-score (tracks/statarb code path), but LONG-only at the deep -2.5 threshold,

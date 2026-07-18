@@ -8,7 +8,7 @@ FLOOR_INDUSTRY_MEMO/FLOOR_INDUSTRY (+ errata) · FLOOR_ATTRIB_MEMO/FLOOR_ATTRIB
 
 ## 1. Bottom-line classification per book
 
-Frozen-ladder label first; honest reading (post-adversarial) second — the ladder's
+Frozen-ladder label first; honest reading (post-adversarial) second: the ladder's
 per-window design measures INTRA-window alpha and is structurally blind to
 cross-window beta TIMING, which is these books' actual thesis.
 
@@ -72,16 +72,16 @@ genuine/leaked provenance claim about residual factors.
 **Single best next action.** Run the already-frozen sibling blind-window attribution
 (research/hunt2026/preregistrations/factor-attribution-2026-07-14.md) EXTENDED with
 one market-timing term (Treynor–Mazuy quadratic or signal-conditioned beta) on the
-full 2014→2026 span with its claim-bearing holdout — it directly adjudicates the
+full 2014→2026 span with its claim-bearing holdout: it directly adjudicates the
 timing channel this program proved its own design cannot see, at zero new-data cost,
 and its claim-bearing windows dodge most of the selection taint. (Research-side
-runner-up, hers to take to the lab as theory: C4's edge under heteroskedastic noise —
+runner-up, hers to take to the lab as theory: C4's edge under heteroskedastic noise:
 the empirical-null replacement is now validated practice in two phases.)
 
 **Process notes for the record.** Four rule-drafting defects surfaced this program
 (industry-control raw-ratio bar, a_match null, VRP ceiling, plus Phase 6's span
 mislabel); the shared root is freezing thresholds without a reachability/null check
-against their own construction — worth one standing line in the estimator_lab process
+against their own construction, worth one standing line in the estimator_lab process
 rules: "every frozen numeric bar ships with its null value and a reachability check."
 Stage-1's FAIL verdict was honored as recorded (diagnosis only, no re-verdict); the
 proceed decision was documented as a consequence-override and survived adversarial

@@ -40,7 +40,7 @@ def test_sharpe_bootstrap_deterministic_and_centered():
 
 
 def test_sharpe_bootstrap_crash_risk_widens_interval():
-    # negative skew (steady gains, occasional crash — the classic fragile equity curve)
+    # negative skew (steady gains, occasional crash: the classic fragile equity curve)
     # must bootstrap WIDER than a symmetric series at the exact same point Sharpe
     rng = np.random.default_rng(7)
     z = rng.normal(size=500)

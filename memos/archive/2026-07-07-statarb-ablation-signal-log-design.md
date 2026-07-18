@@ -1,7 +1,7 @@
 # StatArb Ablation Harness + Per-Signal Outcome Log (Design)
 
 **Date:** 2026-07-07
-**Status:** Design approved by Kristen — pending spec review
+**Status:** Design approved by Kristen, pending spec review
 **Track:** `tracks/statarb` · HYP-005 · backtest-side (complements the Stage-5 paper book)
 **Repo:** code in `~/projects/alpha-lab/`; this spec + journal in the vault
 
@@ -16,37 +16,37 @@ forward data concatenate into one training set.
 ## Context
 
 **What already exists** (verified against the repo, 2026-07-07):
-- `scripts/statarb_residual_run.py` — the audited backtest: vectorized signal (`rolling_residual` →
+- `scripts/statarb_residual_run.py`, the audited backtest: vectorized signal (`rolling_residual` →
   cumulative s-score → `band_positions`), no look-ahead, already toggling **transaction costs**
   (`--cost-bps`) and one **risk filter** (`--long-floor`), plus `--pit`, `--skip`, `--cap`.
-- `core/broker/base.py` + `tracks/statarb/paper/{signal,ledger,reconcile,report}.py` — the forward
+- `core/broker/base.py` + `tracks/statarb/paper/{signal,ledger,reconcile,report}.py`: the forward
   paper-book scaffold (separate, already-approved spec: `2026-07-07-paper-book-residual-reversion-design.md`).
-- `tracks/pead/events.py::fetch_earnings_yf` — free earnings dates (reused here).
-- `core/eval/scorecard.py` — the shared net-of-cost / deflated-Sharpe / subperiods scorecard.
+- `tracks/pead/events.py::fetch_earnings_yf`: free earnings dates (reused here).
+- `core/eval/scorecard.py`: the shared net-of-cost / deflated-Sharpe / subperiods scorecard.
 
-**What is missing — the only real gap:** a **per-signal outcome log**. The backtest emits a daily
+**What is missing, the only real gap:** a **per-signal outcome log**. The backtest emits a daily
 net-P&L series and a scorecard; it has no per-trade record (entry features → realized outcome). Both
 the ablation table's per-experiment stats (`n_signals`, `win_rate`, `avg_holding`) and any future ML
 meta-model are *derived from* this log. So the log is built first.
 
 **Why two windows, not one** (the resolved fork):
 - **Ablation → full history (2018→today).** "Does layer X help?" earns trust from many trades across
-  regimes (COVID, 2022 selloff, calm 2024). A 2–3-month window is too few trades — a single bad week
+  regimes (COVID, 2022 selloff, calm 2024). A 2–3-month window is too few trades, a single bad week
   could flip a layer's verdict.
 - **ML prototype → recent slice + forward.** The meta-model needs *unbiased labels*, not volume.
   Over a short recent window almost no S&P 500 name delists, so it is ~survivorship-clean; the forward
   paper book extends it with truly survivorship-immune data.
-- Same log feeds both — the log is date-tagged, sliced differently per purpose. Conflating the windows
+- Same log feeds both, the log is date-tagged, sliced differently per purpose. Conflating the windows
   is the subtle mistake this split avoids.
 
 ---
 
 ## Decisions
 
-1. **Approach A — extend the vectorized core, do not rewrite it.** Signal + position math stays
+1. **Approach A: extend the vectorized core, do not rewrite it.** Signal + position math stays
    byte-for-byte unchanged (the path that produced the audited 2.67). Layers become pure functions that
    transform the positions matrix; a single `extract_trades()` derives the log from that matrix. The
-   rejected alternative (an event-driven day-by-day loop) would reimplement the audited trading loop —
+   rejected alternative (an event-driven day-by-day loop) would reimplement the audited trading loop,
    exactly the parity risk the paper-book spec built a harness to prevent.
 2. **Parity gate protects 2.67.** Acceptance criterion: `run_residual(config)` with **all layers off**
    reproduces today's net-P&L series bit-for-bit. A refactor that changes the audited number fails.
@@ -54,7 +54,7 @@ meta-model are *derived from* this log. So the log is built first.
    so the log records *every* candidate signal (each s-score band-cross) with `entered: true/false`, the
    filters that blocked it, **and the P&L it would have realized if taken.** This lets the ablation say
    "the liquidity filter skipped 40 trades averaging −1.2%" (earned its keep) vs "+0.9%" (hurt). Forward
-   paper trading cannot observe this — it only sees trades taken. Backward log = richer counterfactuals;
+   paper trading cannot observe this, it only sees trades taken. Backward log = richer counterfactuals;
    forward log = cleaner dead-name labels. Complementary by construction.
 4. **Unionable schema.** The per-signal log is a superset-compatible union of the paper book's
    `positions.jsonl` fields (`entry_s`, `entry_bucket`, `close_reason`, `realized_pnl`, `holding_days`)
@@ -79,13 +79,13 @@ alpha-lab/
 └── core/data/prices.py           # EXTEND — also fetch volume (dollar-ADV + volume_ratio feature)
 ```
 
-- **`run_residual(config) -> (net_series, trades_log)`** — the single audited code path. `statarb_residual_run.py`
+- **`run_residual(config) -> (net_series, trades_log)`**: the single audited code path. `statarb_residual_run.py`
   becomes a thin CLI over it; `statarb_ablation_run.py` calls it once per config. Signal/position math
   unchanged; layers applied as post-signal position transforms; log extracted from the final matrix.
-- **`filters.py`** — one pure function per layer (below). Each takes the positions matrix + a context
+- **`filters.py`**: one pure function per layer (below). Each takes the positions matrix + a context
   bundle (returns, volume, sector map, earnings dates) and returns a transformed matrix. Order is fixed
   and explicit in `run_residual`. Pure functions → independently unit-testable, no hidden state.
-- **`trades.py`** — `extract_trades()` scans each ticker column of the positions matrix for entry→exit
+- **`trades.py`**: `extract_trades()` scans each ticker column of the positions matrix for entry→exit
   runs, computes entry features + realized (and counterfactual) P&L + `close_reason`, and emits log rows.
   `trade_stats()` rolls a log up to per-experiment summary stats.
 
@@ -115,7 +115,7 @@ One row per candidate signal (band-cross), written as date-tagged JSONL under
 | Field | Meaning |
 | ----- | ------- |
 | `signal_id`, `ticker`, `entry_date` | identity |
-| `entry_s`, `entry_bucket`, `residual` | signal at entry (`bucket` ∈ short / long_shallow / long_deep / long_verydeep — same boundaries as the paper book) |
+| `entry_s`, `entry_bucket`, `residual` | signal at entry (`bucket` ∈ short / long_shallow / long_deep / long_verydeep, same boundaries as the paper book) |
 | `sector`, `sector_etf`, `volatility`, `volume_ratio`, `earnings_next` | features |
 | `entered` (bool), `filters_blocked` (list) | decision + *why* skipped (empty if entered) |
 | `exit_date`, `holding_days`, `close_reason` | exit; `close_reason` ∈ `{reversion_exit, band_flip, floor_stop, window_end}` |
@@ -124,7 +124,7 @@ One row per candidate signal (band-cross), written as date-tagged JSONL under
 | `success` (bool) | label = realized (or counterfactual) net return > 0 over the hold |
 
 **Honest schema boundary:** backtest `close_reason` lacks `halt / delisted / corporate_action /
-gap_stop` — those are forward-only (dead names have no free price history). That gap is *precisely* why
+gap_stop`, those are forward-only (dead names have no free price history). That gap is *precisely* why
 forward data is needed for deep-dip labels; the shared schema means the two logs concatenate cleanly,
 the forward one simply carrying close reasons the backward one cannot.
 
@@ -146,11 +146,11 @@ log; risk metrics from the shared `scorecard`.
 
 Cells are runtime output (format shown, not fixed values). **Second parity anchor:** the ablation runs
 on the canonical universe (S&P 500, `skip=1`), so the `+costs` row at 10 bps must reproduce the audited
-~2.67 — if it doesn't, the harness has drifted from the run that produced the headline number. The
+~2.67; if it doesn't, the harness has drifted from the run that produced the headline number. The
 costs-*off* baseline is therefore *above* 2.67 by construction.
 
-Each layer's row also reports the **counterfactual delta** — how the trades it removed *would* have
-done — so "helped" vs "hurt" is evidenced, not asserted.
+Each layer's row also reports the **counterfactual delta**, how the trades it removed *would* have
+done, so "helped" vs "hurt" is evidenced, not asserted.
 
 ---
 
@@ -183,11 +183,11 @@ done — so "helped" vs "hurt" is evidenced, not asserted.
 
 - **No ML in this build.** The log is built and validated here; the meta-model (logistic → random forest
   → XGBoost, walk-forward) is Phase 3, on the recent-clean slice + forward data.
-- **Earnings-only** news layer — general news / M&A deferred (no free structured feed).
-- **Equal-weight book preserved** — sector/name caps constrain it, but no Ledoit-Wolf / optimizer (that
+- **Earnings-only** news layer, general news / M&A deferred (no free structured feed).
+- **Equal-weight book preserved**: sector/name caps constrain it, but no Ledoit-Wolf / optimizer (that
   is a separate track item, as in the paper-book spec).
-- **No new dependencies** — yfinance volume + existing pead earnings + stdlib.
-- **Backtest only** — the forward paper book is its own spec; this one just guarantees schema union.
+- **No new dependencies**: yfinance volume + existing pead earnings + stdlib.
+- **Backtest only**: the forward paper book is its own spec; this one just guarantees schema union.
 
 ---
 
@@ -205,5 +205,5 @@ done — so "helped" vs "hurt" is evidenced, not asserted.
 The **counterfactual labeling** (Decision 3). It is what makes the backtest log uniquely valuable
 (forward can't see skipped-trade outcomes) and what turns the ablation from "Sharpe went up" into
 "here are the specific trades each layer removed and what they would have done." Confirm this is worth
-the extra bookkeeping in `extract_trades` — it is the one place this design does more than the minimum,
+the extra bookkeeping in `extract_trades`, it is the one place this design does more than the minimum,
 and deliberately so.

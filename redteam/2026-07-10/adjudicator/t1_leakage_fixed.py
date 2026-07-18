@@ -1,7 +1,7 @@
 """Agent 1 leakage battery: truncation test + future-poison test on all 7 active books.
 
 Truncation: weights at date t computed from panel[:t] must equal weights at t from the
-full panel — any diff means the spec's weight at t depends on data after t (look-ahead)
+full panel. Any diff means the spec's weight at t depends on data after t (look-ahead)
 OR on panel-end conventions (backtest/live drift). Distinguished by the poison test:
 poisoning FUTURE data and seeing past weights change is look-ahead proper.
 """

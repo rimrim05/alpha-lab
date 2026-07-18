@@ -68,7 +68,7 @@ def main():
     else:
         prices = fetch_prices_yf(sorted(sectors), args.start, None)
         prices = prices[[c for c in prices.columns if c in sectors]]
-    # universe integrity — a truncated pull would silently shift the headline Sharpe. Fail loud.
+    # universe integrity: a truncated pull would silently shift the headline Sharpe. Fail loud.
     if prices.shape[1] < 0.9 * expected:
         raise RuntimeError(f"universe truncated: {prices.shape[1]}/{expected} S&P 500 names have "
                            f"price data — refusing to run (would misstate the headline Sharpe)")
@@ -92,7 +92,7 @@ def main():
     features = {"volatility": rets.rolling(60).std(),
                 "volume_ratio": (volume / volume.rolling(20).mean()).reindex_like(rets)}
 
-    # earnings blackout — graceful: a partial/failed fetch only weakens the blackout layer, never
+    # earnings blackout, graceful: a partial/failed fetch only weakens the blackout layer, never
     # the universe or the headline result. Cached to a parquet (shared across the two venvs).
     blackout = None
     earn_cache = Path("data/raw/statarb_earnings.parquet")

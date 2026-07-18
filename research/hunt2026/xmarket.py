@@ -3,7 +3,7 @@
 REPLICATION EVIDENCE, NOT A NEW TRIAL: the registered params from vol_managed_qqq /
 trend_vol_qqq (sigma_target=0.25, rv_lookback=21, tolerance_band=0.05, cap 2x,
 sma_window=200, hysteresis 1%) are applied UNCHANGED to every asset. Zero per-asset
-tuning, so there is no selection here to deflate — the question is only whether the
+tuning, so there is no selection here to deflate; the question is only whether the
 mechanism generalizes (Moreira & Muir 2017 Table on non-US assets; Faber 2007).
 
 Universe: every non-US-large-cap / non-equity ETF already in panel_2005.parquet plus
@@ -27,7 +27,7 @@ HERE = Path(__file__).parent
 OUT = HERE / "robustness" / "xmarket.md"
 XPANEL = HERE / "panel_xmarket.parquet"
 
-# frozen registered params — do not touch
+# frozen registered params, do not touch
 SIGMA, LB, CAP, BAND = 0.25, 21, 2.0, 0.05
 SMA_W, HYST = 200, 0.01
 COST = 2e-4  # 2 bps/side, ETFs

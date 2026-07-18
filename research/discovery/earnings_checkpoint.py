@@ -1,13 +1,13 @@
-"""Discovery Program — armed earnings-IC checkpoint gate (READ-ONLY, no scheduler, no deployment).
+"""Discovery Program: armed earnings-IC checkpoint gate (READ-ONLY, no scheduler, no deployment).
 
 The Discovery Program is in maintenance mode. This gate fires the earnings-lane checkpoint ONLY when
 all six pre-registered arming conditions hold; until then it prints one silent NOT-ARMED line and does
 nothing. It never writes the control plane, never builds a portfolio, and reuses the FROZEN
-EXP-IC-EARNINGS-FWD machinery (compute_sue, report, N_PRIMARY/N_KILL, IC≥0.03/t≥2 pass) — condition 5.
+EXP-IC-EARNINGS-FWD machinery (compute_sue, report, N_PRIMARY/N_KILL, IC≥0.03/t≥2 pass), condition 5.
 
 Arming conditions (ALL must be true):
   1. >=300 eligible point-in-time events fully MATURED through the primary 20-trading-day horizon
-     (maturity = reaction_date + 20 trading days <= today, on the panel calendar — NOT raw collector count).
+     (maturity = reaction_date + 20 trading days <= today, on the panel calendar, NOT raw collector count).
   2. event timestamps / estimates / actuals / availability fields pass the data-quality audit.
   3. sector and issuer concentration are reported (computable).
   4. missing-event and API-failure rates are quantified.

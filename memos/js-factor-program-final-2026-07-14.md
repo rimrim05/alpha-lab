@@ -18,7 +18,7 @@ riders from the adversarial review:
   → −0.15%/yr after the missing gold factor (β_GLD 0.22, t=9.5) and the 1.92x financing
   stress; dual_momentum_gold (+13.0%, t=1.32) → +2.0%, t=0.26 after gold beta (β 0.79), on
   a hindsight-flagged menu; trend_vol_qqq (+9.1%, t=1.50) → +3.8%, t=0.57 excluding 2022,
-  and its naive parent has a LARGER blind alpha (+12.4%, t=1.55) — under-spanned trend
+  and its naive parent has a LARGER blind alpha (+12.4%, t=1.55): under-spanned trend
   premium, not engineering; dual_momentum_gem's 1y cell is statistically empty (half-split
   −9.4%/+39.7%).
 - The verdict is conditional on classifying TSMOM harvest as factor exposure:
@@ -26,7 +26,7 @@ riders from the adversarial review:
   TSMOM proxy (and the QQQ-residual, whose full-sample fit biases alpha UP, not down)
   pulls it under. Timing known premia well is what this book demonstrably does.
 - Power: minimum detectable alpha at t=2 is 7.6%/yr (best cell) to 28%/yr (worst). "Not
-  detected" ≠ "absent" — but the burden of proof sits with the alpha claim, and nothing
+  detected" ≠ "absent", but the burden of proof sits with the alpha claim, and nothing
   cleared it.
 - Best-of-family t=1.77 against ≥18 registered adaptive trials ≈ familywise p ≈ 0.11.
 
@@ -42,10 +42,10 @@ deployment-material JSE value on any book tested).
   factor-1 hedge NO EFFECT (F-028), beta-overlay regime map HARMFUL via turnover (F-029);
   eq.-13 calibration WRONG TARGET (F-027); per-factor gating REDUNDANT (gate never binds,
   min ψ̂ 0.826).
-- The last untested cell — benchmark-relative / tracking error — was adjudicated today
+- The last untested cell, benchmark-relative / tracking error, was adjudicated today
   under a frozen prereg: jse5 vs pca5 ΔTE = −0.04 bps ann (p=0.42), rel −0.02% vs the
   −0.5% overturn bar. VERDICT STANDS. Mechanism: ψ̂₁ ≈ 0.98–1.00 on every accessible
-  universe — there is nothing for the correction to correct at S&P scale; TE, like
+  universe: there is nothing for the correction to correct at S&P scale; TE, like
   min-var vol, is a subspace-and-spectrum functional.
 - What survives is research value, not system value: the boundary map, the ψ̂ regime
   diagnosis, and the drift-not-noise reframing of step 4 (drift-aware subspace estimation
@@ -59,16 +59,16 @@ deployment-material JSE value on any book tested).
 |---|---|---|---|---|---|---|---|---|
 | vol_managed_qqq | 1y | +42.5% | +2.6% (0.32) | +1.4% (0.25) | n/a (ETF) | −0.6% | Mkt/QQQ, TSMOM; R² 0.97 | 219 obs; MDA ≈ 12%/yr |
 | vol_core_svxy | 1y | +36.1% | +1.1% (0.19) | +0.5% (0.10) | n/a | −3.1% | Mkt/QQQ, short-vol unmodeled | SVXY carry not in factor set |
-| dual_momentum_gem | 1y | +58.6% | +19.2% (1.32) | +15.8% (1.12) | n/a | +13.4% | regime-switch, MOM, TSMOM; R² 0.82 | half-split −9.4%/+39.7% — cell empty; MDA 28%/yr |
+| dual_momentum_gem | 1y | +58.6% | +19.2% (1.32) | +15.8% (1.12) | n/a | +13.4% | regime-switch, MOM, TSMOM; R² 0.82 | half-split −9.4%/+39.7%, cell empty; MDA 28%/yr |
 | momentum_concentrated | 1y | +35.4% | −5.8% (−0.54) | −7.5% (−0.68) | −10.7% (−0.64) | −7.5% | MOM, Mkt; R² 0.75 | survivorship overstates raw (audit FAIL-2); strengthens negative |
 | trend_vol_qqq | 5y | +24.7%/yr | +11.7% (1.63) | +9.1% (1.50) | n/a | +7.6% | QQQ, TSMOM; R² 0.62 | ex-2022: +3.8% (0.57); naive parent α larger |
 | defensive_ensemble | 5y | +19.9%/yr | +9.5% (2.01) | +6.7% (1.77) | n/a | +2.9% | Mkt, TSMOM, GLD (β 0.22 unmodeled in M2) | +GLD: +3.7% (1.09); +GLD+financing: −0.15% |
 | dual_momentum_gold | 5y | +29.1%/yr | +17.4% (1.63) | +13.0% (1.32) | n/a | +11.2% | GLD β 0.79, QQQ switch; R² 0.37 | +GLD: +2.0% (0.26); ex-2025: −1.5%; menu hindsight (ledger) |
 
-Controls: SPY/QQQ buy-hold M1 placebo pass (t 0.44–1.55); 1.5x QQQ 5y t=2.09 —
+Controls: SPY/QQQ buy-hold M1 placebo pass (t 0.44–1.55); 1.5x QQQ 5y t=2.09,
 mechanical financing artifact (harness charges no financing), which is exactly what the
 stress line removes; QQQ-based controls under M2 show degenerate t's by construction
-(QQQ-residual is built from QQQ) — placebo gate is defined on M1 per prereg.
+(QQQ-residual is built from QQQ); placebo gate is defined on M1 per prereg.
 Integrity audit: two defects (phantom 2026-05-25 panel row, understates α; full-sample
 QQQ-residual projection, overstates α) roughly cancel; no conclusion flips under either
 fix or both.
@@ -108,7 +108,7 @@ published premia (vol-managed equity, TSMOM, dual momentum, diversification); th
 "unexplained residual" is most plausibly premia mis-measurement (no daily low-vol,
 liquidity, or gold factor in the baseline set) plus regime luck, not idiosyncratic alpha;
 JSE's null is structural (ψ̂→1 at S&P scale), so no amount of further S&P testing will
-revive it — thin panels or a different asset class would be a different question.
+revive it; thin panels or a different asset class would be a different question.
 
 ## 6. What remains unknown
 
@@ -117,20 +117,20 @@ revive it — thin panels or a different asset class would be a different questi
 - No daily low-volatility, liquidity, or quality-beyond-RMW factor; gold entered only via
   the adversarial fix. A Barra-style cross-sectional model was not available.
 - Residual statistical factors: vetted panel covers 61% of days, rank-chained, n=63
-  windows, ~14% real-data false-pass on the C4 screen — usable as controls (they changed
+  windows, ~14% real-data false-pass on the C4 screen, usable as controls (they changed
   nothing), not as economic factors, and momentum_concentrated's M3 x2 cell is empty.
 - Survivorship: momentum_concentrated's raw returns are overstated by missing delisted
   names (direction strengthens the negative verdict, but magnitude unquantified).
-- The phantom 2026-05-25 panel row corrupts frozen book returns after that date (~6 weeks)
-  — flagged for its own fix session; attribution conclusions verified robust to it.
+- The phantom 2026-05-25 panel row corrupts frozen book returns after that date (~6 weeks),
+  flagged for its own fix session; attribution conclusions verified robust to it.
 - Economic identification: attribution proves exposure, not mechanism. Whether
   vol-managed timing is "skill in known premia" or "known premium, period" is a naming
   choice the t-stats cannot settle.
 
 ## 7. One recommended production action
 
-**Keep the live book as a factor-premium harvesting strategy — no JSE deployment, no
-allocation change — and re-base the standing 12-month paper review on factor-adjusted
+**Keep the live book as a factor-premium harvesting strategy (no JSE deployment, no
+allocation change) and re-base the standing 12-month paper review on factor-adjusted
 NAV:** each book's kill/demote rule should be evaluated against its M2 factor replication
 (betas frozen from this run's blind-window estimates, financing-stressed), not raw
 excess-vs-SPY. The attribution pipeline (research/attribution/run_attribution.py) runs on
@@ -138,5 +138,5 @@ forward paper NAV as-is. This converts the power limitation into a live, pre-reg
 forward test at zero additional trading risk; everything else (books, weights, JSE
 non-deployment) stays frozen.
 
-*Rejected reviewer recommendations: none — all adversarial riders were adopted verbatim.
+*Rejected reviewer recommendations: none; all adversarial riders were adopted verbatim.
 Stop conditions honored: one adjudication run only; no post-result parameter changes.*

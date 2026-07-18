@@ -1,4 +1,4 @@
-"""Paper-book unit tests. Weighted toward reconcile — the spec flags terminal-event
+"""Paper-book unit tests. Weighted toward reconcile: the spec flags terminal-event
 disambiguation as the unit where a bug BIASES the answer (a false 'delisted'
 manufactures the survivorship signal), so it gets the most fixtures."""
 import numpy as np

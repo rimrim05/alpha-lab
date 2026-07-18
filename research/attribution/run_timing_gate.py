@@ -1,4 +1,4 @@
-"""EXP-2026-07-14-timing-tm — TM timing gate on the frozen attribution.
+"""EXP-2026-07-14-timing-tm: TM timing gate on the frozen attribution.
 
 Prereg: research/hunt2026/preregistrations/timing-tm-2026-07-14.md (frozen incl.
 dispositions 1-9). M2T = M2 + gamma*(Mkt-RF)^2 per book on its claim-bearing blind

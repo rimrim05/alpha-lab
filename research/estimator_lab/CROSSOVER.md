@@ -41,7 +41,7 @@ Pooled across all 6×138 month-configs (state from the estimation window only):
 | long-only | ρ = +0.177, p = 3.1e-07 | ρ = +0.03, p = 0.32 | ρ = −0.183, p = 1.1e-07 |
 | unconstrained | ρ = −0.189, p = 4.2e-08 | ρ = +0.09, p = 0.009 | ρ = +0.175, p = 4.0e-07 |
 
-The pooled correlation is significant in the pre-registered direction — but it is
+The pooled correlation is significant in the pre-registered direction, but it is
 **entirely the across-n effect**. Within each fixed n, ψ̂_med has zero predictive power
 for the month's delta (Spearman ρ ∈ [−0.01, +0.09], all p > 0.3, six out of six).
 The per-n ψ̂_med distributions barely overlap (n=42 spans 0.876–0.970; n=252 spans
@@ -59,10 +59,10 @@ Eigengap adds nothing (long-only p = 0.32).
 - "ψ̂ < 0.90 → JSE helps": the bucket is 26 configs (25 of them n=42, mostly calm
   2017–2018 / 2023–2025 months where a 42d window sees weak factor signal-to-noise);
   mean Δ is negative but insignificant and SMALLER than the rest. Rejected.
-- "ψ̂ ≥ 0.95 → no improvement": still −1.0 bps at t=−11. Rejected — JSE keeps helping
+- "ψ̂ ≥ 0.95 → no improvement": still −1.0 bps at t=−11. Rejected: JSE keeps helping
   (slightly) even at ψ̂ ≈ 0.98.
 - In-sample threshold scan (color only, never a finding): best X = 0.94, mean −2.5 bps
-  over 167 configs, hit 70.7% — barely different from "always apply".
+  over 167 configs, hit 70.7%: barely different from "always apply".
 
 ## Verdict vs pre-registration
 
@@ -75,14 +75,14 @@ Eigengap adds nothing (long-only p = 0.32).
 | pooled Spearman(Δ, ψ̂) > 0, significant | **Confirmed formally** (ρ=+0.177, p=3e-07) — but entirely across-n; within-n content is zero |
 | ψ̂<0.90 helps / ψ̂≥0.95 none | **Both rejected** (table above) |
 
-**Kill condition: NOT triggered** — (a) long-only significant at every n, (b) pooled
+**Kill condition: NOT triggered**: (a) long-only significant at every n, (b) pooled
 Spearman significant. But the interesting half of the hypothesis dies anyway: ψ̂ has no
 month-level timing content. The deployable rule is book- and window-level, not month-level:
 
 > **Apply JSE in long-only min-var at any window length; expected benefit ≈ −0.24 bps of
 > realized vol per unit p/n (so it only pays meaningfully when p/n ≳ 5, i.e. n ≤ ~90 on a
 > ~470-name book). Never apply it unconstrained.** A month-level ψ̂ gate adds nothing over
-> "always on" — hit rates are 65–77% everywhere because the delta is negative on average
+> "always on": hit rates are 65–77% everywhere because the delta is negative on average
 > everywhere in long-only.
 
 Honesty labels: the −0.24 bps/(p/n) slope and the X=0.94 scan are in-sample descriptions

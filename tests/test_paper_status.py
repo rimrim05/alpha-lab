@@ -1,4 +1,4 @@
-"""Offline unit tests for scripts/paper_status.py — no network, no disk writes.
+"""Offline unit tests for scripts/paper_status.py: no network, no disk writes.
 
 Covers the approved authority rules: ledger-evidence proof-of-cycle, corroborating-only
 scheduler metadata, manifest-only clean clock, historical-vs-live order separation, graceful
@@ -30,7 +30,7 @@ def test_missing_reconcile_row_is_none():
 # ---------- ledger registry: a new ledger file cannot appear unnoticed ----------
 
 # Every file allowed in ledgers/hunt2026/. Adding a ledger (a new book, a new account, a new
-# reconcile series) MUST be registered here — that is the point. The mc-isolation cutover added
+# reconcile series) MUST be registered here. That is the point. The mc-isolation cutover added
 # _account_mc.jsonl and _reconcile_mc.jsonl silently, and paper_status counted _account_mc as an
 # 8th strategy book for a full day. This test is the tripwire that would have caught it offline.
 KNOWN_META_LEDGERS = {"_account.jsonl", "_reconcile.jsonl",
@@ -52,7 +52,7 @@ def test_every_ledger_file_is_registered():
 
 
 def test_expected_books_matches_the_runner():
-    """paper_status duplicates the book count (it may not import the runner) — keep them equal."""
+    """paper_status duplicates the book count (it may not import the runner); keep them equal."""
     from scripts.hunt_paper_run import N_BOOKS_TOTAL
 
     assert ps.EXPECTED_BOOKS == N_BOOKS_TOTAL
@@ -426,7 +426,7 @@ def test_exit_codes():
 # ---------- read-only guarantee (no write / no order path) ----------
 
 def _code_only(path: Path) -> str:
-    """Module source with the docstring and all comments stripped — the guarantee is about
+    """Module source with the docstring and all comments stripped: the guarantee is about
     executable code, not documentation (the docstring legitimately names what it does NOT do)."""
     import ast
     src = path.read_text()

@@ -16,12 +16,12 @@ no alpha conclusions.
 | Field | Value | Source |
 |---|---|---|
 | Broker session date (regular session being reconciled) | `2026-07-10` (ledger label) · live fills settled into Mon `2026-07-13` open | `_reconcile.jsonl` `date`; Alpaca fill settlement |
-| Snapshot timestamp — pre-cycle baseline | `INCONCLUSIVE` — no committed pre-open snapshot artifact for Mon open | — |
-| Snapshot timestamp — post-cycle | `2026-07-13T18:00:57-07:00` | live `get_*` |
-| Scheduler run ID | `PENDING` — `nightly.log` absent; launchctl `runs=0`, `last exit code=(never exited)` | `artifacts/hunt2026/paper/`; `launchctl print gui/501/com.rimrim.hunt2026-paper` |
+| Snapshot timestamp: pre-cycle baseline | `INCONCLUSIVE`: no committed pre-open snapshot artifact for Mon open | — |
+| Snapshot timestamp: post-cycle | `2026-07-13T18:00:57-07:00` | live `get_*` |
+| Scheduler run ID | `PENDING`: `nightly.log` absent; launchctl `runs=0`, `last exit code=(never exited)` | `artifacts/hunt2026/paper/`; `launchctl print gui/501/com.rimrim.hunt2026-paper` |
 | Strategy / spec commit | `5c7e931a22c4a6f03df3ee06a6932922290d32c3` (repo HEAD at report time) | `git rev-parse HEAD` |
 | Reconciliation-code commit | `a644decf532d09c93fe1a139c52843348361d399` | `git log -1 -- scripts/hunt_paper_reconcile.py` |
-| Clean-start candidate timestamp | *(blank — §11 conditions not all met)* | — |
+| Clean-start candidate timestamp | *(blank, §11 conditions not all met)* | — |
 
 ---
 
@@ -41,9 +41,9 @@ Live broker snapshot at report time (no separate pre-open artifact). Cross-check
 | Net exposure (Σ signed mv) | `$109,751.33` | positions |
 | Foreign positions (count) | `0` | `_reconcile.jsonl` `foreign_positions.n` + live |
 | Open flatten orders (count) | `0` | `get_orders(OPEN)` |
-| Flatten quantity — submitted | `INCONCLUSIVE` (not stored on latest row as a scalar; historical Jul-10 notes cited 1,563) | — |
-| Flatten quantity — filled | `INCONCLUSIVE` (same) | — |
-| Flatten quantity — remaining | `0` | `foreign_positions.flatten_remaining_total` |
+| Flatten quantity: submitted | `INCONCLUSIVE` (not stored on latest row as a scalar; historical Jul-10 notes cited 1,563) | — |
+| Flatten quantity: filled | `INCONCLUSIVE` (same) | — |
+| Flatten quantity: remaining | `0` | `foreign_positions.flatten_remaining_total` |
 
 **Cash note (triage, not a flatten-gate input):** cash is negative because the book is leveraged long
 (~1.12× gross / equity, multiplier=4). This is consistent with margin on a long ETF-heavy book, not
@@ -61,9 +61,9 @@ prior mark). Leave as monitoring; do not treat as residual inventory.
 | 3 | No terminally failed flatten order attached to a nonzero foreign position | **PASS** | live `failed_flatten=false`; open orders=0; rejects=0 |
 | 4 | Independent broker snapshot agrees with ledger on foreign/flatten | **PASS** | live foreign_n=0 matches reconcile foreign_n=0 (`paper_status` g4 PASS) |
 
-**Overall flatten gate:** **COMPLETE** — foreign inventory cleared; live and ledger agree on foreign=0.
+**Overall flatten gate:** **COMPLETE**: foreign inventory cleared; live and ledger agree on foreign=0.
 
-*(Separate from flatten: first **launchd** cycle has still never fired — see §9/§10.)*
+*(Separate from flatten: first **launchd** cycle has still never fired; see §9/§10.)*
 
 ---
 
@@ -75,7 +75,7 @@ No **foreign** residuals. One **wrong-side / incomplete-book** exception (in-tar
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | AMAT | −1 | short | ~$584 | −$583.44 | none open | INCONCLUSIVE | INCONCLUSIVE | 1 share short vs long `$324.76` target | active | yes | Known Jul-10 held-for-orders residue; book target is long AMAT (`target_dollars.AMAT=324.76`) but broker still holds −1 | **Do not hand-trade.** Let tonight's `hunt_paper_run.py --live` net toward the aggregate target; re-check post-cycle. |
 
-Also incomplete (in target, not held — contribute to gap, not foreign):
+Also incomplete (in target, not held; contribute to gap, not foreign):
 `AMD, CAT, DELL, FIX, GOOG, GOOGL, KLAC, LITE, MU, SNDK, STX, WDC` (12 names from
 `momentum_concentrated` sleeve).
 
@@ -92,7 +92,7 @@ Also incomplete (in target, not held — contribute to gap, not foreign):
 | Foreign symbols (held, in no target) | none | `foreign_positions.symbols=[]` |
 | Silent-flat books | none (`flat_nights=0` all 7) | `_reconcile.jsonl` `books[*]` |
 
-**Reconcile sufficiently to begin the clean forward clock?** **NO** — flatten gate is COMPLETE, but
+**Reconcile sufficiently to begin the clean forward clock?** **NO**: flatten gate is COMPLETE, but
 (1) first launchd cycle has not run (`nightly.log` absent, `runs=0`); (2) AMAT wrong-side residue + 12
 missing target names keep `position_gap_frac=4.99%`; (3) council + governance require a clean
 *automated* cycle before Coordinator manifest edit. Threshold judgment deferred to post-20:30
@@ -133,7 +133,7 @@ Source: latest `_reconcile.jsonl` for labeled session `2026-07-10` (re-measured 
 - **Reference-price definition:** reconcile run-date reference close (script default).
 - **Fills excluded:** not enumerated on row.
 - **Sample sufficiency:** **\<20 per class → interpretation WITHHELD.** Means are outside the
-  provisional bands printed by reconcile (ETF 0–5 bps, stock 0–15 bps) but `n<20` — log as
+  provisional bands printed by reconcile (ETF 0–5 bps, stock 0–15 bps) but `n<20`; log as
   monitoring for the second data point after tonight; do not retune bands.
 
 ---
@@ -168,9 +168,9 @@ No committed pre-open baseline row with broker equity/cash. Partial marks only:
 | Stale data | NO evidence | — |
 | Rejected or partial orders | NO | §6 zeros |
 | Corporate actions | INCONCLUSIVE | not audited this session |
-| Broker or scheduler failures | **YES — scheduler never fired** | `nightly.log` absent; launchctl `runs=0` |
+| Broker or scheduler failures | **YES: scheduler never fired** | `nightly.log` absent; launchctl `runs=0` |
 
-**Material contamination remaining?** **YES (operational)** — automated scheduler path unproven;
+**Material contamination remaining?** **YES (operational)**: automated scheduler path unproven;
 AMAT wrong-side share + incomplete momentum sleeve. Foreign stat-arb inventory: **cleared**.
 
 ---
@@ -207,9 +207,9 @@ if the job's trailing reconcile step failed), then amend this report with the fi
 section and only then submit a clean-start manifest edit for Kristen approval.
 
 ### Pre-flight already done this session (do not redo)
-1. Reconcile refreshed (`foreign=0`, gap `4.99%`, 304/304 fills) — appended `_reconcile.jsonl`.
+1. Reconcile refreshed (`foreign=0`, gap `4.99%`, 304/304 fills); appended `_reconcile.jsonl`.
 2. launchd loaded; weekdays 20:30; cwd + `.venv` paths correct; log dir writable; no pid/lock files.
-3. `pmset`: system sleep enabled (`sleep 1`) but currently prevented by active apps — **do not close
+3. `pmset`: system sleep enabled (`sleep 1`) but currently prevented by active apps; **do not close
    lid / force sleep before 20:30.**
 4. No manual `hunt_paper_run.py --live` (council: leave alone until scheduled fire).
 
@@ -243,16 +243,16 @@ unattended:
 
 **Still blocking a clean-start (unchanged from §5, NOT resolved by the automated cycle):**
 - **AMAT wrong-side −1** (Jul-10 held-for-orders residue) did **not** net to its long target on the
-  automated cycle — still short 1 share vs a long target.
+  automated cycle; still short 1 share vs a long target.
 - **position_gap_frac WIDENED** `4.99% → 5.77%` (moved the wrong direction).
 
-**Amended readiness verdict:** still **OPERATIONAL CYCLE PASSED, CLEAN CLOCK NOT STARTED** — but the
+**Amended readiness verdict:** still **OPERATIONAL CYCLE PASSED, CLEAN CLOCK NOT STARTED**, but the
 reason narrows from "scheduler unproven + gap/AMAT" to **"gap/AMAT only."** The automated path is now
 proven.
 
 **Approval (Kristen, 2026-07-14):** **APPROVED** as an operational-cycle-passed status record.
 Scope of this approval, explicit:
-- It **does NOT** start the clean-forward clock (§11 timestamp stays **BLANK** — AMAT + gap unresolved).
+- It **does NOT** start the clean-forward clock (§11 timestamp stays **BLANK**: AMAT + gap unresolved).
 - It **does NOT** authorize a `DEPLOYMENT_MANIFEST.md` edit (that remains a separate Coordinator action).
 - Starting the clock requires a **subsequent cycle that nets AMAT to its long target and brings the gap
   back down**, then a fresh amendment here + the Coordinator manifest edit.

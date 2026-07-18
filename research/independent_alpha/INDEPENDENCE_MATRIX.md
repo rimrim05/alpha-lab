@@ -7,7 +7,7 @@ Method + reproducible script: `research/independent_alpha/independence/compute_i
 ## What was computed (not hand-waved)
 
 For each of the 7 live books I reconstructed a **daily net return series** using the exact
-runner path — `compute_book` → `_heal_etfs` → `harness.run(spec, panel)["net_daily"]` on
+runner path: `compute_book` → `_heal_etfs` → `harness.run(spec, panel)["net_daily"]` on
 `research/hunt2026/panel_2005.parquet` (same P&L convention: held = W.shift(1), close-to-close,
 costs 2/10 bps). SPY and QQQ buy-and-hold factors built the same way. Window after warm-up:
 **2005-01-03 → 2026-07-10, n = 5,413 trading days** (robustness re-run on the all-books-active
@@ -29,10 +29,10 @@ trend_vol 2005-10, defensive_ensemble 2005-01, dual_momentum_gold/gem 2008-05, m
 
 **Verdict: the expected finding is CONFIRMED, with numbers.** vol_managed_qqq / vol_core_svxy /
 trend_vol_qqq collapse to ~1 factor (residual corr 0.71–0.86, mean 0.79). Removing SPY+QQQ barely
-dents their co-movement — the shared thing is a *vol/trend risk-management estimator*, not market
+dents their co-movement: the shared thing is a *vol/trend risk-management estimator*, not market
 beta. This is the same one-cluster reality already flagged in CANONICAL_STATE §2 and F-014
 (trend+vol combine HALVES median excess) / F-020 (vol-management does NOT replicate cross-market,
-3/7) — now quantified at the return-series level.
+3/7): now quantified at the return-series level.
 
 ## Raw pairwise correlation (7×7)
 
@@ -61,10 +61,10 @@ dual_momentum_gold       0.081    -0.237    0.791
 momentum_concentrated   -0.002    -0.025    0.432
 dual_momentum_gem        0.048    -0.188    1.017
 ```
-All the vol/trend books load heavily on QQQ (0.97–1.38) and short a little SPY — i.e. they ARE a
+All the vol/trend books load heavily on QQQ (0.97–1.38) and short a little SPY, i.e. they ARE a
 levered-QQQ-with-a-vol-switch. `momentum_concentrated` has ~zero alpha (−0.002) and the lowest
 factor loadings, consistent with the dead-XS-momentum finding (F-015/16). Alpha here is
-regression intercept, **not** an independent-alpha claim — most of it is the vol-timing estimator,
+regression intercept, **not** an independent-alpha claim: most of it is the vol-timing estimator,
 which does not survive as a cross-market market-forecast (F-020).
 
 ## Residual correlation (after removing SPY+QQQ) — the real independence test
@@ -83,15 +83,15 @@ dual_momentum_gem     0.24   0.28   0.35   0.45    0.50    0.39    1.00
 ## Clusters (residual corr > 0.5 = same information source)
 
 1. **Vol/trend risk-management cluster (one factor):** vol_managed_qqq, vol_core_svxy,
-   trend_vol_qqq — residual corr 0.71–0.86. **These are three implementations of ONE alpha.**
+   trend_vol_qqq: residual corr 0.71–0.86. **These are three implementations of ONE alpha.**
 2. **Cross-asset dual-momentum pair:** dual_momentum_gold ↔ dual_momentum_gem, residual 0.50.
    One mechanism, two menus (CANONICAL_STATE §2: right now they even hold an identical position).
-3. **momentum_concentrated — the most independent book:** residual corr 0.19–0.39 to everything,
+3. **momentum_concentrated, the most independent book:** residual corr 0.19–0.39 to everything,
    the only book with near-zero residual co-movement with the vol cluster. Independent, but its
    own evidence is weak (α ≈ 0, dead XS momentum).
 
 **defensive_ensemble is a bridge, not a 4th independent alpha.** Residual corr 0.51–0.68 to the
-vol cluster AND 0.60 to dual_momentum_gold — it shares the inverse-vol/defensive mechanism with
+vol cluster AND 0.60 to dual_momentum_gold: it shares the inverse-vol/defensive mechanism with
 both. It is a Portfolio-alpha sleeve (diversified premia), not an independent Market forecast.
 
 ## Four independence dimensions per pair (not one opaque score)
@@ -107,32 +107,32 @@ both. It is a Portfolio-alpha sleeve (diversified premia), not an independent Ma
 
 Downside (worst-decile SPY days, n=542) and shared-down-month Jaccard tables are in
 `corr_downside.csv` / `shared_failure_jaccard.csv`. Crisis correlation for the 3 vol books is
-0.765 — **they fail together when it matters most**, so they provide no crisis diversification for
+0.765: **they fail together when it matters most**, so they provide no crisis diversification for
 each other (the whole point of vol-management is supposed to be crisis behavior).
 
 ## Effective number of independent bets
 
-- **n_eff (raw) = 2.80** — the 7 books carry the information of ~2.8 independent series.
-- **n_eff (residual) = 4.12** — after stripping market beta, ~4.1 independent residual sources,
+- **n_eff (raw) = 2.80**: the 7 books carry the information of ~2.8 independent series.
+- **n_eff (residual) = 4.12**: after stripping market beta, ~4.1 independent residual sources,
   but two of those "sources" (the dual-momentum pair, and defensive_ensemble's overlap) are soft.
 
 ## Bottom line
 
 **The 7 books are NOT 7 independent alphas.** They are:
 - **1 dominant cluster** = the 3 vol/trend risk-management books (residual corr 0.79, crisis corr
-  0.77) — one alpha wearing three tickers;
+  0.77), one alpha wearing three tickers;
 - **+ 1 dual-momentum pair** (gold/gem, one mechanism);
 - **+ 1 genuinely-independent-but-weak book** (momentum_concentrated);
 - **+ defensive_ensemble** as a portfolio sleeve that *bridges* the vol cluster and dual-momentum,
   not a standalone independent forecast.
 
 **Genuinely independent clusters ≈ 3** (vol-cluster / dual-momentum / concentrated-momentum),
-n_eff ≈ 2.8 raw. The promoted 4 collapse toward ONE risk-management idea plus one portfolio wrap —
+n_eff ≈ 2.8 raw. The promoted 4 collapse toward ONE risk-management idea plus one portfolio wrap:
 exactly the concentration CANONICAL_STATE and F-014/F-020 warned about. Any capital-allocation or
 "diversified book" narrative built on 7 names is overstated; it is ~3 bets, one of them dominant.
 
 ### Evidence ladder
-Residualization is an **Estimator/Portfolio-alpha** diagnostic, not a market forecast — it lowers,
+Residualization is an **Estimator/Portfolio-alpha** diagnostic, not a market forecast: it lowers,
 never raises, an independence claim. This memo supports **Level 2 (residual)** for the finding
 "the vol books are one cluster"; it does not by itself grant any book a higher independent-alpha
 level. Forward paper NAV (Level 5) remains the only thing that can separate the pair/bridge cases.

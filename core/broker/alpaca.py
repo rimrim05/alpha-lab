@@ -1,11 +1,11 @@
-"""Live Alpaca **paper** adapter — the one piece that touches keys + network, built last.
+"""Live Alpaca **paper** adapter: the one piece that touches keys + network, built last.
 
 Behind the same `Broker` interface, so nothing upstream changes: the nightly loop cannot tell it from
 `FakeBroker`. Hardcodes the paper endpoint and asserts at runtime it is not the live URL. Keys come from
 the env (`ALPACA_API_KEY_ID` / `ALPACA_API_SECRET_KEY`), never committed.
 
 The `TradingClient` is INJECTED (not built in __init__) so the adapter is unit-tested with a mock, no
-network, no keys — matching the repo rule that tests never touch the network. `alpaca_paper_broker()`
+network, no keys, matching the repo rule that tests never touch the network. `alpaca_paper_broker()`
 is the factory that wires the real client from env for the live runner.
 """
 import os
@@ -57,7 +57,7 @@ class AlpacaBroker(Broker):
         return self._order_errors
 
     def cancel_all_orders(self) -> None:
-        """Cancel any still-pending orders before staging a fresh book — keeps a nightly run
+        """Cancel any still-pending orders before staging a fresh book. Keeps a nightly run
         idempotent against leftover queued orders (e.g. a prior run's unfilled orders)."""
         self._tc.cancel_orders()
 

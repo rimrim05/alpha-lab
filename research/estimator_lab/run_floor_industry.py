@@ -1,4 +1,4 @@
-"""Phase 7: FF+industry known-model arm — vetted residual-factor panel for Stage 2.
+"""Phase 7: FF+industry known-model arm: vetted residual-factor panel for Stage 2.
 
 Frozen prereg: FLOOR_INDUSTRY_MEMO.md (rev 2). Two arms per primary window:
 A = FF3+MOM cross-sectional projection (Phase 6 rerun under the empirical screen);

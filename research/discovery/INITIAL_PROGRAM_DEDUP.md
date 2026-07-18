@@ -6,7 +6,7 @@ already-completed prereg batch BEFORE new work. Verdicts use the charter vocabul
 
 **Headline:** the Discovery Program is **data-gated, not idea-gated.** Two of the five are
 buildable now (Exp 5 done, Exp 4 audit); the three highest-value market lanes (Exp 1, 2, 3) are
-**BLOCKED BY DATA** with a single cheap unblock — FRED/VIX ingest, then let the PIT-earnings
+**BLOCKED BY DATA** with a single cheap unblock: FRED/VIX ingest, then let the PIT-earnings
 collector accrue. This matches [../independent_alpha/DATA_GAP_MAP.md](../independent_alpha/DATA_GAP_MAP.md) §4.
 
 | Exp | title | dedup verdict | status | evidence / pointer |
@@ -20,10 +20,10 @@ collector accrue. This matches [../independent_alpha/DATA_GAP_MAP.md](../indepen
 ## What this means for sequencing
 1. **The one action that unblocks the most:** ingest & validate FRED (rates/curve) + a real
    ^VIX/VIX3M series (timestamp + leakage checks). Unblocks Exp 3 **and** the bond-carry slice of
-   Exp 4 — the cheapest real gap (DATA_GAP_MAP §4 #1).
+   Exp 4: the cheapest real gap (DATA_GAP_MAP §4 #1).
 2. **Keep the PIT-earnings collector accruing** toward n≥300 (Exp 1 / Lane 1, the highest-priority
    lane). Enabled + read-only, gated for deployment (DEPLOYMENT_MANIFEST).
-3. **Everything measurable on in-repo price/volume is exhausted** — the just-run batch killed the
+3. **Everything measurable on in-repo price/volume is exhausted**: the just-run batch killed the
    last daily-bar reversal reopen (H-E1) and the fill-point question (H-D1). Do not open more
    price/volume probes; the reopen condition is new data (charter § 5).
 4. **Nothing here promotes to funded paper.** Any survivor exits via Research Director → Red Team

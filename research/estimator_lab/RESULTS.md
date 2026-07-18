@@ -6,7 +6,7 @@ summary: `summary.csv`. Pre-registration: `PLAN.md`.
 
 **Holding-window alignment:** weights set at close `d` earn returns `d+1 … next_d`
 (harness convention). Day `d`'s own return is the last day of the fit window, so it is
-excluded from the OOS hold — no fit/eval overlap. (An earlier draft included day `d`;
+excluded from the OOS hold, no fit/eval overlap. (An earlier draft included day `d`;
 correcting it moved every number by ≤ a few bps and changed no ranking.)
 
 ## Mean realized ann. vol (primary metric)
@@ -54,10 +54,10 @@ correcting it moved every number by ≤ a few bps and changed no ranking.)
 
 | expectation | outcome |
 |---|---|
-| sample worst by far (1.5–3x, >15%) | **Partly wrong.** Sample is worst or near-worst, but only ~14%, not catastrophic — the pinv min-norm solution plus the 5% cap is itself a regularizer. Its **8.7** monthly turnover is the real tell (unusable; net Sharpe 0.15). |
+| sample worst by far (1.5–3x, >15%) | **Partly wrong.** Sample is worst or near-worst, but only ~14%, not catastrophic, the pinv min-norm solution plus the 5% cap is itself a regularizer. Its **8.7** monthly turnover is the real tell (unusable; net Sharpe 0.15). |
 | pca k improves, k=3/5 ≥ k=1 | **Held unconstrained** (14.9% → 12.1% as k grows); **reversed long-only** (k=1 best at 11.69%, degrades in k). |
 | jse_k < pca_k with gap growing in k | **Rejected.** Unconstrained, JSE is significantly *worse* at every k (+14 to +31 bps, t ≈ 8–12), and the gap *shrinks* in k. Long-only, the difference is statistically significant at k=3,5 but economically zero (< 1 bp). |
-| lw competitive, mp ≈ lw | **Held, understated.** MP clipping is the best unconstrained estimator (11.27%), LW second — both beat every factor model. Long-only they fall behind PCA. |
+| lw competitive, mp ≈ lw | **Held, understated.** MP clipping is the best unconstrained estimator (11.27%), LW second, both beat every factor model. Long-only they fall behind PCA. |
 | long-only compresses differences | **Held.** JSE−PCA collapses to ~0; all estimators land in 11.7–14.2%. |
 
 **Bottom line:** the Goldberg bridge does not carry at k>1 on this design. Diagnosis
@@ -80,11 +80,11 @@ Runtime: ~20s single-core for the full 9-estimator × 2-book × 137-month grid.
 
 - **n=63 reopen** (`results_w63.csv`, `summary_w63.csv`): long-only JSE significantly
   beats PCA at every k (k=3: −2.0 bps, t=−6.0); unconstrained still worse. F-021 partially
-  reopened — see FAILURES.md.
+  reopened, see FAILURES.md.
 - **EXP-EST-CROSSOVER** (`CROSSOVER.md`, `crossover.csv`): mapped n ∈ {42,63,90,126,189,252}
   at k=3. **No crossover exists**: long-only JSE helps at every n (−2.6 bps at n=42 decaying
   monotonically to −0.5 bps at n=252, always p<0.0001); unconstrained JSE hurts at every n.
-  ψ̂ predicts the regime only through p/n — within a fixed n it has zero month-level timing
+  ψ̂ predicts the regime only through p/n, within a fixed n it has zero month-level timing
   content. Deployable rule: JSE always-on in long-only, never unconstrained; benefit
   ≈ −0.24 bps per unit p/n. This supersedes the "economically zero at n=252" long-only
   reading above: tiny but real and significant at every window.

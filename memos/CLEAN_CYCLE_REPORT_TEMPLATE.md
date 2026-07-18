@@ -5,14 +5,14 @@ committed. Populate ONLY from broker + ledger evidence after the real first post
 approval **before** committing or changing `DEPLOYMENT_MANIFEST.md`.
 
 **How to populate (rules):**
-- Every value comes from a cited artifact — read-only `get_account` / `get_all_positions` / `get_orders`
+- Every value comes from a cited artifact: read-only `get_account` / `get_all_positions` / `get_orders`
   snapshots and `ledgers/hunt2026/*.jsonl` (esp. `_reconcile.jsonl`). Never infer a field; leave it
   `INCONCLUSIVE` with the reason if the evidence is missing.
 - Keep **canceled** and **rejected** separate everywhere.
 - Do not draw performance/alpha conclusions. This is an **operational** report.
 - Do not record a clean-start timestamp (§11) unless §3 (all four gates), §5 (reconcile), and §9 (no material
   contamination) all pass.
-- §7-of-the-audit risk controls remain **proposal-only** — this template neither implements nor assumes them.
+- §7-of-the-audit risk controls remain **proposal-only**: this template neither implements nor assumes them.
 
 > Fill placeholders written as `<…>`. Mark gate/verdict cells with the allowed enum only. Blank cells stay blank
 > until evidenced.
@@ -24,8 +24,8 @@ approval **before** committing or changing `DEPLOYMENT_MANIFEST.md`.
 | Field | Value | Source |
 |---|---|---|
 | Broker session date (regular session being reconciled) | `<YYYY-MM-DD>` | exchange calendar / fill dates |
-| Snapshot timestamp — pre-cycle baseline | `<ISO8601>` | read-only `get_account`/`get_all_positions` |
-| Snapshot timestamp — post-cycle | `<ISO8601>` | read-only snapshot |
+| Snapshot timestamp: pre-cycle baseline | `<ISO8601>` | read-only `get_account`/`get_all_positions` |
+| Snapshot timestamp: post-cycle | `<ISO8601>` | read-only snapshot |
 | Scheduler run ID | `<launchd run / nightly.log marker>` | `artifacts/hunt2026/paper/nightly.log` |
 | Strategy / spec commit | `<git sha>` | frozen specs (`ff71245` / `354bf47` baseline) |
 | Reconciliation-code commit | `<git sha>` | `scripts/hunt_paper_reconcile.py` HEAD |
@@ -49,9 +49,9 @@ cross-check `_reconcile.jsonl` last pre-open row.
 | Net exposure (Σ signed mv) | `<$>` | positions |
 | Foreign positions (count) | `<n>` | `foreign_positions.n` |
 | Open flatten orders (count) | `<n>` | `get_orders(OPEN)` opposing held side |
-| Flatten quantity — submitted | `<shares>` | `flatten_submitted_qty` Σ |
-| Flatten quantity — filled | `<shares>` | `flatten_filled_qty` Σ |
-| Flatten quantity — remaining | `<shares>` | `flatten_remaining_total` |
+| Flatten quantity: submitted | `<shares>` | `flatten_submitted_qty` Σ |
+| Flatten quantity: filled | `<shares>` | `flatten_filled_qty` Σ |
+| Flatten quantity: remaining | `<shares>` | `flatten_remaining_total` |
 
 ---
 
@@ -67,7 +67,7 @@ sufficient. Gate = COMPLETE only if all four PASS.
 | 3 | No terminally failed flatten order (filled/canceled/rejected/expired) attached to a nonzero position | `<PASS\|FAIL\|INCONCLUSIVE>` | `<per-symbol order_status vs qty>` |
 | 4 | Independent broker snapshot agrees with the ledger (positions, signed exposure, flatten quantities) | `<PASS\|FAIL\|INCONCLUSIVE>` | `<fresh get_* vs _reconcile.jsonl diff>` |
 
-**Overall flatten gate:** `<COMPLETE / NOT COMPLETE>` — `<one-line reason>`
+**Overall flatten gate:** `<COMPLETE / NOT COMPLETE>`: `<one-line reason>`
 
 ---
 
@@ -80,7 +80,7 @@ proposed here without explicit authorization.
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `<SYM>` | `<±q>` | `<long/short>` | `<$>` | `<±$>` | `<status>` | `<q>` | `<q>` | `<q>` | `<active/halted/delisted>` | `<yes/no>` | `<cause>` | `<recommendation>` |
 
-*(If empty: "No residual exceptions — all foreign inventory flattened and reconciled.")*
+*(If empty: "No residual exceptions: all foreign inventory flattened and reconciled.")*
 
 ---
 
@@ -103,7 +103,7 @@ Source: `_account` aggregate target row vs `get_all_positions`; per-symbol at th
 |---|---|---|---|---|---|---|
 | `<SYM>` | `<q>` | `<q>` | `<Δq>` | `<$>` | `<$>` | `<Δ$>` |
 
-**Reconcile sufficiently to begin the clean forward clock?** `<YES / NO / INCONCLUSIVE>` — `<reason; threshold:
+**Reconcile sufficiently to begin the clean forward clock?** `<YES / NO / INCONCLUSIVE>`: `<reason; threshold:
 position_gap_frac in-band, zero foreign, zero silent-flat>`
 
 ---
@@ -129,7 +129,7 @@ Canceled and rejected kept separate. Source: `get_orders` bucketed to the run-da
 ## 7. Slippage
 
 ETFs and stocks separate. Side-adjusted vs the run-date reference close; positive = worse than model. **Do not
-draw conclusions from a sample too small to support them** — if `fill count < 20` per class, report the numbers
+draw conclusions from a sample too small to support them**: if `fill count < 20` per class, report the numbers
 and explicitly state the sample is below the pre-registered threshold and interpretation is withheld.
 
 | Metric | ETF | Stock |
@@ -181,7 +181,7 @@ clean start (§10/§11).
 | Corporate actions | `<YES/NO>` | `<splits/divs on held names in window>` |
 | Broker or scheduler failures | `<YES/NO>` | `<nightly.log / run ID>` |
 
-**Material contamination remaining?** `<YES / NO>` — `<one-line reason>`
+**Material contamination remaining?** `<YES / NO>`: `<one-line reason>`
 
 ---
 

@@ -25,10 +25,10 @@ Fundamentals, Estimates) return 403.**
 - **Earnings-IC lane** (needs a forward-collected PIT estimates/surprise panel): Estimates content = 403.
   Even an entitled Estimates Report Builder returns *current-vintage per-entity consensus tables*, which
   the frozen EXP-IC-EARNINGS-FWD prereg **explicitly excludes** (no vendor backfill; PIT only). So
-  FactSet does not change the earnings-lane design — the forward collector remains the correct, gated path.
+  FactSet does not change the earnings-lane design: the forward collector remains the correct, gated path.
 
 ## What the entitled piece (Entity Report Builder) COULD do
-`/report/entity/v1/structure` returns entity corporate-structure tables — usable to resolve
+`/report/entity/v1/structure` returns entity corporate-structure tables: usable to resolve
 successor/predecessor linkage for the repair's 175 unmatched rename/M&A names (e.g. ABX→GOLD), a
 complement to the Polygon delist dates. Not prices. Build only if worth it vs a real price source.
 

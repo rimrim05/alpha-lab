@@ -1,13 +1,13 @@
 """Leakage guards for the signal-quality meta-model.
 
 Two distinct leakage species, both tested:
-  (a) within-trade — exit-derived columns (holding_days, close_reason, realized_pnl...) must never
+  (a) within-trade: exit-derived columns (holding_days, close_reason, realized_pnl...) must never
       enter the feature matrix. This is the one that produces a beautiful AUC that dies forward.
-  (b) temporal — walk-forward must not predict a month using its own or future rows (the first month
+  (b) temporal: walk-forward must not predict a month using its own or future rows (the first month
       has no prior history and must stay unpredicted).
 
 The dataset test runs anywhere (pandas only). The walk-forward test needs xgboost (train.py), so it
-importorskips — it runs in .venv-report, is skipped in the audited .venv.
+importorskips; it runs in .venv-report, is skipped in the audited .venv.
 """
 import numpy as np
 import pandas as pd

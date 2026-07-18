@@ -7,7 +7,7 @@ Usage: .venv/bin/python scripts/gkx_run.py
 Alignment note (verified with a toy check, see STATE): expanding_window_predict returns
 y_true[t] = the forward (t->t+1) return that score[t] forecasts, so scores and y_true are
 contemporaneously aligned at date t. core.backtest lags weights by one period internally
-(held = weights.shift(1)), so we feed it `actual.shift(1)` — pairing weight(t) with
+(held = weights.shift(1)), so we feed it `actual.shift(1)`, pairing weight(t) with
 y_true(t), realization dated t+1. Feeding `actual` unshifted would credit each month's
 return to the prior month's position (misaligned).
 """

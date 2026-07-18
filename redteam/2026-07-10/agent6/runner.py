@@ -210,7 +210,7 @@ PARAM_GRID = {  # book -> list of (label, key, value)
 
 
 def universe_variants(book, panel_):
-    """Yield (label, mod_or_None, panel) — mod=None means use fresh baseline mod."""
+    """Yield (label, mod_or_None, panel): mod=None means use fresh baseline mod."""
     if book in ("vol_managed_qqq", "trend_vol_qqq"):
         yield "U1-spy", fresh_mod(book), swap_qqq_spy(panel_)
     elif book == "vol_core_svxy":

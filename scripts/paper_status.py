@@ -1,10 +1,10 @@
-"""paper_status.py — STRICTLY READ-ONLY status for the hunt2026 paper system.
+"""paper_status.py: STRICTLY READ-ONLY status for the hunt2026 paper system.
 
 One manual command that answers, without reading ten JSON files by hand:
-  1. LATEST COMPLETED RUN   — historical proof-of-cycle from the ledgers
-  2. LIVE BROKER SNAPSHOT    — current accounts / positions / OPEN orders (as-of now), BOTH the
+  1. LATEST COMPLETED RUN   : historical proof-of-cycle from the ledgers
+  2. LIVE BROKER SNAPSHOT    : current accounts / positions / OPEN orders (as-of now), BOTH the
      shared ETF account and the dedicated momentum_concentrated account
-  3. GATE / READINESS STATE  — four-part flatten gate, reconciliation, clean-forward clock
+  3. GATE / READINESS STATE  : four-part flatten gate, reconciliation, clean-forward clock
 
 Read-only guarantees (enforced by test_paper_status.py::test_no_write_or_order_paths):
   - never submits / cancels / replaces / modifies any order;
@@ -49,7 +49,7 @@ LEDGER_DIR = ROOT / "ledgers" / "hunt2026"
 RECONCILE = LEDGER_DIR / "_reconcile.jsonl"
 ACCOUNT = LEDGER_DIR / "_account.jsonl"
 # Dedicated momentum_concentrated account (mc-isolation cutover 2026-07-15). Monitored only once
-# the cutover has actually produced a live _account_mc row — pre-cutover trees stay unaffected.
+# the cutover has actually produced a live _account_mc row; pre-cutover trees stay unaffected.
 RECONCILE_MC = LEDGER_DIR / "_reconcile_mc.jsonl"
 ACCOUNT_MC = LEDGER_DIR / "_account_mc.jsonl"
 # Duplicated from hunt_paper_run.MC_CRED_NAMES on purpose: the read-only guarantee forbids importing
@@ -66,7 +66,7 @@ PLIST = Path.home() / "Library" / "LaunchAgents" / "com.rimrim.hunt2026-paper.pl
 NIGHTLY_LOG = ROOT / "artifacts" / "hunt2026" / "paper" / "nightly.log"
 LABEL = "com.rimrim.hunt2026-paper"
 
-# ponytail: weekday-minus-holiday session calendar — pandas_market_calendars isn't installed.
+# ponytail: weekday-minus-holiday session calendar; pandas_market_calendars isn't installed.
 # Upgrade path: swap _trading_day for mcal.get_calendar("XNYS") if that dep ever lands. This set
 # only needs to cover the paper program's live window (2026-07 onward) to avoid false MISSING.
 US_HOLIDAYS_2026 = {
@@ -84,7 +84,7 @@ ISO_RE = re.compile(
     r"\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2})?(?:[+-]\d{2}:\d{2}|Z)?)?")
 
 # Embedded fallback trading calendar covers ONLY these years (ponytail: hardcoded stopgap until
-# pandas_market_calendars lands). Outside this range we do NOT assume weekdays are trading days —
+# pandas_market_calendars lands). Outside this range we do NOT assume weekdays are trading days;
 # calendar confidence drops to LIMITED and session-staleness is reported UNKNOWN.
 CAL_YEARS = (2026,)
 
@@ -136,7 +136,7 @@ def run_health(session: str, account_live_dates: set[str], reconcile_dates: set[
 
 def scheduler_meta(exit_status: int | None, log_exists: bool, log_mtime: dt.datetime | None,
                    session: str, first_fire_passed: bool) -> dict:
-    """CORROBORATING metadata only — never the completion proof (see module docstring)."""
+    """CORROBORATING metadata only, never the completion proof (see module docstring)."""
     if not first_fire_passed:
         return {"health": "PENDING FIRST RUN",
                 "note": "launchd job has not fired yet; missing log / exit 0 are not failures"}
@@ -203,7 +203,7 @@ def clean_clock(manifest_ts: str | None, residue_present: bool) -> dict:
 
 def next_action(broker_ok: bool, run_status: str, books_ok: bool, rejects: int,
                 gate_complete: bool, clock_state: str, first_fire_passed: bool) -> str:
-    """Deterministic single next operational action — first matching rule wins."""
+    """Deterministic single next operational action; first matching rule wins."""
     if not broker_ok:
         return "Restore broker connectivity; live snapshot is degraded."
     if run_status in ("MISSING", "PARTIAL") and first_fire_passed:
@@ -330,7 +330,7 @@ def _load_ledgers() -> dict:
                 account_live_dates.add(d)
             elif not book.startswith("_"):
                 # `_`-prefixed rows are account/meta ledgers (_account_mc, _reconcile_mc), never
-                # strategy books — counting them inflates books_computed past 7 (mc cutover 2026-07-15).
+                # strategy books; counting them inflates books_computed past 7 (mc cutover 2026-07-15).
                 book_dates[d].add(book)
     book_counts = {d: len(s) for d, s in book_dates.items()}
     recon_rows = ([json.loads(x) for x in RECONCILE.read_text().splitlines()]
@@ -369,7 +369,7 @@ def _broker_snapshot(target_symbols: set[str], since: str,
     key, secret = os.environ.get(cred_names[0]), os.environ.get(cred_names[1])
     if not (key and secret):
         return {"ok": False, "error": f"{cred_names[0]} / {cred_names[1]} not in env/.env"}
-    # ponytail: retry the live snapshot — a single transient APIError (Alpaca blip/rate-limit)
+    # ponytail: retry the live snapshot; a single transient APIError (Alpaca blip/rate-limit)
     # otherwise fires a false BROKER-UNREACHABLE alarm. 3 tries, 2s/4s backoff.
     last_err = None
     for attempt in range(3):
@@ -377,7 +377,7 @@ def _broker_snapshot(target_symbols: set[str], since: str,
             time.sleep(2 * attempt)
         try:
             return _broker_snapshot_once(key, secret, target_symbols, since)
-        except Exception as e:  # broker down / SDK / network — retry, then degrade
+        except Exception as e:  # broker down / SDK / network, retry, then degrade
             last_err = e
     return {"ok": False, "error": type(last_err).__name__}
 

@@ -25,15 +25,15 @@ Detector D_j = R² of residual-factor returns on estimated known-factor returns;
   everywhere; the single bar violation is FPR 0.12 at (350,90) vs the 0.10 bar.
 - **Mechanism of the false positives (diagnosed, not patched):** the estimated factor
   returns f̂_F = B̃_FᵀY are noise-contaminated, and the residual factor series share the
-  SAME noise realization — so genuine factors' R² sits slightly above the F-null (med D
+  SAME noise realization, so genuine factors' R² sits slightly above the F-null (med D
   0.058–0.090 vs null ≈ k_F/n), worst where n/p is largest (350,90 = 0.26). The F-test
   assumes an independent null; the shared-noise term violates it mildly. A split-sample
-  detector (estimate f̂_F on half the window, test on the other half) is the principled fix
-  — a NEW detector requiring a new prereg, not a threshold tweak.
-- **The trap is real and maximal: trap rate 100% in every LEAK/MIXED cell** — every truly
+  detector (estimate f̂_F on half the window, test on the other half) is the principled fix:
+  a NEW detector requiring a new prereg, not a threshold tweak.
+- **The trap is real and maximal: trap rate 100% in every LEAK/MIXED cell**: every truly
   leaked factor passes the trust screen with floor < 0.3, i.e. leaked structure looks
   PERFECTLY reliable to the floor+screen pipeline. Without a leakage check, a practitioner
-  would trust exactly the wrong factors. The floor itself is not fooled about (a) — the
-  leaked factors genuinely ARE well-estimated directions — but their PROVENANCE is wrong.
+  would trust exactly the wrong factors. The floor itself is not fooled about (a), the
+  leaked factors genuinely ARE well-estimated directions, but their PROVENANCE is wrong.
 - **NEG arm validates the pipeline order:** with no residual factors at all, the C4 screen
   rejects everything before the leak test ever runs (all-nan row = nothing survived to test).

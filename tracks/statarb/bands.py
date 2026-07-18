@@ -3,11 +3,11 @@
 Given a standardized series (pair spread z-score, or residual s-score), take a
 mean-reversion position: go long (+1) when the series is far BELOW zero (cheap,
 expect reversion up), short (-1) when far ABOVE zero, and flatten when it returns
-inside the exit band. Positions are stateful — held between crossings.
+inside the exit band. Positions are stateful, held between crossings.
 
 The state machine is path-dependent, so it can't be vectorized in pandas. The hot
 loop is ported to C++ (core/backtest/_fastbands, via pybind11); if that extension
-isn't built, we fall back to the pure-Python loop below — same signature, same
+isn't built, we fall back to the pure-Python loop below: same signature, same
 output (a parity test enforces exact equality).
 """
 import pandas as pd
@@ -15,7 +15,7 @@ import pandas as pd
 try:
     from core.backtest._fastbands import band_positions_c as _band_positions_c
     _HAVE_FAST = True
-except ImportError:  # extension not compiled — use the pure-Python fallback
+except ImportError:  # extension not compiled, use the pure-Python fallback
     _HAVE_FAST = False
 
 
@@ -42,7 +42,7 @@ def band_positions(series: pd.Series, entry: float = 2.0, exit_: float = 0.5,
                 pos = 1
             elif v >= entry:
                 pos = -1
-        elif pos == 1 and too_deep:   # knife kept falling — stop out the long
+        elif pos == 1 and too_deep:   # knife kept falling, stop out the long
             pos = 0
         elif abs(v) <= exit_:
             pos = 0

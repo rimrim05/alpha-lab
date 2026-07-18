@@ -32,7 +32,7 @@ JSE ≈ PCA to measurement noise, and spectrum shrinkage (MP, LW) beats both.
 ## Story
 
 TE, like min-var vol, turns out to be dominated by the subspace and the spectrum, not the
-within-subspace eigenvector directions — consistent with the subspace-invariance diagnosis
+within-subspace eigenvector directions: consistent with the subspace-invariance diagnosis
 (min-var is a subspace functional; evidently min-TE against a spanned-ish EW benchmark is
 too). The one theoretical opening for JSE here (active weights depend on eigenvector
 directions through (Σ w_b)_B) does not materialize at S&P scale because ψ̂ ≈ 1: the corrected

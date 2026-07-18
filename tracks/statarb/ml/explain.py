@@ -1,4 +1,4 @@
-"""SHAP feature attribution for the signal-quality meta-model — the standard 'which features drove
+"""SHAP feature attribution for the signal-quality meta-model: the standard 'which features drove
 the prediction' beeswarm every ML-signal paper ships. TreeExplainer on the full-data XGBoost model.
 Saves a beeswarm PNG under reports/ (committed).
 """

@@ -47,16 +47,16 @@ downstream use (Stage 2, final memo):
 
 1. **a_match headline RETRACTED.** The correct null for a_match (arm-B top-7 spanning
    arm-A top-5 after removing a RANDOM 11-dim cross-sectional subspace, sector sizes
-   preserved) has median 0.991. The observed 0.877 sits BELOW that mechanical floor —
+   preserved) has median 0.991. The observed 0.877 sits BELOW that mechanical floor:
    "factor directions persist nearly intact" was measured against the wrong null and
    carries zero positive information; read correctly, the sector projection removed
    MORE factor content than a random 11-dim projection would.
 2. **Null-relative control arithmetic.** Sector-R² on 11 regressors at n=63 has a dof
-   baseline ≈ 0.177. As EXCESS over that baseline — the memo's own frozen "levels are
-   meaningless" principle — the industry projection removed (0.430−0.169)/0.430 =
+   baseline ≈ 0.177. As EXCESS over that baseline (the memo's own frozen "levels are
+   meaningless" principle) the industry projection removed (0.430−0.169)/0.430 =
    60.6% ≥ the 50% bar: the control PASSES in its own spirit. The FAIL isolates to a
    raw-ratio metric that contradicted the memo's stated principle; this was catchable
-   pre-freeze and passed two review rounds — a process defect, recorded.
+   pre-freeze and passed two review rounds, a process defect, recorded.
 3. **"Theme structure" downgraded to UNRESOLVED.** Shared-calendar vol-regime coupling
    (sector series built from the same stale-vol-standardized names) explains the same
    three diagnostic facts; the persistence magnitude was also overstated ~2× by quoting
@@ -76,6 +76,6 @@ downstream use (Stage 2, final memo):
    2022-11-21 → 2026-03-02 (ending 2026-05-29), not "2021-11 → 2025-11" as the Phase 6
    research log stated.
 8. **Proceed-decision assessment (adversarial):** defensible on content, irregular on
-   process — a documented consequence-override, NOT verdict-shopping; its validity
+   process, a documented consequence-override, NOT verdict-shopping; its validity
    rests on point 2 above, not on the retracted persistence claims. Conditions (a)-(d)
    of the assessment are adopted as binding and reflected in points 1–6.

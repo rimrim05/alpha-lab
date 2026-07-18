@@ -30,7 +30,7 @@ def sharpe_bootstrap(returns: pd.Series, periods_per_year: int, n_sims: int = 10
     Path-luck check, complementary to deflated_sharpe (selection across trials) and the
     perturbation red-team (parameter sensitivity): how much does the point Sharpe depend on
     this particular composition of the return path? Read p05 against the repo kill bar
-    (net Sharpe < 0.5 is dead) — a wide interval or p05 < 0 means the headline number leans
+    (net Sharpe < 0.5 is dead): a wide interval or p05 < 0 means the headline number leans
     on a few lucky returns. Blocks preserve short-range autocorrelation.
     """
     r = returns.dropna().to_numpy(dtype=float)

@@ -1,4 +1,4 @@
-"""vol_core_svxy — vol-managed QQQ+SPY core with VIX-gated SVXY carry sleeve.
+"""vol_core_svxy: vol-managed QQQ+SPY core with VIX-gated SVXY carry sleeve.
 
 Core: 60/40 QQQ/SPY, each scaled to a constant-vol target (sigma_target / rv21,
 leverage capped at 2x per leg). Sleeve: hold svxy_weight in SVXY only when VIX
@@ -42,7 +42,7 @@ def target_weights(panel: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    # ponytail: minimal self-check — gross cap and no ^VIX weight
+    # ponytail: minimal self-check, gross cap and no ^VIX weight
     import sys
     sys.path.insert(0, str(Path(__file__).parents[2]))
     import harness

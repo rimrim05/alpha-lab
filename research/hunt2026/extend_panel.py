@@ -3,7 +3,7 @@
 Free-data honesty: pre-2014 stock history for a point-in-time universe would be
 survivorship fiction (yfinance has no delisted names), so stock columns are NaN and
 member=0 before 2014. ETFs have full real history from inception. Output:
-panel_2005.parquet — the walk-forward panel (adds GFC, 2011, 2015-16, 2018Q4 regimes
+panel_2005.parquet: the walk-forward panel (adds GFC, 2011, 2015-16, 2018Q4 regimes
 for every ETF-based spec).
 """
 import json

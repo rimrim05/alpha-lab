@@ -5,7 +5,7 @@ all production layers off it reproduces the equal-weight formula exactly (parity
 the weights path is used only when a sector/name cap is active.
 
 Signal vs P&L space (2026-07-10 engine fix): signals come from the RESIDUAL (which
-subtracts the trailing alpha estimate — fine for ranking, impossible to earn), but P&L
+subtracts the trailing alpha estimate, fine for ranking, impossible to earn), but P&L
 is scored on HEDGED returns (stock minus lagged-beta x sector ETF), the return an
 implementable book with an ETF hedge overlay actually realizes, charged for the
 overlay's own turnover at ETF spreads.
@@ -25,7 +25,7 @@ ETF_COST_BPS = 1.0  # per-side cost on the hedge overlay; sector ETFs are pennie
 def overlay_cost(weights: pd.DataFrame, beta: pd.DataFrame,
                  etf_cost_bps: float = ETF_COST_BPS) -> pd.Series:
     """Turnover cost of the ETF hedge overlay implied by `weights` (per-name book
-    weights) and lagged betas. Charged per name on |d(w*beta)|; conservative — ignores
+    weights) and lagged betas. Charged per name on |d(w*beta)|; conservative, ignores
     the netting of hedge legs across names sharing an ETF."""
     hedge = (weights * beta.shift(1)).fillna(0.0)
     return hedge.diff().abs().sum(axis=1) * etf_cost_bps / 1e4 * 2

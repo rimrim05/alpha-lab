@@ -6,7 +6,7 @@ Commit audited: 78e1a36. Written before any run of the analysis script.
 - Panel: train5y.parquet + holdout5y.parquet (checksums verified vs SCOPE.md).
 - Windows: W1 = 1y blind holdout (2025-07-10, 2026-07-10]; W2 = 5y (2021-07-10, 2026-07-10].
   Round-1 books (vol_managed_qqq, vol_core_svxy, dual_momentum_gem, momentum_concentrated)
-  are NOT blind on W2 (fit windows overlapped) — W2 regime numbers for them are
+  are NOT blind on W2 (fit windows overlapped): W2 regime numbers for them are
   stress-test attribution, not blind evidence. Round-2 books (trend_vol_qqq,
   defensive_ensemble, dual_momentum_gold) are blind on W2.
 - Book returns: frozen harness.run() on the frozen specs (I am not the engine auditor;
@@ -40,7 +40,7 @@ days in a window, its Sharpe is not reported (n too small), only its summed cont
 - C2: best single month's share of total net log return; HHI of positive monthly contributions.
 - C3 (W2 only): calendar-year decomposition of net and benchmark-relative return;
   flag if any single year > 50% of the 5y benchmark-relative sum.
-- C4: per regime — trading-day count, % of days, summed log net return, summed
+- C4: per regime: trading-day count, % of days, summed log net return, summed
   benchmark-relative return, annualized Sharpe (if n >= 15), and share of the max
   drawdown path (sum of negative daily log returns inside the book's max-DD window, by regime).
 - C5: minimum k such that replacing the book's k best benchmark-relative days with the
@@ -55,6 +55,6 @@ days in a window, its Sharpe is not reported (n too small), only its summed cont
 - M3 dual momentum books: mechanism says absolute-momentum gate steps aside in bears;
   check R1=bear exposure and contribution.
 - M4 momentum_concentrated: de-levers below SPY SMA200; check gross exposure in R1=bear.
-- Also: state what fraction of the 1y blind window falls in each regime — if bear/crisis
+- Also: state what fraction of the 1y blind window falls in each regime: if bear/crisis
   coverage in the blind window is ~0, the blind year is declared uninformative about
   those regimes (evidence gap, not a bug).

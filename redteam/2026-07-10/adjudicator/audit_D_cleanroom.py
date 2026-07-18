@@ -1,4 +1,4 @@
-"""Audit D — clean-room completion. Patches Agent 8's buggy month_ends/week_ends helpers
+"""Audit D: clean-room completion. Patches Agent 8's buggy month_ends/week_ends helpers
 (pandas groupby-apply KeyError), then compares clean-room weights (built from specs only)
 vs the frozen spec.py weights, per book, daily. Tolerance 1bp on net returns."""
 import sys

@@ -4,10 +4,10 @@
 **Last session:** 2026-07-06
 
 ## Built
-- `events.py` — SUE proxy = (actual − estimate) / |estimate|, floored; `fetch_earnings_yf`
-- `event_study.py` — CAR matrix around events, top-minus-bottom SUE-quintile drift spread
-- `universe.py` — 60 large caps (survivorship-biased placeholder)
-- `scripts/pead_run.py` — full run → `artifacts/pead/{events,cars}.parquet + drift.md`
+- `events.py`: SUE proxy = (actual − estimate) / |estimate|, floored; `fetch_earnings_yf`
+- `event_study.py`: CAR matrix around events, top-minus-bottom SUE-quintile drift spread
+- `universe.py`: 60 large caps (survivorship-biased placeholder)
+- `scripts/pead_run.py`: full run → `artifacts/pead/{events,cars}.parquet + drift.md`
 - Tests 2/2 green.
 
 ## First result (2026-07-06, 539 events, 2024-01 → ~2026-04)
@@ -17,7 +17,7 @@
 | +20d | 5.89% |
 | +60d | 8.45% |
 
-Monotone increasing drift — textbook PEAD direction and shape.
+Monotone increasing drift: textbook PEAD direction and shape.
 
 ## HONEST CAVEATS (do not treat this as validated alpha)
 1. **Survivorship bias**: universe = today's large caps. These names disproportionately

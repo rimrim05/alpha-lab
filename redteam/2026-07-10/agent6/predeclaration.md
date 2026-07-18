@@ -44,7 +44,7 @@ perturbation counts (tolerance: 0.1pp on total_net).
    rebalance day): k ∈ {1, 3}; applies to the 4 discrete-rebalance books
    (dual_momentum_gold, dual_momentum_gem, momentum_concentrated, defensive_ensemble)
    via minimally patched spec copies in agent6/scratch/ (frozen specs untouched).
-   For the daily-signal books this family coincides with signal delay — marked covered.
+   For the daily-signal books this family coincides with signal delay: marked covered.
 5. Execution timestamp: next-open execution (hold old weights over the night, new
    weights earn open→close): ret(t+1) = W(t-1)·r_overnight(t+1) + W(t)·r_intraday(t+1).
 6. Random missed trades: each day independently with prob p ∈ {5%, 10%}, the day's

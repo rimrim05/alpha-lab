@@ -2,17 +2,17 @@
 
 Built 2026-07-14 by build_residual_factors.py from the frozen Phase 6 floor pipeline (research/estimator_lab/run_floor_realdata.py; results FLOOR_REALDATA.md; diagnostics FLOOR_REALDATA_DIAG.md). Binding downstream prereg: research/hunt2026/preregistrations/factor-attribution-2026-07-14.md §M3.
 
-Panel: residual_factors.parquet — daily returns x2..x5, 2021-07-01 → 2026-05-29 (1233 trading days), NaN where no vetted factor. 14 windows with membership coverage ≥ 90% (63-return-day non-overlapping analysis windows, grid inherited from the pipeline).
+Panel: residual_factors.parquet: daily returns x2..x5, 2021-07-01 → 2026-05-29 (1233 trading days), NaN where no vetted factor. 14 windows with membership coverage ≥ 90% (63-return-day non-overlapping analysis windows, grid inherited from the pipeline).
 
 ## Vetting rules (hard, frozen before build)
-- residual PC1 excluded ALWAYS (leakage footprint — FLOOR_REALDATA.md Story #3)
+- residual PC1 excluded ALWAYS (leakage footprint, FLOOR_REALDATA.md Story #3)
 - PC2–5 kept iff: passes C4 in that window AND reported floor in [0,1] AND not leakage-flagged (leak = D ≥ window circular-shift null q99 AND F-test p < 0.01) AND localization L ≤ 0.30 (one-day-event artifact guard)
 
 ## Chaining / sign rule
 A factor is only defined within its 63-day window; x2..x5 are RANK-CHAINED series (PC rank 2..5 per window), not persistent economic factors. Sign alignment: each window's rank-j loading vector is correlated with the previous window's aligned rank-j loading on shared names; corr < 0 flips the sign of loading and returns (applied to every window for continuity; 23 flips total). Returns are in vol-standardized units (inherited from the pipeline), fine as regressors.
 
 ## Coverage
-- vetted windows span 2022-11-21 → 2026-03-02 (window starts). NOTE: the memo's 'coverage ≥ 90% ≈ 2021 onward' estimate was optimistic — in the frozen run the gate first passes at the 2022-11-21 window (2021-05→2022-08 windows sit at 0.867–0.899), so 2021-07-01 → 2022-11-18 is structurally all-NaN.
+- vetted windows span 2022-11-21 → 2026-03-02 (window starts). NOTE: the memo's 'coverage ≥ 90% ≈ 2021 onward' estimate was optimistic: in the frozen run the gate first passes at the 2022-11-21 window (2021-05→2022-08 windows sit at 0.867–0.899), so 2021-07-01 → 2022-11-18 is structurally all-NaN.
 - days with ≥ 1 vetted factor: 61.3% of the full 2021-07-01→2026-05-29 range; 85.7% of days from the first vetted window onward
 - x2: 15.3% of days
 - x3: 15.3% of days
@@ -118,7 +118,7 @@ Top exclusion reasons:
 
 ## LIMITS (read before using x2..x5)
 - These are rank-chained STATISTICAL factors, not economic factors. Rank j in one window need not be the same risk source as rank j in the next; identity is only sign-continuity via loadings on shared names.
-- C4 has a ~14% false-pass rate on real S&P residuals (heteroskedastic, heavy-tailed noise consumes the isotropic safety margin — FLOOR_REALDATA.md Story #1); some kept slots are plausibly noise despite passing every gate.
+- C4 has a ~14% false-pass rate on real S&P residuals (heteroskedastic, heavy-tailed noise consumes the isotropic safety margin, FLOOR_REALDATA.md Story #1); some kept slots are plausibly noise despite passing every gate.
 - Only 14 dependent windows, n = 63 obs each; adjacent windows share up to ~189 beta-window days, so buckets are correlated across neighbors (memo A8) and bucket shares are not stable population numbers.
-- Low D means low association with FF3+MOM ONLY — industry/sector structure is invisible to the detector (memo A7); candidate-residual-risk factors are plausibly sector risk, not risk beyond standard models.
+- Low D means low association with FF3+MOM ONLY: industry/sector structure is invisible to the detector (memo A7); candidate-residual-risk factors are plausibly sector risk, not risk beyond standard models.
 - Returns are vol-standardized units, window-level universe completeness is a known look-ahead (memo A3); descriptive regressor use only, no portfolio claims.

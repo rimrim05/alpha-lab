@@ -5,12 +5,12 @@ spend limit (0/11 agents returned structured reports). However, 9 of 10 auditors
 already written their scratch analysis code and output CSVs to disk before dying. This
 adjudication **re-ran that code directly** and reproduced the findings first-hand; where an
 agent's driver was missing or buggy, the adjudicator wrote/fixed it (noted per finding).
-This is therefore a genuine reproduction, not a paraphrase of unseen agent claims — but it
+This is therefore a genuine reproduction, not a paraphrase of unseen agent claims, but it
 is narrower than the full charter (Agents 6/7/10 analyses only partially harvested; see
 "Remaining audit work").
 
 ## 1. Scope & checksums
-Frozen commit `78e1a36` (HEAD later moved — a sibling session committed; audit ran against
+Frozen commit `78e1a36` (HEAD later moved: a sibling session committed; audit ran against
 frozen content). Panels verified against SCOPE.md md5s: panel_2005 `dc14c2da…` (5413 rows,
 2005-01-03→2026-07-10), train `232488b8…`, holdout `ab574ab3…`. Suite 152 passed / 1
 skipped at freeze. Roster: 7 books. No production file, spec, manifest, ledger, scheduler,
@@ -32,7 +32,7 @@ adjudicator to complete the checks; neither implicates the repo.
 
 ## 4. Confirmed methodological weaknesses
 
-**F-RT-01 — Diversification of the 7-book roster is overstated; excess-vs-naive is leverage,
+**F-RT-01: Diversification of the 7-book roster is overstated; excess-vs-naive is leverage,
 not alpha. [HIGH, CONFIRMED METHODOLOGICAL WEAKNESS]**
 Component: portfolio construction / benchmark choice. Reproduced from Agent 9
 (`beta_alpha_holdout.csv`, `corr_holdout.csv`, `factor_attrib_holdout.csv`) + Agent 5
@@ -57,24 +57,24 @@ invalidating. Remediation: report excess only vs exposure-matched controls (alre
 nightly); treat the roster as 2–3 sleeves in any future allocator. Does not require
 rerunning trials.
 
-**F-RT-02 — Effective independent trials ≈ 2.3, not 18. [MEDIUM, CONFIRMED METH. WEAKNESS]**
+**F-RT-02: Effective independent trials ≈ 2.3, not 18. [MEDIUM, CONFIRMED METH. WEAKNESS]**
 Agent 4 (`a4_dsr_audit.py`, reproduced): the 18 trials have mean pairwise corr **+0.60**;
 eigenvalue-effective count **2.3**. Monte-Carlo E[max Sharpe | null, empirical cov, N=18] =
 **0.49 ann**, *below* the repo's deflation threshold sr0 = 0.53 ann → the repo's DSR was
 **conservative, not inflated**. Post-deflation, Newey-West(10)-adjusted: defensive_ensemble
 **96.9%**, dual_momentum_gold 91.3%, trend_vol_qqq 91.0%, vol_core_svxy 85.2%,
 vol_managed_qqq 83.2%, dual_momentum_gem 73.4%, momentum_concentrated 80.2%. Belief change:
-none — corroborates the repo's own honest trial-count discipline. Scope limit: all on
+none. Corroborates the repo's own honest trial-count discipline. Scope limit: all on
 overlapping windows / ≤11y history; DSR assumptions (iid-ish, Gaussian tails) only partially
 met, so read as ordinal, not literal probabilities.
 
 ## 5. Plausible unresolved concerns
 
-**F-RT-03 — momentum_concentrated stock universe: ~13% of members unpriceable per day.
+**F-RT-03: momentum_concentrated stock universe: ~13% of members unpriceable per day.
 [MEDIUM, PLAUSIBLE CONCERN]**
 Agent 3 (`check_panel.py`, reproduced): mean **64 of ~503** member-days/day carry NaN close
 (max 503 at panel start). Worst offenders are renamed/merged tickers the member-mask still
-names under the old symbol — FB(→META), ANTM(→ELV), ABC(→COR), CTXS, PXD, WRK — plus
+names under the old symbol: FB(→META), ANTM(→ELV), ABC(→COR), CTXS, PXD, WRK, plus
 long-NaN names like BK/MMC/K. **Soft survivorship**: a name whose column is NaN can't be
 ranked or held, so momentum_concentrated silently selects only from priceable members.
 Bound: affects **only** momentum_concentrated (the other 6 books are ETF-only). Mitigant:
@@ -83,7 +83,7 @@ defect contaminates no *believed* edge. Not testable to full precision without a
 survivorship-complete price source (CRSP/Polygon). Belief change: lowers data-integrity
 confidence for the stock book specifically; leaves ETF books untouched.
 
-**F-RT-04 — Backtest-vs-live rebalance-timing drift on monthly books. [MEDIUM, PLAUSIBLE
+**F-RT-04: Backtest-vs-live rebalance-timing drift on monthly books. [MEDIUM, PLAUSIBLE
 CONCERN]**
 Agent 1 truncation test (reproduced): truncating the panel at a month-end changes
 dual_momentum_gem's pick (SPY↔QQQ↔EFA) and shifts momentum_concentrated tranche weights ~1–2%.
@@ -92,21 +92,21 @@ as "a day whose successor is in a new month," so the panel's final row is delibe
 treated as month-end. On the full backtest a completed month-end rebalances *on* that day;
 the live runner (panel ends "today") defers until the next session confirms the boundary →
 the live book rebalances **~1 trading day later** than the backtest. Direction is **safe**
-(more conservative, no look-ahead — confirmed by F-RT-06). Impact: ≤1-day slippage on ~12
+(more conservative, no look-ahead, confirmed by F-RT-06). Impact: ≤1-day slippage on ~12
 rebalances/yr, immaterial to returns, but means forward paper NAV will not tick-for-tick
 match the frozen backtest. Disclose in the +3-month review; no fix required.
 
 ## 6. Issues RULED OUT (tested, not merely assumed)
 
-**F-RT-05 — Engine / accounting bug. RULED OUT.** An independent engine with **zero
+**F-RT-05: Engine / accounting bug. RULED OUT.** An independent engine with **zero
 alpha-lab imports** (Agent 2 `indep_engine.weight_engine`, adjudicator wrote the driver)
 reproduces `harness.run` net returns to **0.0000 bp max daily divergence on all 7 books**
 (tolerance was 1 bp). Gross-cap violations: 0. Clean-room reimplementation-from-spec (Agent 8)
 completed for vol_managed_qqq: net & weight abs-diff **0.0** every day of the holdout year.
 
-**F-RT-06 — Forward look-ahead / data leakage. RULED OUT.** Future-poison test (Agent 1,
+**F-RT-06: Forward look-ahead / data leakage. RULED OUT.** Future-poison test (Agent 1,
 reproduced): scaling the **last 21 days of every close ×7** changes **zero** past weights on
-**all 7 books** — the definitive test. Any spec consuming future data would move past
+**all 7 books**: the definitive test. Any spec consuming future data would move past
 weights; none do. `held = W.shift(1)` in `harness.py` positions t uses info through t−1; the
 two truncation flags (§F-RT-04) are the end-of-panel month-end guard, not leakage.
 
@@ -114,11 +114,11 @@ two truncation flags (§F-RT-04) are the end-of-panel month-end guard, not leaka
 weekends, no >5-day gaps, train/holdout non-overlapping, panel_2005 vs train identical on
 overlap (max rel diff 0.0), ^VIX 0 NaN and in [9.1, 82.7]. One residual: the phantom
 2026-05-25 all-NaN row persists in the **train/holdout** parquets (the fix reached only
-panel_2005) — contributes ~0 to holdout P&L (all-NaN → 0 return); see §11 (relabel, LOW).
+panel_2005): contributes ~0 to holdout P&L (all-NaN → 0 return); see §11 (relabel, LOW).
 
 **Execution-cost sensitivity (vol family). RULED OUT as a fragility.** Agent 5
 (`stress_holdout.csv`, reproduced): vol_managed_qqq total-net across base/half/2×/4× costs,
-vol-stressed, 1–2 day delay, 50% partial, 10% missed = **[0.401, 0.423]** (base 0.408) — low
+vol-stressed, 1–2 day delay, 50% partial, 10% missed = **[0.401, 0.423]** (base 0.408): low
 turnover (cost drag 0.16%/yr base) makes it near-invariant to execution assumptions.
 
 ## 7–8. Shared-engine & data findings
@@ -155,29 +155,29 @@ F-RT-05 (independent engine, all 7) + F-RT-06 (leakage, all 7). Full clean-room 
 ## 11. Results to rerun / relabel
 - **Relabel (LOW):** note the phantom 2026-05-25 row in train/holdout parquets; holdout-year
   results are materially unaffected (~0 contribution) but the parquets should be regenerated
-  with the panel_2005 fix for consistency at the next legitimate data refresh (not now —
+  with the panel_2005 fix for consistency at the next legitimate data refresh (not now,
   frozen).
 - **No rerun required:** all headline results reproduce exactly; the JSE reconciliation
   (prior F-021) already closed.
 
 ## 12. Production-gate status
-**Before continued paper interpretation** (charter §10): CRITICAL engine/reconciliation bugs
-— **none** ✓; clean account-vs-manifest reconcile — pending first fills (harness exists,
+**Before continued paper interpretation** (charter §10): CRITICAL engine/reconciliation bugs:
+**none** ✓; clean account-vs-manifest reconcile: pending first fills (harness exists,
 0 fills) ⧗; stable nightly pipeline ✓; complete strategy+benchmark logging ✓; cancel/reject/
-partial handling — instrumented, unexercised ⧗; target-weight reproduction — ✓ (F-RT-05/06);
-no unexplained clean-room diffs > tol — ✓ for vol_managed_qqq, ⧗ for 6. **Gate status:
+partial handling: instrumented, unexercised ⧗; target-weight reproduction: ✓ (F-RT-05/06);
+no unexplained clean-room diffs > tol: ✓ for vol_managed_qqq, ⧗ for 6. **Gate status:
 PASS on code/accounting; PENDING on fill-based items until Monday's fills land.**
 **Before live capital:** not met (zero forward evidence, momentum_concentrated BLOCKED,
-6-book clean-room incomplete) — as expected this early.
+6-book clean-room incomplete), as expected this early.
 
 ## 13. Remaining unknowns
 Real slippage/fills (Monday+); whether vol_core_svxy's holdout drag vs control persists;
 6-book clean-room; survivorship-complete stock universe for momentum_concentrated; and the
-only thing that ultimately settles it — forward paper NAV vs exposure-matched controls.
+only thing that ultimately settles it: forward paper NAV vs exposure-matched controls.
 
 ## 14. Recommended NEXT AUDIT (not an alpha experiment)
 **Re-run the full 10-agent red-team with a spend budget** to complete Agents 6/7/10
 (perturbation, regime-concentration, adversarial-implementation) and the 6-book clean-room,
 THEN the first **fill-based execution reconciliation** after ~20 trading days (the
-`hunt_paper_reconcile.py` harness is already wired) — that audit converts the ⧗ gate items to
+`hunt_paper_reconcile.py` harness is already wired): that audit converts the ⧗ gate items to
 ✓/✗. No new strategy work until it runs.

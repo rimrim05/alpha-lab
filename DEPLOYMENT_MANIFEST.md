@@ -8,7 +8,7 @@ every verified sweep of {registry, scheduler, broker account, ledgers}.
 
 **Last reconciliation: 2026-07-10 ~22:45 PT** (registry + launchd + Alpaca positions/orders
 + ledgers all verified from disk/broker; conflicting 6-vs-7-book session notes resolved:
-GEM was added at Kristen's explicit request after the 6-book gate — 7 books is authoritative.)
+GEM was added at Kristen's explicit request after the 6-book gate; 7 books is authoritative.)
 
 ## Account
 
@@ -69,14 +69,14 @@ carries the aggregate submission + h26-filtered fills.
 puts n_eff ≈ 2.8 across the seven; the promoted set is one market cluster + one portfolio wrap.
 Report in three groups, never as seven equal candidates:
 
-- **Core evidence — one market cluster (AS-01):** `vol_managed_qqq`, `vol_core_svxy`,
+- **Core evidence, one market cluster (AS-01):** `vol_managed_qqq`, `vol_core_svxy`,
   `trend_vol_qqq`. Three implementations of the U.S. large-cap **volatility/trend
   risk-management** source (residual pairwise corr 0.79, crisis corr 0.77). Status:
-  **one provisionally supported, era-replicated cluster (Level 3)** — **no Level-4
+  **one provisionally supported, era-replicated cluster (Level 3).** **No Level-4
   (incremental/cross-market) or Level-5 (forward-validated) market source exists yet.**
-- **Capital-preservation sleeve — Portfolio alpha:** `defensive_ensemble`. Diversification /
+- **Capital-preservation sleeve, Portfolio alpha:** `defensive_ensemble`. Diversification /
   drawdown control, not an independent market forecast.
-- **Shadow research controls — held for forward falsification only:** `dual_momentum_gold`,
+- **Shadow research controls, held for forward falsification only:** `dual_momentum_gold`,
   `dual_momentum_gem`, `momentum_concentrated`. 0/3 add incremental value at equal risk
   (momentum_concentrated is value-destructive, P(ΔSharpe>0)=0.07). Their paper capital is
   **experimental allocation, not confidence-weighted deployment.**
@@ -89,7 +89,7 @@ not information. Exception requires a manifest change + Kristen's approval.
 
 ## Review schedule (no edits to frozen books outside these gates)
 
-- **+20 trading days (~2026-08-07): operational review only** — orders executed, positions
+- **+20 trading days (~2026-08-07): operational review only**, orders executed, positions
   correct, no silent flattening, slippage sane, benchmarks reconcile. No alpha judgments.
 - **+3 months: early mechanism review** (exposure behavior, gold-vs-GEM divergence,
   sophistication vs naive controls).
@@ -101,7 +101,7 @@ not information. Exception requires a manifest change + Kristen's approval.
 Concurrent sessions produced duplicate fixes and overlapping commits (two independent copies
 of the held-position reconcile fix; drifting 6-vs-7 book notes; the earnings-collect
 enable/disable flip above). To stop this drift, the deployment-critical control plane has
-**exactly one writer — the Deployment Coordinator.** Coordinator-only files:
+**exactly one writer, the Deployment Coordinator.** Coordinator-only files:
 
 - `scripts/hunt_paper_run.py`
 - `DEPLOYMENT_MANIFEST.md`
@@ -114,7 +114,7 @@ Only the Coordinator may create, edit, resize, enable, disable, or reconcile the
 control-plane change lands as a single manifest edit + a change-log line here — no direct
 sibling-session commits to these paths. Other agents/sessions may write **isolated research
 artifacts only** (`research/**`, `memos/**`, `notebooks/**`, `reports/**`) and must **not**
-modify the live-paper control plane — propose changes to the Coordinator instead. No research
+modify the live-paper control plane; propose changes to the Coordinator instead. No research
 subagent may enable live-paper submission (charter rule 20).
 
 ## Change log

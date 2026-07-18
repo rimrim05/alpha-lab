@@ -4,20 +4,20 @@
 
 **Hypothesis** (one falsifiable sentence, mechanism included):
 Under real open+close execution (buy the close, sell the next open), the equity overnight
-premium — the fact that most of the close-to-close return accrues outside regular hours —
+premium (the fact that most of the close-to-close return accrues outside regular hours)
 survives the frozen 2 bps/side ETF cost model on SPY and QQQ, because the premium
 (~9%/yr per F-006's stock-panel estimate) exceeds the ~10.1%/yr cost of two trades per day.
 The arithmetic already makes this doubtful; this experiment closes F-006 with a measured
 answer instead of a guess.
 
 **Layer touched** (exactly one) + registered baseline:
-Layer D — execution convention only. A research-lane open+close P&L engine is added in the
+Layer D: execution convention only. A research-lane open+close P&L engine is added in the
 robustness script; **harness.py is NOT modified** (the frozen books' published results
 depend on it). Registered baseline = buy-and-hold SPY/QQQ through the same engine.
 Engine gates before any variant counts:
-(a) nesting — the new engine in close-executed mode reproduces harness.run on the frozen
+(a) nesting: the new engine in close-executed mode reproduces harness.run on the frozen
     vol_managed_qqq spec exactly (net series max abs diff < 1e-12);
-(b) composition identity — per day, (1+r_overnight)(1+r_intraday) = (1+r_close-to-close)
+(b) composition identity: per day, (1+r_overnight)(1+r_intraday) = (1+r_close-to-close)
     to < 1e-12 on both ETFs;
 (c) data validity (already verified pre-registration, data-quality only, no P&L computed):
     100% open coverage, opens ≠ closes (real opens), open/close adjustment basis consistent
@@ -33,13 +33,13 @@ overnight-only book returns ≈ 0%/yr or worse and its net Sharpe falls clearly 
 buy-and-hold's. Break-even per-side cost lands near premium/(504) ≈ 1.5–2 bps.
 
 **Alternative result** (what the world looks like if the hypothesis is true):
-Overnight-only net Sharpe exceeds buy-and-hold net Sharpe on BOTH ETFs — requiring the ETF
+Overnight-only net Sharpe exceeds buy-and-hold net Sharpe on BOTH ETFs, requiring the ETF
 overnight premium to exceed buy-and-hold total return plus ~10%/yr of costs. That world
 would justify pre-registering a follow-up on cheaper execution or partial-notional overlays.
 
 **Registered variants** (4 strategy books + 2 controls, all reported, gross and net):
 overnight-only {SPY, QQQ} (long close t → open t+1, flat intraday; weights decided on
-information through close t — no look-ahead), intraday-only {SPY, QQQ} (long open t →
+information through close t, no look-ahead), intraday-only {SPY, QQQ} (long open t →
 close t), buy-and-hold {SPY, QQQ} (controls). No other assets, timing hybrids, or
 partial-notional variants may be added after results are seen.
 
@@ -54,25 +54,25 @@ partial-notional variants may be added after results are seen.
    intraday-only stats.
 
 **Failure / kill condition** (pre-committed; includes the stop-iterating rule):
-One run of the 6 registered books. The frozen cost model is THE cost model — no "but at
+One run of the 6 registered books. The frozen cost model is THE cost model: no "but at
 0.5 bps it works" relaxations, no timing hybrids, no partial-notional overlays from this
 data. The stock cross-section tilt (F-006's original form) stays closed by arithmetic:
-10 bps/side × 2 trades/day ≈ 50%/yr — untestable under the frozen model and not run here.
+10 bps/side × 2 trades/day ≈ 50%/yr, untestable under the frozen model and not run here.
 If NOT EXPLOITABLE → F-006 closes finally (new FAILURES.md entry); the harness keeps its
 close-to-close convention and the open+close engine remains a research tool only.
 
-**Trial-ledger row**: TRIAL_LEDGER.md — Robustness experiments table, added in the same
+**Trial-ledger row**: TRIAL_LEDGER.md, Robustness experiments table, added in the same
 commit.
 
-**Derived from prior holdout results?** YES — adaptive loop: F-006 (a prior experiment on
+**Derived from prior holdout results?** YES, adaptive loop: F-006 (a prior experiment on
 this panel) is the reason this exists and supplies the premium estimate. Flagged.
 
 ---
 **Result** (filled after the run, never edited above this line): PREMIUM REAL, NOT
-EXPLOITABLE — and stronger than the expected world: overnight carries 75% of gross CAGR on
+EXPLOITABLE, and stronger than the expected world: overnight carries 75% of gross CAGR on
 both ETFs (≥60% bar met; F-006's stock estimate ~69% confirmed), but overnight-only loses
 to buy-and-hold even GROSS (SPY 8.2% vs 10.9%; QQQ 11.6% vs 15.4%) at equal drawdown, so
-the measured break-even per-side cost is NEGATIVE (−0.6/−0.8 bps) — no cost model rescues
+the measured break-even per-side cost is NEGATIVE (−0.6/−0.8 bps): no cost model rescues
 it. Net Sharpe: overnight −0.14/0.13 vs buy-hold 0.64/0.77. Intraday-only annihilated net
 (−7.3/−6.5%/yr). Both engine gates passed (< 1e-12). F-006 CLOSED FINALLY → FAILURES.md
 F-025; harness.py unchanged; the open+close engine remains a research tool. Full tables +

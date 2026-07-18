@@ -1,5 +1,5 @@
 """defensive_ensemble: equal-risk ensemble of three uncorrelated defensive sleeves,
-vol-targeted to 18% ann. Standalone reimplementation — no sibling-spec imports.
+vol-targeted to 18% ann. Standalone reimplementation: no sibling-spec imports.
 
 Sleeve A: trend+vol-managed QQQ (200d SMA gate, 1% hysteresis; on: min(2, 0.25/rv21); off: BIL)
 Sleeve B: multi-asset 252d-sign TSMOM, inverse-63d-vol weights, monthly rebalance

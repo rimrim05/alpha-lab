@@ -70,6 +70,6 @@ def fetch_news_alpaca(symbols: list[str], start: str, end: str | None,
             time.sleep(REQUEST_PAUSE)
         time.sleep(REQUEST_PAUSE)
     df = news_to_frame(items, names)
-    # articles carry every symbol they mention — keep only the requested universe, or the
+    # articles carry every symbol they mention, so keep only the requested universe, or the
     # scoring run pays to score names the backtest can't trade
     return df[df["ticker"].isin(set(symbols))].reset_index(drop=True)

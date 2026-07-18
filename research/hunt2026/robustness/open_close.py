@@ -1,6 +1,6 @@
 """EXP-2026-07-14-open-close: overnight premium under real open+close execution (SPY/QQQ).
 
-Research-lane open+close P&L engine — harness.py is NOT modified. Per day t:
+Research-lane open+close P&L engine. harness.py is NOT modified. Per day t:
   overnight leg  r_on(t) = open(t)/close(t-1) - 1   (held from prior close to the open)
   intraday leg   r_id(t) = close(t)/open(t) - 1     (held open to close)
 Book returns leg-compound: (1 + w_on*r_on)(1 + w_id*r_id) - 1. All six registered books
@@ -9,9 +9,9 @@ arithmetic daily convention. Costs: frozen 2 bps/side on |weight change| at each
 point (the prior close and the open); first-day entry charged like harness.run.
 
 Gates (preregistrations/open-close-2026-07-14.md) before any variant counts:
-(a) nesting — this file's close-executed path reproduces harness.run's net series on the
+(a) nesting: this file's close-executed path reproduces harness.run's net series on the
     frozen vol_managed_qqq spec to < 1e-12;
-(b) composition — per day, (1+r_on)(1+r_id) equals 1+r_cc to < 1e-12 on both ETFs.
+(b) composition: per day, (1+r_on)(1+r_id) equals 1+r_cc to < 1e-12 on both ETFs.
 
 Writes robustness/open_close.md + artifacts/hunt2026/open_close_run.json.
 """

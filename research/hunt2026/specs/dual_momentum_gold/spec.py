@@ -2,7 +2,7 @@
 
 Monthly at the last close of each month: rank SPY/QQQ/GLD by trailing 252d total
 return. If the winner beats BIL's 252d return (absolute-momentum gate), hold the
-winner at 1.5x. Otherwise hold the better of TLT/BIL by 252d return at 1.0x —
+winner at 1.5x. Otherwise hold the better of TLT/BIL by 252d return at 1.0x:
 defensive momentum, not hardcoded TLT, so a rising-rate bear doesn't force us
 into a falling bond. Single position, ~12 trades/yr, ETF costs only.
 """

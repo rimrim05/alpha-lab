@@ -1,14 +1,14 @@
-"""PC factor-timing — the revival variant of the GKX signal-rotation track (HYP-004).
+"""PC factor-timing: the revival variant of the GKX signal-rotation track (HYP-004).
 
 The rotation study forecast all ~200 individual anomaly long-shorts and rotated toward the
 predicted winners; it LOST to equal-weighting the zoo (0.78 vs 2.10, see gkx STATE.md). The
-post-mortem's fix: richer conditioning with fewer degrees of freedom. This module does that —
+post-mortem's fix: richer conditioning with fewer degrees of freedom. This module does that:
 compress the panel with PCA and time only the top few principal components (the dominant common
 factors), then map the timed tilt back to a tradable book in signal space.
 
 THE look-ahead trap (flagged in the vault HYP-004 note): PCA loadings MUST be fit on the trailing
 window only. `rolling_pc_returns` refits PCA on an expanding window at each annual refit and projects
-each out-of-sample month onto PAST loadings using the fitted (training) mean — a month's PC value
+each out-of-sample month onto PAST loadings using the fitted (training) mean; a month's PC value
 never enters its own fit, and no future month does either. The timing layer on top reuses the track's
 `expanding_window_predict`, itself strictly out-of-sample.
 
@@ -99,7 +99,7 @@ def signal_weights_from_pc_scores(preds: pd.DataFrame, loadings_by_date: dict,
 
 def equal_weight_pc_benchmark(loadings_by_date: dict, signal_cols: pd.Index,
                               dates: pd.Index) -> pd.DataFrame:
-    """Signal weights from holding all PCs equally — isolates whether TIMING beats just holding
+    """Signal weights from holding all PCs equally: isolates whether TIMING beats just holding
     the factors (the 'did timing add value' control, distinct from equal-weighting raw signals)."""
     weights = pd.DataFrame(0.0, index=dates, columns=signal_cols)
     for d in dates:

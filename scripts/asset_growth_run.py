@@ -34,7 +34,7 @@ def load_composite():
 def resolve_universe(name: str) -> list[str]:
     if name == "wide":
         return list(load_composite()["ticker"])
-    return UNIVERSE  # "mega" — the original 60-name placeholder
+    return UNIVERSE  # "mega": the original 60-name placeholder
 
 
 def to_monthly(panel: pd.DataFrame, grid: pd.DatetimeIndex) -> pd.DataFrame:
@@ -99,7 +99,7 @@ def main():
         sectors = dict(zip(comp["ticker"], comp["sector"]))
         ms = neutralize_score(ms, monthly_size[covered], sectors)
 
-    # only trade months with a healthy cross-section — thin early months make quintiles
+    # only trade months with a healthy cross-section: thin early months make quintiles
     # of 1-2 undiversified names, producing junk (e.g. a single short blowing past -100%)
     MIN_NAMES = 50
     ms = ms[ms.notna().sum(axis=1) >= MIN_NAMES]

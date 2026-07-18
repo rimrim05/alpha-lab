@@ -2,7 +2,7 @@
 
 train5y.parquet  = data <= 2021-07-10 (builders-only view for round 2)
 holdout5y.parquet = 2021-07-10 -> 2026-07-10 (evaluator-only, 5 blind years)
-No new network pull — the panel already spans 2014 -> 2026-07-10.
+No new network pull; the panel already spans 2014 -> 2026-07-10.
 """
 import json
 from pathlib import Path

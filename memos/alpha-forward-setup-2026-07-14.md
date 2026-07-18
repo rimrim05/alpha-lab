@@ -3,7 +3,7 @@
 FROZEN 2026-07-14, before the first forward day (2026-07-15). Implements the production
 action recommended by memos/js-factor-program-final-2026-07-14.md: measure each live book's
 forward return beyond a frozen factor-replication benchmark, after costs and financing.
-Measurement/review layer ONLY — no trading weight, capital, or strategy-logic change.
+Measurement/review layer ONLY: no trading weight, capital, or strategy-logic change.
 JSE is not deployed anywhere in this layer, per the program verdict.
 
 ## Freeze
@@ -15,7 +15,7 @@ JSE is not deployed anywhere in this layer, per the program verdict.
 - Panels: corrected post-phantom-row (memos/panel-phantom-row-correction.md). Frozen
   historical results files untouched; corrected data used for all forward accounting.
 - Models: **M2** (FF5 + Mom + TSMOM proxy + QQQRES) for five books; **M2g** (M2 + GLD
-  excess) for defensive_ensemble and dual_momentum_gold — their gold loadings are KNOWN
+  excess) for defensive_ensemble and dual_momentum_gold: their gold loadings are KNOWN
   exposures documented in the final memo before the forward test started (factor-model
   review; amended 2026-07-14 with zero forward days elapsed; after 2026-07-15 the
   benchmark may not change for any reason until the 12m review).
@@ -42,15 +42,15 @@ panel; M2 as-run α retained in the JSON for the record.)
 
 ## Benchmark construction (per finalized day)
 
-- replication_t = RF_t + Σⱼ βⱼ·Fⱼ,t (uncosted — biases residuals AGAINST the books by an
+- replication_t = RF_t + Σⱼ βⱼ·Fⱼ,t (uncosted, biases residuals AGAINST the books by an
   estimated ≤ 50 bps/yr; will not be adjusted at review).
 - financing_t = (gross_{t−1} − 1)⁺ × (RF_t + 0.50%/252), gross from the book's own ledger
   (leverage actually held during day t).
 - **residual_t = book net return_t − replication_t − financing_t.** Book returns are the
   ledger's `ret_1d` (true daily net, added 2026-07-14; the ledger `nav` is a rolling
-  252d-rebased index and is never differenced — integrity-audit blocker B1).
+  252d-rebased index and is never differenced, integrity-audit blocker B1).
 - TSMOM and placebo/GLD closes from a dedicated ~550-day fresh yfinance pull each review
-  (single adjustment vintage; no panel seam inside any rolling window — audit finding 2).
+  (single adjustment vintage; no panel seam inside any rolling window, audit finding 2).
 - Finalized day = book return exists AND FF factors exist AND the day trails the FF file
   end by ≥ 10 trading days (revision embargo).
 
@@ -59,7 +59,7 @@ panel; M2 as-run α retained in the JSON for the record.)
 Exact fields per day: `date, ret_net, repl_ret, fin, resid_net, gross`. Append-only,
 strictly-increasing dates; recompute drift vs stored rows warns and never rewrites.
 Rows embed the factor vintage at first append (the series of record); mid-run failures
-self-heal on later runs; the same date may embed different FF vintages across series —
+self-heal on later runs; the same date may embed different FF vintages across series,
 accepted. At the 12m review the full series is recomputed from the then-current vintage
 as a disclosed sensitivity; |Δresid_ann| > 25 bps/yr on any book triggers investigation,
 not substitution. Derived at review time: tracking error, residual drawdown, turnover
@@ -96,8 +96,8 @@ A band miss is a pipeline stop, not a result.
   · defensive/TSMOM {defensive_ensemble}.
 - At 12m: **"promising but unproven residual alpha"** requires NW-lag-5 t ≥ 2.4 AND
   positive cumulative residual in both the 0–6m and 6–12m halves AND all placebo bands
-  passing AND residual surviving the financing/cost stress — then schedule an independent
-  replication. 2.0 ≤ t < 2.4 = "suggestive — extend 12 months, no allocation change."
+  passing AND residual surviving the financing/cost stress, then schedule an independent
+  replication. 2.0 ≤ t < 2.4 = "suggestive: extend 12 months, no allocation change."
   Below 2.0 or negative = **factor-premium harvesting confirmed**; factor-adjusted
   kill/demote rules replace raw-vs-SPY going forward (manifest edit, Kristen's approval).
 - No allocation changes automatically; any proposed deployment change is surfaced to
@@ -111,12 +111,12 @@ A band miss is a pipeline stop, not a result.
    the loss); its 12m verdict must be caveated. Reality tripwire: the standing
    EXP-OPS-REALITY reconciliation (per-book tracking drag < 30 bps/month vs broker) is the
    alarm; a persistent breach voids the affected book's forward series.
-2. Constant frozen betas leave factor-TIMING P&L in the residual by design — consistent
+2. Constant frozen betas leave factor-TIMING P&L in the residual by design, consistent
    with the program's classification (timing known premia = premium-timing, not alpha
    until it clears the bar above). vol_managed_qqq's regime beta range (0.80–1.47 around
    frozen 1.54) means large residual swings; read the NW t, not the point estimate.
 3. Cash drag: the harness credits no RF on uninvested cash (momentum_concentrated gross
-   ≈ 0.85), matching the freeze-time convention — the forward test measures the same
+   ≈ 0.85), matching the freeze-time convention: the forward test measures the same
    quantity; do not over-read a negative residual by ~1–2%/yr of RF drag.
 4. Adjusted-close vintage: a date recomputed later may not bit-match its write-once row;
    first-append vintage is the record (see ledger section).
@@ -126,7 +126,7 @@ A band miss is a pipeline stop, not a result.
 
 ## Review dispositions (all recommendations adopted except)
 
-- Data-integrity M4's "judge 1.5x placebo at +4.7%" — adopted in mechanism but centered
+- Data-integrity M4's "judge 1.5x placebo at +4.7%": adopted in mechanism but centered
   at the as-run regression alpha (+6.4% after the financing-leg adjustment) rather than
   the const-leakage arithmetic; the frozen betas came from that exact regression, so the
   empirical anchor is the consistent one. Band unchanged (±0.7%).

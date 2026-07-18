@@ -11,8 +11,8 @@
 ## Global Constraints
 
 - **Repo:** `~/projects/alpha-lab/`. Run everything via the venv: `.venv/bin/python`, `.venv/bin/pytest`.
-- **Tests never touch the network** — network fetch stays in `scripts/` and in the two `fetch_*_yf` functions (which have no unit tests, matching the existing convention). Engine and filters take pre-built DataFrames and are fully offline-testable.
-- **Parity is non-negotiable** — `run_residual` with all layers off must reproduce the current equal-weight P&L formula exactly (Task 5).
+- **Tests never touch the network:** network fetch stays in `scripts/` and in the two `fetch_*_yf` functions (which have no unit tests, matching the existing convention). Engine and filters take pre-built DataFrames and are fully offline-testable.
+- **Parity is non-negotiable:** `run_residual` with all layers off must reproduce the current equal-weight P&L formula exactly (Task 5).
 - **Positions matrix convention:** `pd.DataFrame`, index = dates (sorted, unique), columns = tickers, values ∈ {−1, 0, +1}. Weights matrix: same shape, float, row-wise dollar-neutral (Σ|w| ≈ 1).
 - **Reuse, don't reinvent:** signal via `tracks.statarb.residual.rolling_residual`; positions via `tracks.statarb.bands.band_positions`; scoring via `core.eval.scorecard.scorecard` / `to_markdown`; JSONL via `tracks.statarb.paper.ledger.Ledger`; earnings via `tracks.pead.events.fetch_earnings_yf`.
 - **Signal-log JSONL** lives under `artifacts/statarb/signal_log/` (gitignored). Schema is a superset-compatible union with the paper book's `positions.jsonl`.
@@ -26,7 +26,7 @@
 - Test: `tests/test_prices.py` (append one test)
 
 **Interfaces:**
-- Produces: `fetch_volume_yf(tickers: list[str], start: str, end: str | None, chunk_size: int = 200) -> pd.DataFrame` (share volume, network — no test). `rolling_dollar_adv(prices: pd.DataFrame, volume: pd.DataFrame, window: int = 20) -> pd.DataFrame` (trailing median of price×volume; pure — tested).
+- Produces: `fetch_volume_yf(tickers: list[str], start: str, end: str | None, chunk_size: int = 200) -> pd.DataFrame` (share volume, network, no test). `rolling_dollar_adv(prices: pd.DataFrame, volume: pd.DataFrame, window: int = 20) -> pd.DataFrame` (trailing median of price×volume; pure, tested).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -243,8 +243,8 @@ git commit -m "feat(statarb): liquidity + earnings-blackout filters"
 
 **Interfaces:**
 - Produces:
-  - `to_weights(positions) -> pd.DataFrame` — equal-weight dollar-neutral: each row `positions / row.abs().sum()` (all-zero rows → 0).
-  - `sector_cap(weights, sectors, name_cap, sector_cap_) -> pd.DataFrame` — clip |w| ≤ `name_cap`; scale each sector's day down if |net sector weight| > `sector_cap_`; renormalize each row back to gross 1.
+  - `to_weights(positions) -> pd.DataFrame`, equal-weight dollar-neutral: each row `positions / row.abs().sum()` (all-zero rows → 0).
+  - `sector_cap(weights, sectors, name_cap, sector_cap_) -> pd.DataFrame`, clip |w| ≤ `name_cap`; scale each sector's day down if |net sector weight| > `sector_cap_`; renormalize each row back to gross 1.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -274,7 +274,7 @@ def test_sector_cap_limits_single_name_then_renormalizes():
     assert (capped.iloc[0].abs() <= 0.20 + 1e-9).all() is np.bool_(False) or True  # post-renorm may exceed; see note
 ```
 
-Note: the last assertion is intentionally loose — after renormalization a clipped weight can rise again; the meaningful invariant is gross = 1 and that the *pre-renorm* clip happened. Replace the loose line with the precise check below.
+Note: the last assertion is intentionally loose, after renormalization a clipped weight can rise again; the meaningful invariant is gross = 1 and that the *pre-renorm* clip happened. Replace the loose line with the precise check below.
 
 Replace that last assertion line with:
 
@@ -344,7 +344,7 @@ git commit -m "feat(statarb): weights + sector/name exposure cap"
 **Interfaces:**
 - Consumes: `base_positions` (no filters), `final_positions` (after filters), `resid` (from `rolling_residual`), `s_scores`, feature DataFrames, `removed_by` (dict name→mask from Tasks 2–3).
 - Produces:
-  - `extract_trades(base_positions, final_positions, resid, s_scores, features, removed_by) -> list[dict]` — one row per candidate trade (a contiguous single-sign run in `base_positions`), with realized P&L if it survived filters, counterfactual P&L if it was skipped.
+  - `extract_trades(base_positions, final_positions, resid, s_scores, features, removed_by) -> list[dict]`, one row per candidate trade (a contiguous single-sign run in `base_positions`), with realized P&L if it survived filters, counterfactual P&L if it was skipped.
   - `trade_stats(trades) -> dict` → `{n_signals, n_entered, win_rate, avg_holding_days}`.
 - **P&L convention (label-oriented):** trade P&L = Σ over the held run of `sign * resid[ticker]` (contemporaneous reversion captured). This is the *label* for "did this signal revert", distinct from the engine's cost-and-lag-adjusted headline net series. `success = pnl > 0`.
 
@@ -614,7 +614,7 @@ Then in `main()`, after the panel/factor/etc. are built (unchanged), replace the
     net = out["net"]
 ```
 
-Keep the existing `sector` dict as `sectors`; keep the scorecard/markdown/register/print block below unchanged (it consumes `net`). The `--pit` membership masking stays in `main()` applied to `base_positions` before scoring is out of scope for this task — leave `--pit` behavior exactly as today by keeping its branch in `main()` operating on the pre-`run_residual` positions **only if already present**; if wiring `--pit` through `run_residual` is non-trivial, keep the current `main()` pit path and pass its masked positions in a follow-up (documented, not blocking the ablation).
+Keep the existing `sector` dict as `sectors`; keep the scorecard/markdown/register/print block below unchanged (it consumes `net`). The `--pit` membership masking stays in `main()` applied to `base_positions` before scoring is out of scope for this task, leave `--pit` behavior exactly as today by keeping its branch in `main()` operating on the pre-`run_residual` positions **only if already present**; if wiring `--pit` through `run_residual` is non-trivial, keep the current `main()` pit path and pass its masked positions in a follow-up (documented, not blocking the ablation).
 
 - [ ] **Step 4: Run tests to verify they pass**
 
@@ -629,7 +629,7 @@ Expected: PASS
 - [ ] **Step 5: Real-data parity check (manual, one-time)**
 
 Run: `.venv/bin/python scripts/statarb_residual_run.py --cap large --cost-bps 10`
-Expected: prints net Sharpe **~2.67** (matches the pre-refactor headline). If it differs, the refactor broke parity — stop and fix before proceeding.
+Expected: prints net Sharpe **~2.67** (matches the pre-refactor headline). If it differs, the refactor broke parity; stop and fix before proceeding.
 
 - [ ] **Step 6: Commit**
 
@@ -813,12 +813,12 @@ git commit -m "feat(statarb): ablation sweep runner + comparison table"
 - Per-signal log substrate → Task 4 (+ emitted per config in Task 6). ✓
 - Four layers (costs/liquidity/sector-cap/earnings) → costs exist; Tasks 2–3 add the rest; wired in Task 5. ✓
 - Counterfactual labeling → Task 4 (`counterfactual_pnl` for skipped signals). ✓
-- Unionable schema (entry_s, entry_bucket, close_reason, realized_pnl, holding_days) → Task 4 rows. Note: `entry_bucket` is derivable from `entry_s` (short/long_shallow/long_deep/long_verydeep); add it in Task 4's row dict if the ML phase needs it pre-computed — deferred as YAGNI since it's a pure function of `entry_s` already logged.
+- Unionable schema (entry_s, entry_bucket, close_reason, realized_pnl, holding_days) → Task 4 rows. Note: `entry_bucket` is derivable from `entry_s` (short/long_shallow/long_deep/long_verydeep); add it in Task 4's row dict if the ML phase needs it pre-computed, deferred as YAGNI since it's a pure function of `entry_s` already logged.
 - Parity gate (both anchors) → Task 5 Step 1 (synthetic bit-for-bit) + Step 5 (real-data ~2.67) + Task 6 (`+costs` ≈ 2.67). ✓
 - Full-history ablation, date-tagged log → Task 6 (`--start 2018`, `entry_date` on every row). ✓
 - Ablation table with n_signals/win%/avg-hold/Sharpe/DD → Task 6. ✓
 
-**Placeholder scan:** No TBD/TODO. The one soft spot is Task 5's `--pit` note (explicitly deferred, not blocking) — acceptable, ablation runs on the non-pit large-cap universe where 2.67 is defined.
+**Placeholder scan:** No TBD/TODO. The one soft spot is Task 5's `--pit` note (explicitly deferred, not blocking): acceptable, ablation runs on the non-pit large-cap universe where 2.67 is defined.
 
 **Type consistency:** `run_residual` returns `net`/`trades`/`base_positions`/`final_positions` (Task 5) consumed as `out["net"]`/`out["trades"]` (Task 6). `extract_trades(base, final, resid, s, features, sectors, removed_by)` signature matches its call in Task 5. `sector_cap_`/`name_cap` naming consistent Tasks 3→5→6. `trade_stats` keys (`n_signals`,`n_entered`,`win_rate`,`avg_holding_days`) match `_row`/`ablation_table` COLS.
 
@@ -826,6 +826,6 @@ git commit -m "feat(statarb): ablation sweep runner + comparison table"
 
 ## Deviations from spec (intentional, minimal)
 
-- **Per-trade P&L is contemporaneous reversion** (`Σ sign*resid` over the hold), a *label* for "did it revert" — deliberately distinct from the engine's cost-and-lag net series (the performance number). Documented in Task 4.
-- **`return`/`counterfactual_return`** fields folded into `*_pnl` (resid-space) for v1 — addable later without schema break.
-- **`--pit` not threaded through `run_residual`** yet — ablation uses the standard large-cap universe where the 2.67 anchor is defined.
+- **Per-trade P&L is contemporaneous reversion** (`Σ sign*resid` over the hold), a *label* for "did it revert", deliberately distinct from the engine's cost-and-lag net series (the performance number). Documented in Task 4.
+- **`return`/`counterfactual_return`** fields folded into `*_pnl` (resid-space) for v1, addable later without schema break.
+- **`--pit` not threaded through `run_residual`** yet, ablation uses the standard large-cap universe where the 2.67 anchor is defined.

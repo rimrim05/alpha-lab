@@ -4,11 +4,11 @@
 Solo empirical research on finite-sample reliability diagnostics for hybrid factor risk
 models. Object = FACTOR EXPOSURE ESTIMATION ERROR and the observable out-of-subspace floor.
 NOT a minimum-variance portfolio project (that framing was corrected mid-project; min-var
-results exist in this repo's history but are a separate closed line — F-021..F-031).
+results exist in this repo's history but are a separate closed line, F-021..F-031).
 
 ## The paper this is grounded in
 Kercheval–Gunther–Bernstein–Yao–Lan–Lin–Goldberg, "Estimation Error in Latent
-High-Dimensional Factor Models" (2026) — Kristen's CDAR/Goldberg lab. Local PDFs:
+High-Dimensional Factor Models" (2026), Kristen's CDAR/Goldberg lab. Local PDFs:
 `14-Lab/reading/papers/Concentration 1 (reference).pdf` + `Concentration 2 (Nick summary).pdf`
 (iCloud Obsidian vault). Theorem 1: sin²∠(h_j,b_j) → out-of-subspace floor 1/(1+SNR_j)
 [estimable] + weighted in-subspace rotation [provably NOT estimable, Gurdogan–Shkolnik].
@@ -25,17 +25,17 @@ consistent lower-bound estimator of exposure error. Regime: p→∞, n FIXED (no
    2√(n/p) + n/p + 0.5) is a clean success everywhere incl. residualized panels. C3 trades
    the bound property for accuracy (coverage 1.0 → 0.7).
 4. **Leakage:** with misaligned known factors, leaked strong-factor structure passes the
-   screen with low floor 100% of the time (the trap). Full-window detector — D_j = R² of
-   residual-factor return series on estimated known-factor returns, F-test — separates
+   screen with low floor 100% of the time (the trap). Full-window detector (D_j = R² of
+   residual-factor return series on estimated known-factor returns, F-test) separates
    leaked/genuine at AUC 0.98, FNR ≤ 0.07, FPR ≤ 0.12.
 5. **Mechanism adjudicated:** split-sample detector RAISED FPR (0.22) while oracle stays
-   0.01 ⇒ the "false positives" are PARTIAL MIXING — sample eigenvectors mix leaked and
+   0.01 ⇒ the "false positives" are PARTIAL MIXING: sample eigenvectors mix leaked and
    genuine directions (Theorem 1's in-subspace rotation materializing as mixed provenance).
    Leakage is a continuum: use the FULL-WINDOW detector with D_j as a continuous SCORE.
 
 ## The validated pipeline (frozen)
 Per residual statistical factor: (1) C4 screen → discard if below the MP-edge cut;
-(2) floor, + n/(2p) correction only if p/n ≥ 7; (3) full-window leakage score D_j —
+(2) floor, + n/(2p) correction only if p/n ≥ 7; (3) full-window leakage score D_j:
 low floor is only trustworthy-as-genuine if D_j is near the k_F/n noise level.
 
 ## Where everything lives
@@ -60,7 +60,7 @@ alpha-lab repo (github.com/kristenharim/alpha-lab), `research/estimator_lab/`:
 - factor_lab (~/projects/factor_lab, the lab's repo) is READ-ONLY; this project is separate
   from Kristen's CDAR deliverable to Alex (her Davis–Kahan rotation-bound notebook) and
   must not be represented as it. Theory derivations (finite-p slack law, MP-edge threshold,
-  hybrid Corollary 1) are HERS to take to the lab — sims may motivate, not substitute.
+  hybrid Corollary 1) are HERS to take to the lab; sims may motivate, not substitute.
 
 ## Phase 6 (real data) — DONE 2026-07-14
 FF3+MOM-residualized S&P, 14 primary 63d windows (2021-11→2025-11, p≈460-500, p/n≈7.5).
@@ -82,7 +82,7 @@ results `FLOOR_REALDATA.md` (+ story, research log); diagnostics `run_floor_real
 ## Phase 7 + Stage 2 (attribution program) — DONE 2026-07-14
 Kristen chose the FF+industry arm and expanded to a two-stage attribution program.
 Phase 7 (`FLOOR_INDUSTRY*`): 11-GICS-dummy arm. Verdict FAIL on a mis-set control bar
-(null-relative it passes at 60.6% excess removal); errata section is REQUIRED READING —
+(null-relative it passes at 60.6% excess removal); errata section is REQUIRED READING:
 a_match headline retracted (mechanical null 0.991), theme-vs-vol-coupling unresolved,
 "not sector risk" downgraded to "not annihilated by sector-MEAN projection". Vetted
 panel: 5 label-4 slots / 4 windows / 0 recurrent ≈ spot-checks only.
@@ -95,4 +95,4 @@ thesis); static-beta diagnostics: timing channel +9–11%/y point est. unproven;
 blind-window attribution + a timing term over 2014→2026.
 Process lesson (4 rule-drafting defects this program): every frozen numeric bar ships
 with its null value and a reachability check.
-C4-recalibration-under-heteroskedasticity remains a THEORY item — hers for the lab.
+C4-recalibration-under-heteroskedasticity remains a THEORY item, hers for the lab.

@@ -5,7 +5,7 @@ Written 2026-07-14 before attribution code; rev 2 after the three-reviewer round
 Stage-1 adversarial corrections (FLOOR_INDUSTRY.md errata). Dispositions in Part C.
 
 Inherited Stage-1 caveats (BINDING): label-4 slots mean "not explained by FF3+MOM + 11
-GICS sector MEANS" — not "not industry risk" (sub-sector structure survives by
+GICS sector MEANS", not "not industry risk" (sub-sector structure survives by
 construction); the label-4 gate is exclusion-biased, the panel is UNDER-COMPLETE, and
 per the adversarial errata its evidential value for control purposes is ≈ nil (5 slots,
 4/14 windows, 0 recurrent, exact-permutation p 0.21–0.51, floors ~6%-corrected).
@@ -15,7 +15,7 @@ per the adversarial errata its evidential value for control purposes is ≈ nil 
 
 ## Question
 For each live hunt2026 book, does its return survive controls for (1) known factors,
-(2) sector means, (3) the thin vetted residual panel — and what honest classification
+(2) sector means, (3) the thin vetted residual panel, and what honest classification
 follows?
 
 ## Books (7 live ledgers, frozen specs 2026-07-10) — with provenance (STATUS.md,
@@ -26,7 +26,7 @@ TRIAL_LEDGER.md, FAILURES.md; carried into the final memo's table)
 | vol_core_svxy | promoted L3 | hunt-1; SVXY ETP-menu survivorship (post-2018 deleveraged product) |
 | trend_vol_qqq | promoted L3 | hunt-2 ADAPTIVE loop |
 | defensive_ensemble | promoted L3 | hunt-2 ADAPTIVE loop |
-| momentum_concentrated | sleeve-only | WF-demoted (F-015, −4.6pp median excess); only stock book — heaviest survivorship |
+| momentum_concentrated | sleeve-only | WF-demoted (F-015, −4.6pp median excess); only stock book, heaviest survivorship |
 | dual_momentum_gem | watch/retired-to-forward | whipsaw-fragile |
 | dual_momentum_gold | watch | HINDSIGHT-DISCOUNTED (gold-menu design hindsight; regime artifact per robustness probe) |
 
@@ -34,10 +34,10 @@ TRIAL_LEDGER.md, FAILURES.md; carried into the final memo's table)
 Harness-reconstructed net daily returns (weights at close t earn t+1; net of 10/2 bps
 per side; gross capped 2.0). Warnings on every output:
 (a) SELECTION: pre-freeze history is selection-tainted. n_trials = 18 is a REGISTERED-
-    TRIAL FLOOR — TRIAL_LEDGER.md says effective N > 18 (hunt-2 books came from an
-    adaptive loop) — so any deflated-Sharpe probability is an UPPER bound. Sensitivity
+    TRIAL FLOOR: TRIAL_LEDGER.md says effective N > 18 (hunt-2 books came from an
+    adaptive loop), so any deflated-Sharpe probability is an UPPER bound. Sensitivity
     pair mandated: DSR at N=18 AND N=36; rule 5 requires ≥ 0.5 at BOTH.
-(b) SPAN: all classification statistics use ONLY the 14 Stage-1 primary windows —
+(b) SPAN: all classification statistics use ONLY the 14 Stage-1 primary windows:
     window-starts 2022-11-21 → 2026-03-02, each 63 return days on the statarb∩FF
     calendar, ending 2026-05-29 (span corrected in rev 2; rule-0 cutoff = 2022-11-21).
     Live OOS (post-2026-07-10) and any other dates NEVER enter any classifying
@@ -51,7 +51,7 @@ per side; gross capped 2.0). Warnings on every output:
     alpha_stress = alpha − max(avg_gross − 1, 0) × (mean RF + 0.50%/yr), reported next
     to EVERY alpha; rule 5 additionally requires L4 alpha_stress > 0.
 (e) Attribution measures factor COMPOSITION of the track record (more selection-robust
-    than the alpha LEVEL — selection biased which rules were examined, not each rule's
+    than the alpha LEVEL: selection biased which rules were examined, not each rule's
     exposure); alpha levels inherit selection bias. Both reported, so labeled.
 (f) SIBLING EXPERIMENT: the hunt2026 blind-window attribution prereg above runs a
     parallel classification (different models/spans; not yet run). Doubled-look
@@ -71,7 +71,7 @@ lstsq throughout; per-window design condition numbers reported. dof: worst reali
 case 18 params on 63 obs (window 2023-05-24).
 - KNOWN DEGENERACY (pre-stated): with this panel, L4 ≈ L3 in 10/14 windows;
   classification rule 4 CANNOT fire (its ≥7-window gate is known-unmet); the L4 column
-  carries the annotation "controls applied in 4/14 windows — spot-checks, not residual-
+  carries the annotation "controls applied in 4/14 windows: spot-checks, not residual-
   control robustness; L4 survival is NOT evidence of absence of residual common risk."
   Same-window-estimated x_j regressors mechanically attenuate L4 alpha in covered
   windows (in-sample absorption): attenuation there is an UPPER bound on true
@@ -99,7 +99,7 @@ case 18 params on 63 obs (window 2023-05-24).
 2. known-factor-premium: L1 significant, L2 not.
 3. industry-sector-exposure: L2 significant, L3 not. (Means SECTOR-MEAN exposure.)
 4. hidden-residual-risk-exposure: L3 significant, L4 not, AND ≥ 7 windows with ≥ 1
-   label-4 control — KNOWN UNREACHABLE with this panel; retained for future panels.
+   label-4 control, KNOWN UNREACHABLE with this panel; retained for future panels.
 5. promising-but-unproven-residual-alpha: L4 significant AND same-sign both halves AND
    DSR ≥ 0.5 at BOTH N=18 and N=36 AND L4 alpha_stress > 0. Carries the sparse-controls
    annotation verbatim. Never upgraded past "unproven."
@@ -139,4 +139,4 @@ impl, integrity); suppression-path flag (stat); Stage-1 adversarial conditions (
 adopted (binding language, no theme-identity reliance, corrected floors via rerun,
 panel-as-spot-checks).
 Rejected/deferred: none material; block-wise permutation variant (stat, optional)
-deferred — plain sign-flip retained with the beta-window dependence caveat carried.
+deferred; plain sign-flip retained with the beta-window dependence caveat carried.

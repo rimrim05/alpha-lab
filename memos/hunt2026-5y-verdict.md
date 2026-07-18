@@ -4,7 +4,7 @@ Follow-on to memos/hunt2026-verdict.md. Kristen's instruction: backdate the cut 
 test whether the round-1 survivors still stand, and if not, return to research mode.
 
 **Protocol.** Cut 2021-07-10. Blind window 2021-07-10 → 2026-07-10 (5.0y, 1,256 trading
-days) — contains the 2022 bear (−18% SPY), the 2023-2025 bull, the Aug-2024 vol shock, and
+days), contains the 2022 bear (−18% SPY), the 2023-2025 bull, the Aug-2024 vol shock, and
 the Apr-2025 tariff spike. Round-2 builders saw ONLY train5y.parquet (2014 → 2021-07-09);
 every post-2021 file was chmod-000 during building. Specs frozen in git before unlock;
 results write-once. Same harness, same costs (10/2 bps per side), gross ≤ 2x.
@@ -15,10 +15,10 @@ results write-once. Same harness, same costs (10/2 bps per side), gross ≤ 2x.
 ## Round 1 under the 5-year stress (NOT blind on 2021-2025 — their fit window overlapped)
 
 Only 3/14 hold 18% CAGR: vol_core_svxy +24.3%, vol_managed_qqq +23.3%, vix_panic_buyer
-+21.2% — all from the vol-managed-leverage family, all with −34% to −35% drawdowns through
++21.2%, all from the vol-managed-leverage family, all with −34% to −35% drawdowns through
 2022. Static levered beta (trend_gated 2x, ew_levered, composite_book) fell to 11-16% CAGR
 with −40%+ drawdowns. gap_drift decayed to +12.3%/yr over 5y (the 1-year +5.8% excess did
-not generalize). deep_dip_reversion collapsed to +2.1%/yr — consistent with the statarb
+not generalize). deep_dip_reversion collapsed to +2.1%/yr, consistent with the statarb
 post-mortem, reversion at daily frequency is dead money. dual_momentum_gem: +17.9%, just
 under. momentum_concentrated: +16.6% but the shallowest drawdown of the equity books (−17%).
 Full table: research/hunt2026/results5y/summary.md.
@@ -37,7 +37,7 @@ Full table: research/hunt2026/results5y/summary.md.
 
 **3 of 4 pass, and the pass is qualitatively different from round 1's:** it spans a bear
 year. The headline is defensive_ensemble: +19.9% CAGR at Sharpe 1.32 with a −13.4% max
-drawdown — flat through 2022 while SPY lost 18% — because the TSMOM sleeve (standalone
+drawdown, flat through 2022 while SPY lost 18%, because the TSMOM sleeve (standalone
 fail, +13.7% in 2022) supplied crisis alpha exactly when the equity sleeves needed it.
 The ensemble beat every sleeve's Sharpe, which is the textbook diversification result
 actually showing up out-of-sample.
@@ -46,7 +46,7 @@ dual_momentum_gold has the biggest number but the ugliest path: −25.5% in 2022
 lags fast declines; its builder pre-registered exactly this weakness) and half the 5y total
 came from the 2024-2025 gold+QQQ runs. trend_vol_qqq is the robust single-asset design:
 −11% in 2022 vs QQQ's −33%, positive every other year, and its round-1 sibling was also the
-most robust train finding — same mechanism surviving two different eval windows.
+most robust train finding, same mechanism surviving two different eval windows.
 
 ## Honesty section (read before promoting anything)
 
@@ -73,11 +73,11 @@ most robust train finding — same mechanism surviving two different eval window
 Paper-book promotion, in order: **defensive_ensemble** (the risk-adjusted winner and the
 only book that was flat in the bear), **trend_vol_qqq** (simple, robust across both eval
 windows), and **momentum_concentrated** from round 1 (the stock-selection alpha: sub-market
-exposure, −17% maxDD over 5y, +16.6% excess in the 1y blind test — it misses the 18% bar
+exposure, −17% maxDD over 5y, +16.6% excess in the 1y blind test, it misses the 18% bar
 but is the most credible *alpha* in the hunt). dual_momentum_gold only with the gold-
 hindsight discount stated above. Track every book against exposure-matched SPY; the excess
 is the number that decides at the 6-month review.
 
 *A great backtest is a bug until proven otherwise. Two of these designs now have a blind
-pass each on non-overlapping windows of different lengths — that is evidence, not proof.
+pass each on non-overlapping windows of different lengths, that is evidence, not proof.
 The Alpaca paper book is the next court.*

@@ -1,4 +1,4 @@
-"""EXP-2026-07-10-idio-diag-shrink — residual-diagonal (idiosyncratic-variance) shrinkage
+"""EXP-2026-07-10-idio-diag-shrink: residual-diagonal (idiosyncratic-variance) shrinkage
 in PCA/JSE min-var. Prereg: research/independent_alpha/prereg/H-idio-shrink.md.
 
 Standalone. Reuses the estimator_lab harness (run_minvar walk-forward + estimators._pca_parts)

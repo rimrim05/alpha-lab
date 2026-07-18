@@ -13,13 +13,13 @@ exposure error of the residual statistical factors?
 Corollary 1's observable floor is derived under ISOTROPIC residual noise (z has cov δ²I; the
 bulk sample eigenvalues estimate δ²/n). Residualizing y with a fundamental model applies the
 cross-sectional projector M = I − B̃_F(B̃_FᵀB̃_F)⁻¹B̃_Fᵀ to every period, so the residual
-noise becomes δ²·M — a RANK-DEFICIENT projector, NOT isotropic — even when B̃_F = B_F
+noise becomes δ²·M, a RANK-DEFICIENT projector, NOT isotropic, even when B̃_F = B_F
 exactly. So the floor may break from residualization ALONE, before any misspecification.
 That is the primary thing under test; misspecification is secondary.
 
 ## 3. Theorem-faithful target metric
 Evaluate the floor against the ESTIMABLE out-of-subspace component ONLY, never the full angle
-(the full angle contains the provably-inestimable in-subspace rotation — using it as the
+(the full angle contains the provably-inestimable in-subspace rotation, using it as the
 success criterion smuggles the unobservable term back in).
 - True out-of-subspace (a)_j = ‖Π⊥_Bsig h_j‖², where Bsig = span of the top-k_R principal
   directions of the ACTUAL residual signal covariance Σ0_res (= M·(BΣ_fBᵀ)·Mᵀ, top-k_R),
@@ -27,17 +27,17 @@ success criterion smuggles the unobservable term back in).
 - **Rank discrimination:** Kendall τ between ℓ/θ_j and (a)_j, across factors × MC draws.
 - **Calibration (reported SEPARATELY):** coverage P(ℓ/θ_j ≤ full sin²∠(h_j,b_j)) → should
   stay ~1 (it's a lower bound); and slack S_j = (a)_j − ℓ/θ_j (bias of the floor vs the true
-  estimable component — should be ~0 if the floor is unbiased; nonzero ⇒ residualization bias).
+  estimable component, should be ~0 if the floor is unbiased; nonzero ⇒ residualization bias).
 
 ## 4. Experimental arms (minimal)
-- **A0 validation** (k_F=0, M=I): raw planted data, reproduce Corollary 1 — floor tracks (a).
+- **A0 validation** (k_F=0, M=I): raw planted data, reproduce Corollary 1, floor tracks (a).
   Gate: if A0 τ is not high, the simulator is wrong, stop.
 - **A1 oracle residualization** (B̃_F = B_F): isolates the isotropy-breaking effect alone.
 - **A2 estimated residualization** (B̃_F = B_F misaligned by ρ_F): adds correlated
   misspecification; sweep ρ_F ∈ {small, large}.
 - **HET** (within A1/A2): residual block has heterogeneous SNR (strong + weak + ~noise
   factors) so τ can measure triage; plus a uniform-low control.
-- **NEG** (B_R = 0): no residual factors — the floor MUST flag the spurious top residual
+- **NEG** (B_R = 0): no residual factors: the floor MUST flag the spurious top residual
   eigenvalues as high (unreliable), else Cor 1 is misapplied here.
 
 ## 5. Regime knobs (frozen small set)
@@ -92,7 +92,7 @@ Dual-space computation (n×n Gram; h_j = Yv_j/√(npθ_j), exact per the paper's
 - REGIME-LIMITED: slack concentrates below an observable detectability cut (small SNR̂);
   above the cut uncorrected |slack| < 0.05. Deliverable = the trust-region rule
   ("interpret the floor only when SNR̂ > c"), not a correction.
-- UNCALIBRATABLE: neither — floor bias depends on unobservables everywhere.
+- UNCALIBRATABLE: neither, floor bias depends on unobservables everywhere.
 Stop-iterating: one run; no new correction forms after seeing results.
 
 ---
@@ -101,7 +101,7 @@ Stop-iterating: one run; no new correction forms after seeing results.
 
 ## Candidates (exactly two, from Phase-2's measured structure; no others afterward)
 - **C3 (n/p-linear correction):** floor' = floor + c·(n/p) with c = 0.5 FROZEN (the Phase-2
-  slack law ≈ n/(2p); stated openly as derived from Phase 2 — evaluation is therefore on
+  slack law ≈ n/(2p); stated openly as derived from Phase 2, evaluation is therefore on
   OFF-GRID cells with a NEW seed, so the test is out-of-sample in both grid and randomness).
   Honest note: C3 turns the floor from a conservative lower bound into a calibrated point
   estimate; coverage degradation is reported alongside.
@@ -129,7 +129,7 @@ from pass/fail (the correction claims validity for p/n ≥ 4 only).
 
 ## Question
 When known-factor exposures are estimated imperfectly, can residual PCA factors be low-floor
-and apparently reliable because they contain LEAKED known-factor structure — and can leakage
+and apparently reliable because they contain LEAKED known-factor structure, and can leakage
 be detected from observables?
 
 ## Why the obvious check is vacuous (pre-stated)
@@ -155,7 +155,7 @@ C4 trust screen (Phase 3, frozen) → among trusted factors: floor + leakage fla
 
 ## Arms (k′=5 extracted throughout; mis = loading misalignment; SNR ladder as Phases 1–3)
 A1 oracle (mis=0, genuine het) · NEG (mis=0, B_R=0) · LEAK (mis=0.5, B_R=0) ·
-MIXED (mis=0.5, genuine het) — the decisive arm.
+MIXED (mis=0.5, genuine het), the decisive arm.
 
 ## Cells and seeds
 Main (500,63); HELD-OUT (350,90) and (750,50). Seed=2 (fresh). N_MC=200.
@@ -164,7 +164,7 @@ Main (500,63); HELD-OUT (350,90) and (750,50). Seed=2 (fresh). N_MC=200.
 - SUCCESS: AUC(D_j → leaked) ≥ 0.9 AND at the frozen F-test flag FPR ≤ 0.10 and FNR ≤ 0.10.
 - FAIL: AUC < 0.7 OR either error rate > 0.25.
 - AMBIGUOUS: between. Also reported: the TRAP RATE (fraction of truly-leaked factors that
-  pass the trust screen with floor < 0.3 — the practitioner hazard motivating all this);
+  pass the trust screen with floor < 0.3, the practitioner hazard motivating all this);
   sanity on pure arms (LEAK median D high, A1 median D near the k_F/n null).
 - Known limit (pre-stated): the sim plants f_R ⊥ f_F; in real markets genuine residual
   factors may correlate with fundamentals, which this detector would mis-flag. Correlated-f
@@ -184,7 +184,7 @@ x_j = h_jᵀY_res over half 2 regressed on f̂_F = B̃_FᵀY over half 2; F-test
 - FPR drops to ≤0.10 at all held-out cells → Phase-4's shared-noise/overfit story confirmed.
 - FPR persists ≈0.12 → the true mechanism is PARTIAL MIXING: factors labeled "genuine"
   (L < 0.2 permits real leakage up to 20%) carry leaked content the F-test CORRECTLY
-  detects — fix is interpretive (leakage is a continuum), not a better detector.
+  detects, fix is interpretive (leakage is a continuum), not a better detector.
 
 ## Decision rule
 SUCCESS: held-out MIXED FPR ≤ 0.10 AND FNR ≤ 0.10 (power cost of n/2 obs accepted) AND AUC

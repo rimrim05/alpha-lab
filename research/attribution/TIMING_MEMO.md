@@ -21,7 +21,7 @@ timing optimization. This memo is that stop.
 
 A realistic TM-visible timing effect is order +1–3%/yr. The 1-year books were
 therefore a foregone non-detection at any plausible effect size (~15% power); the
-powered part of the test is the 5-year books — best case defensive_ensemble, where
+powered part of the test is the 5-year books: best case defensive_ensemble, where
 anything ≥ +5.4%/yr was detectable and nothing appeared. Scope: the gate sees
 TM-visible timing only (daily market-return convexity beyond FF5+MOM+TSMOM+QQQRES);
 vol-space convexity, discrete regime switching, and horizon-mismatched timing are
@@ -48,7 +48,7 @@ The full tables live in `TIMING_GATE.md` + `timing_gate.csv` (this gate) and
 `ATTRIBUTION.md` (levels): fixed-factor replication (M2) leaves blind-window level
 alphas of −7.5% to +15.8%/yr, none with t ≥ 2; the TM timing term adds no positive
 convexity anywhere; the naive trend parent itself was whipsawed concave in the blind
-year (γ −23, t −2.06), so no book failed the parent comparison to a *skilled* parent —
+year (γ −23, t −2.06), so no book failed the parent comparison to a *skilled* parent:
 they failed on their own numbers. Placebos/controls: SPY/QQQ clean; the two flagged
 control t-stats were adjudicated by the pre-committed bootstrap rule (one NW-size
 artifact; one economically-nil cost-drag concavity, TV −0.07%/yr, recorded as a
@@ -56,7 +56,7 @@ control model limitation).
 
 ## 5. Regime breakdown
 
-Not run beyond the blind/full split — the gate stopped the program before Phase 2's
+Not run beyond the blind/full split: the gate stopped the program before Phase 2's
 regime battery, per the pre-committed route. Full-history (in-sample, context only)
 γ is ≈ 0 for every book, so there is no in-sample convexity that a regime split
 could resurrect.
@@ -65,14 +65,14 @@ could resurrect.
 
 Harness costs (10/2 bps per side) are inside every number. Financing haircut
 max(gross−1,0)·(RF+50bps) turns the two vol books' positive blind-year level alphas
-(+14.6%, +15.4%) into ≈ 0 (−0.7%, −1.2%) once their negative timing value is added —
+(+14.6%, +15.4%) into ≈ 0 (−0.7%, −1.2%) once their negative timing value is added:
 at gross 1.85–1.65 the free-financing illusion is the books' entire apparent edge.
 
 ## 7. What mechanism, if any, creates value
 
 The blind-year decomposition is the useful discovery: the vol books earn a POSITIVE
 LEVEL (carry-like, +14–15%/yr) and pay for it with NEGATIVE market convexity
-(TV −13%/yr) — the signature of harvesting a short-gamma/variance-style premium, not
+(TV −13%/yr): the signature of harvesting a short-gamma/variance-style premium, not
 of timing. What looked like "maybe timing alpha" in the earlier windowed attribution
 is, under a design that can see convexity, premium harvesting whose net stressed
 value in the claim-bearing year was ≈ 0. Nothing in any book shows the convex
@@ -81,11 +81,11 @@ signature timing skill would produce.
 ## 8. One recommended next action
 
 **Demote / stop the timing-alpha hypothesis for the existing signals.** Do not tune
-lookbacks, thresholds, or rebalance frequencies — the mechanism gate says there is
+lookbacks, thresholds, or rebalance frequencies: the mechanism gate says there is
 nothing there to refine at any detectable size, and Phase 3 is closed by rule. If
 timing remains interesting, it needs a NEW data hypothesis, and the gate's own
 blind-spot list says where to look first: vol-space convexity (a variance-swap-like
-test of the vol books against realized-vs-implied vol, needs option/VIX-term data) —
+test of the vol books against realized-vs-implied vol, needs option/VIX-term data):
 that is a new experiment with its own prereg, not a refinement of this one.
 
 Forward paper trading of the books continues regardless (it tests the LEVEL claim,
@@ -96,7 +96,7 @@ in this program changes live allocations.
 
 Prereg frozen before code (incl. 9 reviewer dispositions: leverage-normalized parent
 leg, MDE table mandated, strong-tier restricted to 5y, size-distortion disclosure,
-control-failure adjudicator, PIT-QQQRES robustness — which came back identical to
+control-failure adjudicator, PIT-QQQRES robustness, which came back identical to
 2 decimals). Statistical + integrity reviews pre-execution; controls adjudicated by
 the pre-committed rule; corrected (post-phantom-row) panels used per program
 directive, deviation from disposition 9's wording disclosed in TIMING_GATE.md notes.

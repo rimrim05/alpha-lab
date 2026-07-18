@@ -1,7 +1,7 @@
 # MEMO — Earnings blackout on the residual book: tested, rejected
 
 **Date:** 2026-07-09
-**Hypothesis:** HYP-006 — blocking new residual-reversion entries within ±2 days of a
+**Hypothesis:** HYP-006, blocking new residual-reversion entries within ±2 days of a
 name's earnings report improves the book (the textbook "reversion loses when the move
 was informed" story).
 **Verdict: rejected. No change to the live paper book.**
@@ -13,10 +13,10 @@ was informed" story).
 - Blackout mask: `filters.earnings_window_mask`, earnings dates from the cached
   yfinance pull (`data/raw/statarb_earnings.parquet`, 502 names). Coverage is dense
   only from ~2019 (yfinance's 28-quarter limit), so the honest evaluation window is
-  **2019+, where coverage is 100%** — the old ablation's full-history `all_on` row
+  **2019+, where coverage is 100%**, the old ablation's full-history `all_on` row
   diluted the filter with a decade it couldn't see.
 - New data infrastructure this memo rode on: `core/data/earnings.py` (Nasdaq public
-  calendar; EODHD's calendar endpoint 403s on the current plan). Forward-looking only —
+  calendar; EODHD's calendar endpoint 403s on the current plan). Forward-looking only,
   the backtest used the yfinance history above.
 
 ## Result (2019+)
@@ -42,7 +42,7 @@ The pre/post split kills the intuition cleanly:
 
 The blackout was built for a failure mode this spec largely doesn't have. The signal
 enters on a deep s-score with `skip=1`, so by the time a name qualifies "around
-earnings," the announcement move has usually already happened — the book is harvesting
+earnings," the announcement move has usually already happened, the book is harvesting
 the post-event overreaction, which is exactly where residual reversion pays. Blocking
 those entries throws away the juiciest dips the strategy exists to buy.
 
@@ -50,7 +50,7 @@ Caveats, both cutting the same direction:
 1. Nothing here is significant (t ≤ 1.6, and same-day cross-correlation across
    positions overstates even that). There is no evidence the filter helps; there is
    weak evidence it hurts.
-2. Survivorship bias specifically flatters "buy the earnings crash" — names that
+2. Survivorship bias specifically flatters "buy the earnings crash", names that
    crashed on earnings and delisted aren't in the panel to punish the +12.4 bps. A
    CRSP-quality panel would shrink that number, but shrinking it does not rescue the
    filter (its best case is still ~zero marginal Sharpe).

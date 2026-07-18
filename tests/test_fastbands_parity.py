@@ -1,4 +1,4 @@
-"""The C++ band_positions must be EXACTLY the pure-Python state machine — same ints,
+"""The C++ band_positions must be EXACTLY the pure-Python state machine: same ints,
 every path. Positions are discrete state, so parity is exact, not approximate."""
 import numpy as np
 import pandas as pd

@@ -2,7 +2,7 @@
 
 Bar: net CAGR >= 18%. Results in results5y/ (write-once per spec).
 HONESTY NOTE baked into every record: round-1 specs (fit window through 2025-07-10)
-are NOT blind on 2021->2025 — this is a stress test for them. Round-2 specs
+are NOT blind on 2021->2025; this is a stress test for them. Round-2 specs
 (fit on train5y only) ARE blind on the full window; the record carries a `blind` flag.
 """
 import json

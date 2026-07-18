@@ -104,7 +104,7 @@ def paper_stats(live_dir=PAPER_LIVE):
     nav_rows = _read_jsonl(live_dir / "daily_nav.jsonl")
     if not nav_rows:
         return None
-    # ledger is append-only, so a re-run can duplicate a date — keep the last row per date and
+    # ledger is append-only, so a re-run can duplicate a date; keep the last row per date and
     # sort, else sessions inflate and that day's return double-compounds into the NAV curve.
     by_date = {r["date"]: r for r in nav_rows}          # later row for a date wins
     nav_rows = [by_date[d] for d in sorted(by_date)]
