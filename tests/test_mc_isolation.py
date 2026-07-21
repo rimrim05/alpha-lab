@@ -184,7 +184,8 @@ def test_slippage_splits_into_overnight_drift_and_execution():
     mc = _mc_row({"AAPL": 5_000})
     orders = [{"ticker": "AAPL", "side": "buy", "status": "filled", "filled_qty": 50.0,
                "fill_price": 103.5, "client_order_id": "h26mc-AAPL-a",
-               "submitted": "2026-07-17"}]
+               "submitted": "2026-07-16", "submitted_at": "2026-07-16T23:30:00Z",
+               "rests_until_open": True}]                    # 19:30 ET, after the 16th closed
     row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 50.0}, orders, CLOSES, None,
                             opens={"2026-07-17": {"AAPL": 103.0}})
     s = row["slippage_bps"]
@@ -193,6 +194,35 @@ def test_slippage_splits_into_overnight_drift_and_execution():
     assert s["drift_mean"] == pytest.approx(300.0, abs=0.5)
     assert s["exec_mean"] == pytest.approx(50.0, abs=0.5)
     assert s["drift_mean"] + s["exec_mean"] == pytest.approx(350.0)   # exact on means
+
+
+def test_submit_stamp_reads_the_exchange_session_not_the_utc_date():
+    """The 20:30 PT run submits at 03:30 UTC the NEXT calendar day. In exchange time that is
+    23:30 on the session that placed it, after the close, so it rests until the next open."""
+    from scripts.hunt_paper_reconcile import submit_stamp
+
+    evening = submit_stamp("2026-07-21T03:30:00Z")          # 23:30 ET on the 20th, after the close
+    assert evening["submitted"] == "2026-07-20" and evening["rests_until_open"] is True
+
+    premarket = submit_stamp("2026-07-21T08:00:55Z")        # 04:00 ET, what this deployment does
+    assert premarket["submitted"] == "2026-07-21" and premarket["rests_until_open"] is True
+
+    intraday = submit_stamp("2026-07-20T17:05:00Z")         # 13:05 ET, market open
+    assert intraday["submitted"] == "2026-07-20" and intraday["rests_until_open"] is False
+
+    assert submit_stamp("")["rests_until_open"] is False     # unusable stamp withholds, never guesses
+
+
+def test_evening_orders_stay_with_their_own_run_on_consecutive_days():
+    """The case the previous test missed: with runs on BOTH days, a raw UTC date pushed the
+    evening order onto the next day's run and scored it against the wrong close."""
+    from scripts.hunt_paper_reconcile import bucket_orders, submit_stamp
+
+    orders = [{"client_order_id": "h26mc-AAPL-a", **submit_stamp("2026-07-21T03:30:00Z")},
+              {"client_order_id": "h26mc-MSFT-b", **submit_stamp("2026-07-21T17:05:00Z")}]
+    got = bucket_orders(orders, ["2026-07-20", "2026-07-21"])      # consecutive run days
+    assert [o["client_order_id"] for o in got["2026-07-20"]] == ["h26mc-AAPL-a"]
+    assert [o["client_order_id"] for o in got["2026-07-21"]] == ["h26mc-MSFT-b"]
 
 
 def test_mc_orders_bucket_to_the_run_that_submitted_them():
@@ -214,7 +244,8 @@ def test_split_is_withheld_for_an_intraday_submit():
     mc = _mc_row({"AAPL": 5_000})
     orders = [{"ticker": "AAPL", "side": "buy", "status": "filled", "filled_qty": 50.0,
                "fill_price": 103.5, "client_order_id": "h26mc-AAPL-a",
-               "submitted": "2026-07-16"}]                      # same day as the run date
+               "submitted": "2026-07-16", "submitted_at": "2026-07-16T17:05:00Z",
+               "rests_until_open": False}]                   # 13:05 ET, mid-session
     row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 50.0}, orders, CLOSES, None,
                             opens={"2026-07-16": {"AAPL": 103.0}})
     assert row["slippage_bps"]["median"] is not None

@@ -4,48 +4,39 @@
 **Resolves:** `memos/mc-drag-flag-2026-07-16.md` items 1 and 4
 **Scope:** monitoring definitions only. No pre-registered band value was changed.
 
-## 1. The 332 bps median was a measurement artifact, and it is now decomposed
+## 1. The slippage statistic is structurally contaminated by overnight drift
 
 The flag asked whether the MC fills' 332 bps median slippage was real cost or a reference-price
-artifact. It is the artifact, and the mechanism is structural rather than a bug in any one place:
-the run submits after the close, the fill lands at the next open, and the pre-registered statistic
-scores that fill against the close it was submitted after. Every fill therefore carries one full
-overnight gap before execution begins.
+artifact. The mechanism is not in doubt and is structural rather than a bug in any one place: the
+runner submits while the market is closed (this deployment fires around 04:00 ET), the order cannot
+cross until the opening auction, and the pre-registered statistic scores that fill against the
+PREVIOUS session's close. Every fill therefore carries one full overnight gap before execution
+begins. The pre-registration anticipated this and budgeted ±50 bps of per-fill drift; the sandbox
+tape moves 3 to 5 percent a session, so the drift term runs several times what was assumed.
 
-The pre-registration anticipated this and budgeted for it, calling ±50 bps of per-fill drift normal
-and prescribing the trailing mean over 20 fills as the agreement statistic. The sandbox tape moves
-3 to 5 percent a session, so the drift term is running roughly six times what the pre-registration
-assumed, which is enough to dominate the statistic outright.
+What is NOT established is the share. Calling the whole 332 bps an artifact was an overclaim, and
+this note made it before the decomposition existed to check it.
 
 Rather than amend a frozen definition from inside the experiment, the reconcile now reports the
 split alongside the unchanged statistic. Each fill carries `drift_bps` (run-date close to the open
-of the session it actually filled in) and `exec_bps` (that open to the fill), both on the run-date
-close basis so the pair sums to the statistic exactly. On the shared account the trailing window
-reports both and `SLIPPAGE-*` names which half moved when it escalates. The MC path reports the
-split per night only; it has no trailing decomposition.
+it crossed at) and `exec_bps` (that open to the fill), both on the run-date close basis so the pair
+sums to the statistic exactly. Means, not medians, since medians do not add.
 
-The split is only computed for orders submitted after the run date, which is the 20:30 case whose
-orders queue overnight and fill at the next open. A by-hand daytime run submits after its own
-session's open, so that open is not the boundary between market drift and execution and the split
-would read backwards. Most fills in the current window came from by-hand runs, so the evidence
-available today is one session:
-
-All figures below are MEANS over the eligible fills, not medians: drift and exec sum exactly to
-slippage on means over one sample, and not at all on medians.
-
-| account | date | eligible fills | slippage | drift | execution |
+| account | date | split fills | slippage | drift | execution |
 |---|---|---|---|---|---|
-| shared | 2026-07-20 | 4 of 9 | +64.7 | +64.5 | +0.2 |
-| momentum_concentrated | 2026-07-20 | 2 of 5 | +197.6 | +114.3 | +83.3 |
+| shared, ETF trailing 20 | as of 07-20 | 20 of 20 | +1.1 | +1.3 | -0.2 |
+| momentum_concentrated | 2026-07-16 | 16 of 16 | +291.5 | +238.1 | +53.4 |
+| momentum_concentrated | 2026-07-17 | 4 of 4 | -157.1 | -270.0 | +112.9 |
+| momentum_concentrated | 2026-07-20 | 5 of 5 | +100.7 | +64.5 | +36.2 |
 
-That is one session and six fills across two accounts. It is consistent with the reading that the
-shared account's band breaches are drift and that its execution is running inside the 15 bps stock
-and 5 bps ETF bands. It is nowhere near enough to assert either, and the MC pair is too thin to
-read at all. The shared trailing window withholds the split entirely until every fill in it carries
-one, which will take about 20 sessions of scheduled runs; the MC path has no trailing
-decomposition, only these per-night figures. Treat the mechanism as established by construction
-(the reference close precedes the fill by a session, unavoidably) and every magnitude as
-unmeasured until those windows fill.
+Two different readings, and they should not be merged. On the shared ETF book the trailing window
+is full and the answer is clean: execution costs essentially nothing (-0.2 bps) and the band
+breaches are drift. On the dedicated single-name account, drift dominates and flips sign session to
+session as expected, but execution does NOT look free: +53, +113, +36 bps on 25 fills across three
+sessions. That is 25 fills and no trailing statistic, so it is a flag for attention rather than a
+finding, and the obvious candidates (an opening auction print that differs from the vendor's open,
+single-name spreads, or the vendor's adjusted open itself) are untested. Someone should test them
+before anyone concludes single-name execution is expensive.
 
 ## 2. `book_drag_bps_month = 30` stands
 
@@ -74,9 +65,8 @@ by-hand runs. The 2026-07-20 session read 3 fills and now reads 5. MC now uses t
 `MC-DRAG` reads +106.3 bps and will keep reading roughly that until 2026-07-16 rolls out of the
 20-session window in mid-August. That night alone contributed +105.8 bps: it is the initial
 build-out of the dedicated account, one full turnover of the sleeve executed into a session the
-tape fell about 4 percent. Its fills were submitted intraday by hand, so the drift/exec split is
-withheld for it and how much of that 105.8 was market movement rather than execution is not
-measured. It is one true event rather than a ratchet, so it is being left to age out rather than
+tape fell about 4 percent. By the split its 16 fills were +238 bps of drift against +53 bps of
+execution, so most of that night was the market moving, not the desk. It is one true event rather than a ratchet, so it is being left to age out rather than
 suppressed. If it proves noisy enough to train the eye past
 it, the follow-up is to exclude the account's first invested session from a statistic that is
 supposed to measure tracking, which is a definitional question and belongs in a dated ruling of its

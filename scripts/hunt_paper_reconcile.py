@@ -100,9 +100,36 @@ def orders_from_client(tc, since: str, statuses: str = "closed") -> list[dict]:
             "filled_qty": float(o.filled_qty or 0),
             "fill_price": float(o.filled_avg_price) if o.filled_avg_price else None,
             "client_order_id": getattr(o, "client_order_id", None) or "",
-            "submitted": str(getattr(o, "submitted_at", ""))[:10],
+            **submit_stamp(getattr(o, "submitted_at", "")),
         })
     return out
+
+
+# The market defines both facts we need, so both are read in EXCHANGE time rather than the
+# machine's: which session an order belongs to, and whether it was placed while that session was
+# still open. Truncating the UTC timestamp to a date got this wrong every weekday, because the
+# 20:30 PT run submits at 03:30 UTC the NEXT day and then looked like the next run's order.
+EXCHANGE_TZ = "America/New_York"
+EXCHANGE_OPEN = (9, 30)           # 09:30 ET; DST moves the exchange and the clock together
+EXCHANGE_CLOSE = (16, 0)
+
+
+def submit_stamp(submitted_at) -> dict:
+    """{submitted, submitted_at, rests_until_open} from a broker timestamp.
+    `submitted` is the EXCHANGE-local date. `rests_until_open` says the order was placed while the
+    market was CLOSED, so it cannot cross until an opening auction: that is the boundary the
+    drift/exec split is defined on. This deployment submits around 04:00 ET, before the open, not
+    after the close, so testing only for "after the close" withheld the split from every order.
+    An unusable stamp yields False, which withholds the split rather than guessing at it."""
+    from zoneinfo import ZoneInfo
+    raw = str(submitted_at or "")
+    try:
+        t = dt.datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(ZoneInfo(EXCHANGE_TZ))
+    except ValueError:
+        return {"submitted": raw[:10], "submitted_at": raw, "rests_until_open": False}
+    hm = (t.hour, t.minute)
+    return {"submitted": t.date().isoformat(), "submitted_at": raw,
+            "rests_until_open": hm < EXCHANGE_OPEN or hm >= EXCHANGE_CLOSE}
 
 
 def positions_from_client(tc) -> dict[str, float]:
@@ -120,8 +147,10 @@ def account_equity(tc) -> float | None:
 # ---------- pure core (offline-testable) ----------
 
 def bucket_orders(orders: list[dict], run_dates: list[str]) -> dict[str, list[dict]]:
-    """Attribute each h26 order to the latest run-date <= its submission date (orders submitted
-    Friday night fill Monday; they still belong to Friday's run)."""
+    """Attribute each h26 order to the latest run-date <= its submission date. `submitted` is the
+    EXCHANGE-local date (see submit_stamp), so an evening run's orders carry the session they were
+    placed in and land on that run's own date, not the next one. Reading a raw UTC date here put
+    every evening order on the following run whenever runs were on consecutive days."""
     run_dates = sorted(run_dates)
     out: dict[str, list[dict]] = {d: [] for d in run_dates}
     for o in orders:
@@ -229,16 +258,23 @@ def opens_by_session(op) -> dict[str, dict[str, float]]:
 
 
 def _fill_open(opens: dict[str, dict[str, float]], o: dict, date: str) -> float | None:
-    """The open of the session this order filled in: the first session on or after its submitted
-    date. Only for orders submitted AFTER the run date, i.e. the 20:30 run whose orders queue
-    overnight and fill at that open. A by-hand daytime run submits after its own session's open,
-    so that open is not the boundary between market drift and execution and the split would be
-    backwards. None leaves the split unreported rather than misaligned."""
+    """The open the order actually crossed at: the first session whose opening auction comes after
+    the order was placed. Placed before the open, that is its OWN session; placed after the close,
+    the next one. Only orders that waited for an auction get the split, because that auction is the
+    boundary between the drift they inherited and what execution cost. An order placed during the
+    session crossed at an unknown point in it, so no open is that boundary and the split would read
+    backwards. None when it does not qualify or the symbol has no open, which withholds it."""
     sub = o.get("submitted")
-    if not (opens and sub and sub > date):
+    if not (opens and sub and o.get("rests_until_open")):
         return None
-    sessions = [d for d in opens if d >= sub]
-    return opens[min(sessions)].get(o["ticker"]) if sessions else None
+    from zoneinfo import ZoneInfo
+    try:
+        t = dt.datetime.fromisoformat(str(o.get("submitted_at", "")).replace("Z", "+00:00"))
+        pre_open = (t.astimezone(ZoneInfo(EXCHANGE_TZ)).hour, t.astimezone(ZoneInfo(EXCHANGE_TZ)).minute) < EXCHANGE_OPEN
+    except ValueError:
+        return None
+    later = [d for d in opens if (d >= sub if pre_open else d > sub) and o["ticker"] in opens[d]]
+    return opens[min(later)][o["ticker"]] if later else None
 
 
 def drop_reprocessed_dates(prior_rows: list[dict], dates: list[str]) -> list[dict]:
@@ -524,7 +560,13 @@ def reconcile_mc_date(date: str, mc_row: dict, positions: dict[str, float],
     # PREVIOUS run's book. Alarming on tonight's targets flagged every rebalance as a gap. Compare
     # against the settled expectation (last run's target shares), and allow the one share the two
     # sizing bases disagree on: the runner rounds off the live price, this rounds off the close.
-    settled = {leg["sym"]: leg["target_shares"] for leg in ((prior or {}).get("legs") or [])}
+    # Whether the broker should already show TONIGHT's book depends on when tonight's orders were
+    # placed. After the close they rest until the next open, so the settled expectation is last
+    # run's targets. A by-hand daytime run has already crossed, so tonight's own targets are the
+    # expectation and comparing against yesterday's would alarm on every resized leg.
+    rests = any(o.get("rests_until_open") for o in mine) if mine else True
+    settled = ({leg["sym"]: leg["target_shares"] for leg in ((prior or {}).get("legs") or [])}
+               if rests else {leg["sym"]: leg["target_shares"] for leg in legs})
     # An empty settled book is "no expectation yet", not "every share held is unexplained": the
     # first night after a flat prior row would otherwise alarm on the entire book.
     settled_gap, unpriced_gap = 0.0, []
