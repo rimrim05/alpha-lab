@@ -433,22 +433,34 @@ def reconcile_mc_date(date: str, mc_row: dict, positions: dict[str, float],
         if ref and fp and q:
             s_bps = (fp - ref) / ref * 1e4 * (1 if o["side"] == "buy" else -1)
             slips.append(round(s_bps, 2))
-            drag += abs(s_bps) / 1e4 * q * fp
+            # signed, per pre-reg §3 "cumulative slippage drag" and the shared path's book drag.
+            # abs() here rectified the overnight-gap noise every fill carries (fills land at the
+            # next open, the reference is the run-date close), so the rolling sum could only
+            # ratchet up and MC-DRAG could never clear once the book traded at all.
+            drag += s_bps / 1e4 * q * fp
     marked = sum(q * closes.get(s, 0.0) for s, q in positions.items() if closes.get(s))
     drag_bps = round(drag / notional * 1e4, 3)
     hist = ((prior or {}).get("drag_bps_trail", []) or [])[-20:] + [drag_bps]   # ~1 trading month
     drag_month = round(sum(hist), 2)
     flat_nights = ((prior or {}).get("flat_nights", 0) + 1) if not positions else 0
     alarms = []
-    if drag_month > BANDS["book_drag_bps_month"]:
-        alarms.append(f"MC-DRAG: trailing ~1mo tracking drag {drag_month:.1f} bps > "
-                      f"{BANDS['book_drag_bps_month']:.0f} bps band")
+    if abs(drag_month) > BANDS["book_drag_bps_month"]:      # pre-reg: "drifting" either way
+        alarms.append(f"MC-DRAG: trailing ~1mo tracking drag {drag_month:+.1f} bps outside the "
+                      f"±{BANDS['book_drag_bps_month']:.0f} bps band")
     if rejected:
         alarms.append(f"MC-REJECTS: {len(rejected)} rejected/canceled order(s)")
     if flat_nights >= 2 and targets:
         alarms.append(f"MC-SILENT-FLAT: model has targets but dedicated account flat {flat_nights} night(s)")
-    if any(leg["gap_shares"] not in (0, None) for leg in legs):
-        alarms.append(f"MC-POSITION-GAP: ${gap_dollars:,.0f} broker-vs-model share gap")
+    # `positions` is a snapshot taken a minute after the 20:30 run submits, so it still reflects the
+    # PREVIOUS run's book. Alarming on tonight's targets flagged every rebalance as a gap. Compare
+    # against the settled expectation (last run's target shares), and allow the one share the two
+    # sizing bases disagree on: the runner rounds off the live price, this rounds off the close.
+    settled = {leg["sym"]: leg["target_shares"] for leg in ((prior or {}).get("legs") or [])}
+    settled_gap = sum(abs(positions.get(s, 0.0) - (settled.get(s) or 0.0)) * (closes.get(s) or 0.0)
+                      for s in set(settled) | set(positions)
+                      if abs(positions.get(s, 0.0) - (settled.get(s) or 0.0)) > 1)
+    if prior and settled_gap:
+        alarms.append(f"MC-POSITION-GAP: ${settled_gap:,.0f} broker-vs-settled-model share gap")
     return {"date": date, "book": MC_BOOK, "legs": legs,
             "orders": {"filled": len(filled), "partial": len(partial),
                        "rejected": len(rejected), "pending": len(pending)},
@@ -456,7 +468,8 @@ def reconcile_mc_date(date: str, mc_row: dict, positions: dict[str, float],
                              "median": (sorted(slips)[len(slips) // 2] if slips else None)},
             "marked_sleeve_value": round(marked, 2), "model_notional": round(notional, 2),
             "drag_bps": drag_bps, "drag_bps_trail": hist, "drag_month_bps": drag_month,
-            "gap_dollars": round(gap_dollars, 2), "flat_nights": flat_nights, "alarms": alarms}
+            "gap_dollars": round(gap_dollars, 2), "settled_gap_dollars": round(settled_gap, 2),
+            "flat_nights": flat_nights, "alarms": alarms}
 
 
 def print_mc_report(row: dict) -> None:

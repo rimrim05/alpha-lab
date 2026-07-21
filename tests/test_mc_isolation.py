@@ -102,10 +102,33 @@ def test_mc_clean_match_no_alarms():
 
 
 def test_mc_position_gap_alarms():
-    mc = _mc_row({"AAPL": 5_000})                    # want 50 sh, hold only 30
-    row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 30.0}, [], CLOSES, None)
-    assert row["gap_dollars"] == pytest.approx(2_000.0)   # 20 sh * 100
+    # the gap that matters is against the SETTLED book (last run's targets), which tonight's
+    # positions should already reflect; last run wanted 50 sh, the account holds 30
+    mc = _mc_row({"AAPL": 5_000})
+    prior = {"legs": [{"sym": "AAPL", "target_shares": 50}], "drag_bps_trail": [], "flat_nights": 0}
+    row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 30.0}, [], CLOSES, prior)
+    assert row["settled_gap_dollars"] == pytest.approx(2_000.0)   # 20 sh * 100
     assert any("MC-POSITION-GAP" in a for a in row["alarms"])
+
+
+def test_mc_pending_rebalance_is_not_a_position_gap():
+    # tonight's orders were submitted a minute ago and fill at the next open, so holding last
+    # run's shares is correct, not a gap. This fired every rebalance night before the fix.
+    mc = _mc_row({"AAPL": 3_000})                    # tonight wants 30 sh
+    prior = {"legs": [{"sym": "AAPL", "target_shares": 50}], "drag_bps_trail": [], "flat_nights": 0}
+    row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 50.0}, [], CLOSES, prior)
+    assert row["gap_dollars"] == pytest.approx(2_000.0)   # tonight's intended-vs-actual, reported
+    assert row["settled_gap_dollars"] == 0.0             # against the settled book: clean
+    assert not any("MC-POSITION-GAP" in a for a in row["alarms"])
+
+
+def test_mc_one_share_rounding_is_not_a_position_gap():
+    # runner rounds shares off the live price, the reconcile off the close: a one-share
+    # disagreement is the two bases, not drift
+    mc = _mc_row({"AAPL": 5_000})
+    prior = {"legs": [{"sym": "AAPL", "target_shares": 50}], "drag_bps_trail": [], "flat_nights": 0}
+    row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 49.0}, [], CLOSES, prior)
+    assert not any("MC-POSITION-GAP" in a for a in row["alarms"])
 
 
 def test_mc_rejected_order_alarms():
@@ -142,6 +165,23 @@ def test_mc_monthly_drag_band_trips():
     row = reconcile_mc_date("2026-07-16", mc, {"AAPL": 50.0}, orders, CLOSES, prior)
     assert row["drag_month_bps"] > 30.0
     assert any("MC-DRAG" in a for a in row["alarms"])
+
+
+def test_mc_drag_is_signed_so_overnight_noise_cancels():
+    # fills land at the next open and are scored against the run-date close, so each night carries
+    # an overnight gap of either sign. Summing absolute values ratcheted the band; signed nets out.
+    mc = _mc_row({"AAPL": 5_000})
+    buy_high = [{"ticker": "AAPL", "side": "buy", "status": "filled", "filled_qty": 50.0,
+                 "fill_price": 102.0, "client_order_id": "h26mc-AAPL-a"}]      # +200 bps
+    buy_low = [{"ticker": "AAPL", "side": "buy", "status": "filled", "filled_qty": 50.0,
+                "fill_price": 98.0, "client_order_id": "h26mc-AAPL-b"}]        # -200 bps
+    r1 = reconcile_mc_date("2026-07-16", mc, {"AAPL": 50.0}, buy_high, CLOSES, None)
+    r2 = reconcile_mc_date("2026-07-17", mc, {"AAPL": 50.0}, buy_low, CLOSES, r1)
+    assert r1["drag_bps"] > 0 and r2["drag_bps"] < 0
+    # +102 bps and -98 bps of notional (dollar cost scales with the fill price), so the pair nets
+    # to 4 bps instead of the 200 bps an absolute sum would have booked
+    assert r2["drag_month_bps"] == pytest.approx(4.0, abs=0.1)
+    assert not any("MC-DRAG" in a for a in r2["alarms"])
 
 
 # ---------- per-leg submit is fail-safe (no partial-night data loss) ----------
