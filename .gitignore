@@ -27,3 +27,11 @@ build/
 # Polygon reference cache (bulk external data, reproducible from the API)
 research/stock_universe_repair/polygon_raw/
 research/stock_universe_repair/sec_company_tickers.json
+
+# superseded hunt2026 holdout snapshots, 55MB of them. The line above only matches the
+# directory's direct children, so the archive slipped through and would have gone into
+# history permanently. Same rule, one level down.
+research/hunt2026/archive/
+
+# Obsidian indexed this folder and left its editor config behind, same as .claude/
+.obsidian/
