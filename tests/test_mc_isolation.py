@@ -299,6 +299,22 @@ def test_submit_stamp_reads_the_exchange_session_not_the_utc_date():
     assert submit_stamp("")["submitted"] is None            # unusable stamp withholds, never guesses
 
 
+def test_an_unusable_submit_time_is_excluded_not_guessed():
+    """A naive or unparseable stamp used to fall back to the UTC-truncated date, which is the very
+    thing this attribution stopped trusting, and an empty one was pinned to the LATEST run by a
+    "9999" sort default. Both are guesses wearing a default's clothes."""
+    from scripts.hunt_paper_reconcile import bucket_orders, submit_stamp
+
+    naive = submit_stamp("2026-07-21T08:00:55")          # parses, but carries no offset
+    assert naive["submitted"] is None and naive["pre_open"] is False
+
+    orders = [{"client_order_id": "h26-AAPL-a", **naive},
+              {"client_order_id": "h26-MSFT-b", **submit_stamp("2026-07-21T08:00:55Z")}]
+    got = bucket_orders(orders, ["2026-07-20", "2026-07-21"])
+    assert [o["client_order_id"] for o in got["2026-07-20"]] == ["h26-MSFT-b"]
+    assert not got["2026-07-21"]                          # the unusable one lands nowhere
+
+
 def test_pre_open_orders_belong_to_the_previous_run():
     """A run builds its book from the last complete session and stamps its row with that session.
     Submitting before the open puts its orders on the NEXT calendar date, so filing them by date

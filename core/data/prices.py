@@ -64,6 +64,8 @@ def fetch_closes_and_opens_yf(tickers: list[str], start: str, end: str | None,
         if raw.empty:
             continue
         for field, frames in (("Close", close_frames), ("Open", open_frames)):
+            if field not in raw:
+                continue      # a chunk without Open must not cost the caller its closes
             px = (raw[field] if isinstance(raw.columns, pd.MultiIndex)
                   else raw[[field]].rename(columns={field: batch[0]}))
             frames.append(px)

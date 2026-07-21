@@ -122,21 +122,20 @@ EXCHANGE_CLOSE = (16, 0)   # unused since crossing is read from filled_at; kept 
 def _exchange_time(stamp) -> "dt.datetime | None":
     """A broker timestamp in EXCHANGE-local time, or None if it is unusable. Never raises: a bad
     stamp or a missing tz database must not cost a monitoring run its row."""
-    from zoneinfo import ZoneInfo
     if not str(stamp or "").strip():
         return None            # an unfilled order simply has no fill time; that is not a fault
     try:
+        from zoneinfo import ZoneInfo      # inside the guard: a missing tzdb must not kill the run
         t = dt.datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
-    except Exception:
-        print(f"cross-check: unparseable timestamp {stamp!r}; session facts withheld", file=sys.stderr)
-        return None
-    if t.tzinfo is None:
-        # astimezone() reads a naive stamp in the HOST timezone and hands back a confident wrong
-        # session. A withheld fact beats a misclassified one.
-        print(f"cross-check: timestamp {stamp!r} carries no offset; session facts withheld",
+        if t.tzinfo is None:
+            # astimezone() reads a naive stamp in the HOST timezone and hands back a confident
+            # wrong session. A withheld fact beats a misclassified one.
+            raise ValueError("timestamp carries no offset")
+        return t.astimezone(ZoneInfo(EXCHANGE_TZ))
+    except Exception as e:
+        print(f"cross-check: timestamp {stamp!r} unusable ({e}); session facts withheld",
               file=sys.stderr)
         return None
-    return t.astimezone(ZoneInfo(EXCHANGE_TZ))
 
 
 def exchange_date(stamp) -> str | None:
@@ -155,7 +154,9 @@ def submit_stamp(submitted_at) -> dict:
     t = _exchange_time(submitted_at)
     raw = str(submitted_at or "")
     if t is None:
-        return {"submitted": raw[:10] or None, "submitted_at": raw, "pre_open": False}
+        # NOT raw[:10]: that is the UTC-truncated date this whole change exists to stop trusting.
+        # Unknown stays unknown and bucket_orders excludes it rather than guessing a run.
+        return {"submitted": None, "submitted_at": raw, "pre_open": False}
     return {"submitted": t.date().isoformat(), "submitted_at": raw,
             "pre_open": (t.hour, t.minute) < EXCHANGE_OPEN}
 
@@ -188,13 +189,22 @@ def bucket_orders(orders: list[dict], run_dates: list[str]) -> dict[str, list[di
     the date alone then filed every pre-open order under the following run instead of its own."""
     run_dates = sorted(run_dates)
     out: dict[str, list[dict]] = {d: [] for d in run_dates}
+    unattributed: list[str] = []
     for o in orders:
         if not o["client_order_id"].startswith("h26"):
             continue
-        sub = o["submitted"] or "9999"
+        sub = o.get("submitted")
+        if not sub:
+            # "9999" here quietly pinned an unattributable order to the LATEST run, which is a
+            # guess wearing a default's clothes. Excluded and counted instead.
+            unattributed.append(o.get("client_order_id") or "?")
+            continue
         eligible = [d for d in run_dates if (d < sub if o.get("pre_open") else d <= sub)]
         if eligible:
             out[eligible[-1]].append(o)
+    if unattributed:
+        print(f"cross-check: {len(unattributed)} order(s) have no usable submit time and are "
+              f"excluded from attribution: {', '.join(sorted(unattributed)[:5])}", file=sys.stderr)
     return out
 
 
