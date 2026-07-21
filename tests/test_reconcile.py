@@ -111,6 +111,38 @@ def test_slippage_alarm_names_which_half_moved():
     assert hits and "+57.5 bps of overnight drift" in hits[0] and "+2.5 bps of execution" in hits[0]
 
 
+def test_re_scored_date_keeps_the_snapshot_it_was_written_with():
+    """The nightly run revisits yesterday to score fills that had not happened yet, but broker
+    positions are a single NOW snapshot, so yesterday's position-derived fields would be judged
+    against a book that has since rebalanced. Both reviewers flagged this branch as the one
+    nothing pinned down, and a rename of either alarm token silently inverts it."""
+    from scripts.hunt_paper_reconcile import SNAPSHOT_ALARMS, carry_snapshot_fields
+
+    fresh = {"position_gap_frac": 0.91, "foreign_positions": {"n": 3},
+             "books": {"vol_managed_qqq": {"flat_nights": 2}},
+             "alarms": ["SILENT-FLAT: vol_managed_qqq ...", "REJECT-RATE: 2/2 ..."]}
+    stored = {"position_gap_frac": 0.01, "foreign_positions": {"n": 0},
+              "books": {"vol_managed_qqq": {"flat_nights": 0}},
+              "alarms": ["FOREIGN-POSITIONS: 1 held symbol ..."]}
+    row = carry_snapshot_fields(fresh, stored)
+
+    assert row["position_gap_frac"] == 0.01                    # the snapshot that was current
+    assert row["foreign_positions"] == {"n": 0}
+    assert row["books"]["vol_managed_qqq"]["flat_nights"] == 0
+    assert row["alarms"] == ["REJECT-RATE: 2/2 ...",           # fill-derived: recomputed, kept
+                             "FOREIGN-POSITIONS: 1 held symbol ..."]   # snapshot-derived: carried
+    # the tokens have to match the alarms the reconcile actually emits, or this silently no-ops
+    assert all(any(a.startswith(t) for t in SNAPSHOT_ALARMS)
+               for a in ("SILENT-FLAT: x", "FOREIGN-POSITIONS: y"))
+
+
+def test_a_date_with_no_stored_row_stands_as_computed():
+    from scripts.hunt_paper_reconcile import carry_snapshot_fields
+
+    fresh = {"position_gap_frac": 0.91, "books": {}, "alarms": ["SILENT-FLAT: x"]}
+    assert carry_snapshot_fields(fresh, None) == fresh
+
+
 def test_zero_fill_session_raises_the_reject_rate_alarm():
     """2026-07-15 replay: Alpaca expired the whole queued batch, 19/19 orders closed unfilled.
     The 2% band was pre-registered and printed but never alarmed, so the session's total loss of

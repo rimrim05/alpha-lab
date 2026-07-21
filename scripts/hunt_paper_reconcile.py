@@ -116,7 +116,7 @@ EXCHANGE_OPEN = (9, 30)           # 09:30 ET; DST moves the exchange and the clo
 # withholds the SPLIT only and says so on stderr; a quieter action (a ~1000 bps stock dividend)
 # still slips through, so this is a floor on the obvious cases, not a detector.
 CORPORATE_ACTION_BPS = 2000
-EXCHANGE_CLOSE = (16, 0)   # unused since crossing is read from filled_at; kept for reference
+
 
 
 def _exchange_time(stamp) -> "dt.datetime | None":
@@ -332,6 +332,30 @@ def _fill_open(opens: dict[str, dict[str, float]], o: dict, date: str) -> float 
     if not (sub and (session > sub or (session == sub and o.get("pre_open")))):
         return None
     return opens.get(session, {}).get(o["ticker"])
+
+
+# Fields derived from the broker POSITION snapshot, plus the alarms that read them. `positions`
+# is a single NOW snapshot, so recomputing these for an older date judges it against a book that
+# has since rebalanced. flat_nights feeds SILENT-FLAT and foreign positions feed
+# FOREIGN-POSITIONS, so this reaches alarms and not just reported fields.
+SNAPSHOT_FIELDS = ("position_gap_frac", "foreign_positions")
+SNAPSHOT_ALARMS = ("SILENT-FLAT", "FOREIGN-POSITIONS")
+
+
+def carry_snapshot_fields(row: dict, old: dict | None) -> dict:
+    """Keep `old`'s snapshot-derived fields and alarms on a row being re-scored for its FILLS.
+    Without `old` the row stands as computed: a date with no stored row has nothing to carry."""
+    if not old:
+        return row
+    for k in SNAPSHOT_FIELDS:
+        if k in old:
+            row[k] = old[k]
+    for name, b in row.get("books", {}).items():
+        if name in old.get("books", {}):
+            b["flat_nights"] = old["books"][name].get("flat_nights", b["flat_nights"])
+    row["alarms"] = ([a for a in row["alarms"] if not a.startswith(SNAPSHOT_ALARMS)]
+                     + [a for a in old.get("alarms", []) if a.startswith(SNAPSHOT_ALARMS)])
+    return row
 
 
 def drop_reprocessed_dates(prior_rows: list[dict], dates: list[str]) -> list[dict]:
@@ -830,7 +854,6 @@ def main() -> None:
     # (and the two alarms that read them) are carried from the row written when the snapshot was
     # current. The MC path solves the same problem with live_gap.
     stored = {r["date"]: r for r in prior_rows}
-    SNAPSHOT_ALARMS = ("SILENT-FLAT", "FOREIGN-POSITIONS")
     prior_rows = drop_reprocessed_dates(prior_rows, dates)
     prior_flat = {n: b.get("flat_nights", 0)
                   for n, b in (prior_rows[-1]["books"].items() if prior_rows else [])}
@@ -847,15 +870,8 @@ def main() -> None:
         row = reconcile_date(d, shared_books, buckets.get(d, []), positions, closes, prior_flat,
                              symbol_orders=symbol_orders, equity=equity,
                              opens=session_opens)
-        old = stored.get(d)
-        if d != dates[-1] and old:      # re-scored date: its snapshot facts are no longer current
-            for k in ("position_gap_frac", "foreign_positions"):
-                row[k] = old.get(k, row[k])
-            for name, b in row["books"].items():
-                if name in old.get("books", {}):
-                    b["flat_nights"] = old["books"][name].get("flat_nights", b["flat_nights"])
-            row["alarms"] = ([a for a in row["alarms"] if not a.startswith(SNAPSHOT_ALARMS)]
-                             + [a for a in old.get("alarms", []) if a.startswith(SNAPSHOT_ALARMS)])
+        if d != dates[-1]:          # re-scored date: its snapshot facts are no longer current
+            row = carry_snapshot_fields(row, stored.get(d))
         prior_flat = {n: b["flat_nights"] for n, b in row["books"].items()}
         prior_rows.append(row)
         trail = trailing_means(prior_rows)          # needs THIS row, so it runs after the append

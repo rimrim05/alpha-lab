@@ -75,7 +75,9 @@ def fetch_closes_and_opens_yf(tickers: list[str], start: str, end: str | None,
     def _join(frames):
         f = pd.concat(frames, axis=1).dropna(how="all")
         return f.loc[:, ~f.columns.duplicated()]
-    return validate_prices(_join(close_frames)), _join(open_frames)
+    # opens may be absent entirely (every chunk lacking the field); pd.concat([]) raises, and the
+    # caller treats None as "no split", so an optional field must never take the closes down
+    return validate_prices(_join(close_frames)), (_join(open_frames) if open_frames else None)
 
 
 def rolling_dollar_adv(prices: pd.DataFrame, volume: pd.DataFrame,
