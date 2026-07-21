@@ -128,9 +128,11 @@ def submit_stamp(submitted_at) -> dict:
     try:
         t = dt.datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(ZoneInfo(EXCHANGE_TZ))
     except Exception:      # a bad stamp or a missing tz database must not cost the run its row
-        return {"submitted": raw[:10], "submitted_at": raw, "rests_until_open": False}
+        return {"submitted": raw[:10], "submitted_at": raw,
+                "pre_open": False, "rests_until_open": False}
     hm = (t.hour, t.minute)
     return {"submitted": t.date().isoformat(), "submitted_at": raw,
+            "pre_open": hm < EXCHANGE_OPEN,
             "rests_until_open": hm < EXCHANGE_OPEN or hm >= EXCHANGE_CLOSE}
 
 
@@ -149,16 +151,24 @@ def account_equity(tc) -> float | None:
 # ---------- pure core (offline-testable) ----------
 
 def bucket_orders(orders: list[dict], run_dates: list[str]) -> dict[str, list[dict]]:
-    """Attribute each h26 order to the latest run-date <= its submission date. `submitted` is the
-    EXCHANGE-local date (see submit_stamp), so an evening run's orders carry the session they were
-    placed in and land on that run's own date, not the next one. Reading a raw UTC date here put
-    every evening order on the following run whenever runs were on consecutive days."""
+    """Attribute each h26 order to the run that placed it, using EXCHANGE-local dates.
+
+    A run computes its book from the last COMPLETE session and stamps its ledger row with that
+    session. When it submits determines which side of midnight its orders land on:
+
+      submitted after the close   -> same exchange date as the run's row   -> latest run_date <= sub
+      submitted before the open   -> the row is the PREVIOUS session       -> latest run_date <  sub
+
+    Derived per order rather than assumed, because the live schedule has been both: the launchd job
+    is set for 20:30 PT but lands around 04:00 ET when the machine sleeps through it, and reading
+    the date alone then filed every pre-open order under the following run instead of its own."""
     run_dates = sorted(run_dates)
     out: dict[str, list[dict]] = {d: [] for d in run_dates}
     for o in orders:
         if not o["client_order_id"].startswith("h26"):
             continue
-        eligible = [d for d in run_dates if d <= (o["submitted"] or "9999")]
+        sub = o["submitted"] or "9999"
+        eligible = [d for d in run_dates if (d < sub if o.get("pre_open") else d <= sub)]
         if eligible:
             out[eligible[-1]].append(o)
     return out
@@ -270,12 +280,7 @@ def _fill_open(opens: dict[str, dict[str, float]], o: dict, date: str) -> float 
     sub = o.get("submitted")
     if not (opens and sub and o.get("rests_until_open")):
         return None
-    from zoneinfo import ZoneInfo
-    try:
-        t = dt.datetime.fromisoformat(str(o.get("submitted_at", "")).replace("Z", "+00:00"))
-        pre_open = (t.astimezone(ZoneInfo(EXCHANGE_TZ)).hour, t.astimezone(ZoneInfo(EXCHANGE_TZ)).minute) < EXCHANGE_OPEN
-    except ValueError:
-        return None
+    pre_open = bool(o.get("pre_open"))     # decided once, in submit_stamp, from the full timestamp
     # Resolve the session FIRST, then take its open. Filtering on "has this ticker" instead let a
     # halt or a data hole fall through to a later session, which stretches the drift leg across two
     # sessions and dumps the extra day into exec_bps.

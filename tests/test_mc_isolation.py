@@ -227,14 +227,28 @@ def test_submit_stamp_reads_the_exchange_session_not_the_utc_date():
 
     evening = submit_stamp("2026-07-21T03:30:00Z")          # 23:30 ET on the 20th, after the close
     assert evening["submitted"] == "2026-07-20" and evening["rests_until_open"] is True
+    assert evening["pre_open"] is False
 
     premarket = submit_stamp("2026-07-21T08:00:55Z")        # 04:00 ET, what this deployment does
     assert premarket["submitted"] == "2026-07-21" and premarket["rests_until_open"] is True
+    assert premarket["pre_open"] is True
 
     intraday = submit_stamp("2026-07-20T17:05:00Z")         # 13:05 ET, market open
     assert intraday["submitted"] == "2026-07-20" and intraday["rests_until_open"] is False
 
     assert submit_stamp("")["rests_until_open"] is False     # unusable stamp withholds, never guesses
+
+
+def test_pre_open_orders_belong_to_the_previous_run():
+    """A run builds its book from the last complete session and stamps its row with that session.
+    Submitting before the open puts its orders on the NEXT calendar date, so filing them by date
+    alone hands them to the following run: the fills land on a row whose close they never traded
+    against, and the drift leg stops being an overnight gap."""
+    from scripts.hunt_paper_reconcile import bucket_orders, submit_stamp
+
+    orders = [{"client_order_id": "h26-AAPL-a", **submit_stamp("2026-07-21T08:00:55Z")}]  # 04:00 ET
+    got = bucket_orders(orders, ["2026-07-20", "2026-07-21"])
+    assert got["2026-07-20"] and not got["2026-07-21"]     # the run that placed it, not the next
 
 
 def test_evening_orders_stay_with_their_own_run_on_consecutive_days():
